@@ -31,7 +31,7 @@ Instead of assigning permissions to individuals one by one, using Role-Based Acc
 | **John Smith** | Sales Department | Standard User | `jsmith` | `GG-Sales-Metrics` |
 
 ![Active Directory OU Structure](./Active-Directory/active-directory-ou.png)
-![Global Security Groups Configuration](./Active-Directory/security-groups.jpg)
+![Global Security Groups Configuration](./Active-Directory/security-groups.png)
 
 ---
 
@@ -46,7 +46,7 @@ I joined a Windows 11 virtual machine to the domain and locked it down using Gro
 This shrinks the attack surface. If a standard user accidentally downloads malware, the restricted account blocks the malware from silently installing itself with administrative rights.
 
 ![Command Prompt UAC Secure Desktop Interception](./Group-Policy-Objects/cmd-uac-prompt.png)
-![GPResult Verification for Mapped Policies](./Group-Policy-Objects/gpresult-verification.jpg)
+![GPResult Verification for Mapped Policies](./Group-Policy-Objects/gpresult-verification.png)
 
 ---
 
@@ -60,7 +60,7 @@ I created a corporate file server to allow employees to share files, but strictl
 **Why It Matters:**
 It makes data access effortless for employees while preventing critical information leakage between different business departments.
 
-![Successful Deployment of Mapped Sales Shared S: Drive](./Group-Policy-Objects/mapped-s-drive.jpg)
+![Successful Deployment of Mapped Sales Shared S: Drive](./Group-Policy-Objects/mapped-s-drive.png)
 
 ---
 
