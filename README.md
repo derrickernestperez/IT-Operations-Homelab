@@ -1,16 +1,36 @@
-# Enterprise IT Operations & Security Homelab
+<div align="center">
 
-**Objective:** To design, build, and secure a realistic corporate IT environment. This lab demonstrates hands-on experience with Active Directory, Role-Based Access Control (RBAC), Group Policy (GPO), centralized file sharing, and core network services.
+![Homelab Infrastructure](https://img.shields.io/badge/🏗️_INFRASTRUCTURE-HOMELAB-0078D6?style=for-the-badge&labelColor=0A0A0A)
+
+# Enterprise IT Operations & Security Homelab
+### Advanced Identity, Access, & Network Management
+
+A fully functional, simulated corporate IT environment.  
+Demonstrating Active Directory, RBAC, Endpoint Hardening, and Core Networking.
+
+<br />
+
+![Status](https://img.shields.io/badge/Status-Phases_1_to_3_Complete-2EA043?style=for-the-badge&labelColor=0A0A0A)
+![Windows Server](https://img.shields.io/badge/Windows_Server_2022-0078D6?style=for-the-badge&logo=windows&logoColor=white&labelColor=0A0A0A)
+![Active Directory](https://img.shields.io/badge/Active_Directory-0078D6?style=for-the-badge&logo=microsoft&logoColor=white&labelColor=0A0A0A)
+![PowerShell](https://img.shields.io/badge/PowerShell-5391FE?style=for-the-badge&logo=powershell&logoColor=white&labelColor=0A0A0A)
+
+</div>
 
 ---
 
-## 📁 Repository Directory
-* **[Network-Infrastructure](./Network-Infrastructure/)**: DHCP/DNS scopes and topology diagrams.
-* **[Active-Directory](./Active-Directory/)**: OU hierarchy, security groups, and user provisioning data.
-* **[Group-Policy-Objects](./Group-Policy-Objects/)**: Applied GPO configurations (Drive Maps, UAC Hardening).
-* **[Hybrid-Cloud-Sync](./Hybrid-Cloud-Sync/)**: Entra ID synchronization logs.
-* **[ITSM-Ticketing](./ITSM-Ticketing/)**: Jira Service Management incident workflows.
-* **[Scripts-Automation](./Scripts-Automation/)**: PowerShell scripts for automation.
+## 🔗 Repository Directory
+
+> **Navigate the Lab:** Click any folder below to view the configuration files, scripts, and documentation for that specific domain.
+
+| Directory | Contents |
+|-----------|----------|
+| **[📂 Network-Infrastructure](./Network-Infrastructure/)** | DHCP/DNS scopes and topology diagrams |
+| **[📂 Active-Directory](./Active-Directory/)** | OU hierarchy, security groups, and user provisioning data |
+| **[📂 Group-Policy-Objects](./Group-Policy-Objects/)** | Applied GPO configurations (Drive Maps, UAC Hardening) |
+| **[📂 Hybrid-Cloud-Sync](./Hybrid-Cloud-Sync/)** | Entra ID synchronization logs |
+| **[📂 ITSM-Ticketing](./ITSM-Ticketing/)** | Jira Service Management incident workflows |
+| **[📂 Scripts-Automation](./Scripts-Automation/)** | PowerShell scripts for automation |
 
 ---
 
@@ -30,8 +50,10 @@ Instead of assigning permissions to individuals one by one, using Role-Based Acc
 | **Jane Doe** | HR Department | Standard User | `jdoe` | `GG-HR-Security` |
 | **John Smith** | Sales Department | Standard User | `jsmith` | `GG-Sales-Metrics` |
 
+<br />
+
 ![Active Directory OU Structure](./Active-Directory/active-directory-ou.png)
-![Global Security Groups Configuration](./Active-Directory/security-groups.png)
+![Global Security Groups Configuration](./Active-Directory/security-groups.jpg)
 
 ---
 
@@ -45,8 +67,10 @@ I joined a Windows 11 virtual machine to the domain and locked it down using Gro
 **Why It Matters:**
 This shrinks the attack surface. If a standard user accidentally downloads malware, the restricted account blocks the malware from silently installing itself with administrative rights.
 
+<br />
+
 ![Command Prompt UAC Secure Desktop Interception](./Group-Policy-Objects/cmd-uac-prompt.png)
-![GPResult Verification for Mapped Policies](./Group-Policy-Objects/gpresult-verification.png)
+![GPResult Verification for Mapped Policies](./Group-Policy-Objects/gpresult-verification.jpg)
 
 ---
 
@@ -60,21 +84,24 @@ I created a corporate file server to allow employees to share files, but strictl
 **Why It Matters:**
 It makes data access effortless for employees while preventing critical information leakage between different business departments.
 
-![Successful Deployment of Mapped Sales Shared S: Drive](./Group-Policy-Objects/mapped-s-drive.png)
+<br />
+
+![Successful Deployment of Mapped Sales Shared S: Drive](./Group-Policy-Objects/mapped-s-drive.jpg)
 
 ---
 
-## 🌐 Phase 4: Core Networking Services (DHCP/DNS)
-*(Status: In Progress - Deploying automated IP allocation and DNS forwarders)*
+## 🚀 Future Roadmap
 
-## 🎫 Phase 5: ITSM Ticket Lifecycle Integration (Jira)
-*(Status: Pending - Engineering incident management workflows)*
+| Phase | Technology | Status | Objective |
+|-------|------------|--------|-----------|
+| **Phase 4** | DHCP & DNS | 🟡 *In Progress* | Deploy automated IP allocation and DNS forwarders |
+| **Phase 5** | Jira ITSM | ⚪ *Pending* | Engineer real-world incident management workflows |
+| **Phase 6** | Windows LAPS | ⚪ *Pending* | Deploy Local Administrator Password Solution |
+| **Phase 7** | Entra ID | ⚪ *Pending* | Synchronize on-premises AD to Microsoft 365 Cloud |
+| **Phase 8** | File Auditing | ⚪ *Pending* | Configure Object Access auditing for file modifications |
 
-## 🛡️ Phase 6: Enterprise Security Hardening (Windows LAPS)
-*(Status: Pending - Deploying Local Administrator Password Solution)*
+---
 
-## ☁️ Phase 7: Hybrid Cloud Operations (Entra ID)
-*(Status: Pending - Synchronizing on-premises AD to Microsoft 365)*
-
-## 📝 Phase 8: Data Audit Trails & Forensic Compliance
-*(Status: Pending - Configuring Object Access auditing for file modifications)*
+<div align="center">
+  <p><sub>Enterprise IT Infrastructure & Operations Homelab · 2026</sub></p>
+</div>
