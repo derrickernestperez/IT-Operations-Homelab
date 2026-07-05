@@ -53,7 +53,7 @@ Instead of assigning permissions to individuals one by one, using Role-Based Acc
 <br />
 
 ![Active Directory OU Structure](./Active-Directory/active-directory-ou.png)
-![Global Security Groups Configuration](./Active-Directory/security-groups.jpg)
+![Global Security Groups Configuration](./Active-Directory/security-groups.png)
 
 ---
 
@@ -70,7 +70,7 @@ This shrinks the attack surface. If a standard user accidentally downloads malwa
 <br />
 
 ![Command Prompt UAC Secure Desktop Interception](./Group-Policy-Objects/cmd-uac-prompt.png)
-![GPResult Verification for Mapped Policies](./Group-Policy-Objects/gpresult-verification.jpg)
+![GPResult Verification for Mapped Policies](./Group-Policy-Objects/gpresult-verification.png)
 
 ---
 
@@ -86,7 +86,7 @@ It makes data access effortless for employees while preventing critical informat
 
 <br />
 
-![Successful Deployment of Mapped Sales Shared S: Drive](./Group-Policy-Objects/mapped-s-drive.jpg)
+![Successful Deployment of Mapped Sales Shared S: Drive](./Group-Policy-Objects/mapped-s-drive.png)
 
 ---
 
