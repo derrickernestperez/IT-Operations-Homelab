@@ -44,8 +44,8 @@ Instead of assigning permissions to individuals one by one, using Role-Based Acc
 
 <br />
 
-![Active Directory OU Structure](./01-Infrastructure/03-Active-Directory/Evidence/Screenshots/active-directory-ou.png)
-![Global Security Groups Configuration](./01-Infrastructure/03-Active-Directory/Evidence/Screenshots/security-groups.png)
+![Active Directory OU Structure](./IT-Operations-Homelab/01-Infrastructure/03-Active-Directory/Evidence/Screenshots/active-directory-ou.png)
+![Global Security Groups Configuration](./IT-Operations-Homela/01-Infrastructure/03-Active-Directory/Evidence/Screenshots/security-groups.png)
 
 ---
 
@@ -61,8 +61,8 @@ This shrinks the attack surface. If a standard user accidentally downloads malwa
 
 <br />
 
-![Command Prompt UAC Secure Desktop Interception](./01-Infrastructure/04-Group-Policy/Evidence/Screenshots/cmd-uac-prompt.png)
-![GPResult Verification for Mapped Policies](./01-Infrastructure/04-Group-Policy/Evidence/Screenshots/gpresult-verification.png)
+![Command Prompt UAC Secure Desktop Interception](./IT-Operations-Homela/01-Infrastructure/04-Group-Policy/Evidence/Screenshots/cmd-uac-prompt.png)
+![GPResult Verification for Mapped Policies](./IT-Operations-Homela/01-Infrastructure/04-Group-Policy/Evidence/Screenshots/gpresult-verification.png)
 
 ---
 
@@ -78,7 +78,7 @@ It makes data access effortless for employees while preventing critical informat
 
 <br />
 
-![Successful Deployment of Mapped Sales Shared S: Drive](./01-Infrastructure/05-File-Server/Evidence/Screenshots/mapped-s-drive.png)
+![Successful Deployment of Mapped Sales Shared S: Drive](./IT-Operations-Homela/01-Infrastructure/05-File-Server/Evidence/Screenshots/mapped-s-drive.png)
 
 ---
 
