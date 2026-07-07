@@ -1,6 +1,7 @@
-# 🛠️ Module 1: Enterprise Virtualization
-
-> **Objective:** Build the virtual foundation of an enterprise IT environment using VMware Workstation Pro.
+<div align="center">
+  <h1>🛠️ Module 1: Enterprise Virtualization</h1>
+  <p><i>Building the virtual foundation of an enterprise IT environment using VMware Workstation Pro.</i></p>
+</div>
 
 ---
 
@@ -47,51 +48,87 @@ By the end of this module, the following competencies were achieved:
 
 ### Step 1: Create a New Virtual Machine
 Launched the **New Virtual Machine Wizard** to begin provisioning the first enterprise server.
-![New Virtual Machine](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/01-New-Virtual-Machine-Wizard.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/01-New-Virtual-Machine-Wizard.png" width="800" alt="New Virtual Machine">
+</p>
 
 ### Step 2: Select Custom Configuration
 Selected **Custom (Advanced)**. This provides granular control over the virtual hardware, reflecting how VMs are strictly defined in production environments.
-![Custom Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/02-Custom-Configuration.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/02-Custom-Configuration.png" width="800" alt="Custom Configuration">
+</p>
 
 ### Step 3: Hardware Compatibility
 Maintained the latest VMware hardware compatibility version to ensure seamless integration with modern virtual hardware and Windows Server 2025.
-![Hardware Compatibility](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/03-Hardware-Compatibility.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/03-Hardware-Compatibility.png" width="800" alt="Hardware Compatibility">
+</p>
 
 ### Step 4: Operating System Installation
 Selected **"I will install the operating system later."** This disables VMware Easy Install, allowing for a manual OS installation and providing better visibility into the boot process.
-![Install Later](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/04-Install-Operating-System-Later.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/04-Install-Operating-System-Later.png" width="800" alt="Install Later">
+</p>
 
 ### Step 5: Guest Operating System
 Configured the profile for **Microsoft Windows Server 2025** so VMware can apply the appropriate driver optimizations.
-![Guest Operating System](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/05-Guest-Operating-System.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/05-Guest-Operating-System.png" width="800" alt="Guest Operating System">
+</p>
 
 ### Step 6: Virtual Machine Naming
 Assigned the hostname **SRV01**. Consistent naming conventions are critical for asset management as environments scale.
-![VM Name](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/06-VM-Name.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/06-VM-Name.png" width="800" alt="VM Name">
+</p>
 
 ### Step 7: Firmware & Security
 Transitioned firmware to **UEFI** and enabled **Secure Boot**, aligning with modern enterprise security standards to protect the boot sequence.
-![UEFI](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/07-UEFI-SecureBoot.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/07-UEFI-SecureBoot.png" width="800" alt="UEFI">
+</p>
 
 ### Step 8: Processor Allocation
 Assigned **1 Processor** and **2 Cores**. This provides adequate processing power for core infrastructure services while preserving host resources.
-![CPU Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/08-CPU-Configuration.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/08-CPU-Configuration.png" width="800" alt="CPU Configuration">
+</p>
 
 ### Step 9: Memory Allocation
 Allocated **4 GB (4096 MB)** of memory. This baseline is sufficient for foundational services (AD, DNS, DHCP) and ensures resources remain available for spinning up additional VMs later.
-![Memory Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/09-Memory-Configuration.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/09-Memory-Configuration.png" width="800" alt="Memory Configuration">
+</p>
 
 ### Step 10: Storage Provisioning
 Created an **80 GB NVMe virtual disk** utilizing **Thin Provisioning**. This ensures the VM only consumes physical storage as data is written, maximizing host drive efficiency.
-![Storage Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/10-NVMe-Disk.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/10-NVMe-Disk.png" width="800" alt="Storage Configuration">
+</p>
 
 ### Step 11: Network Configuration
 Selected **NAT**. This provides the VM with internet access for patching and updates while logically isolating the lab from the physical home network.
-![Network Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/11-NAT-Network.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/11-NAT-Network.png" width="800" alt="Network Configuration">
+</p>
 
 ### Step 12: Hardware Verification
 Conducted a final review of the virtual hardware ledger prior to powering on the VM to prevent deployment failures.
-![Hardware Summary](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/12-VM-Hardware-Summary.png)
+
+<p align="center">
+  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/12-VM-Hardware-Summary.png" width="800" alt="Hardware Summary">
+</p>
 
 ---
 
@@ -123,7 +160,7 @@ Conducted a final review of the virtual hardware ledger prior to powering on the
 
 ---
 
-## ⏭️ Next Steps
-
-**[Module 2: Installing Windows Server 2025] →**
-The upcoming module covers the OS installation phase, edition selection (Standard vs. Datacenter), initial server configuration, and preparing the system for its infrastructure roles.
+<div align="center">
+  <b><a href="#">⏭️ Next Module: Installing Windows Server 2025</a></b><br>
+  <i>Covering OS installation, edition selection, and initial server configuration.</i>
+</div>
