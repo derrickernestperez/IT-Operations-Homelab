@@ -1,30 +1,26 @@
-# Project Title
+# Windows Server 2025 Base Configuration
 
-## Overview
+## 1. Project Overview
+Deployed and configured the foundational Windows Server 2025 Virtual Machine. This server will act as the core infrastructure anchor (Domain Controller, DNS, and DHCP) for the enterprise homelab.
 
-## Learning Objectives
+## 2. Environment
+* **Hypervisor:** VMware Workstation Pro
+* **Operating System:** Windows Server 2025 Standard (Desktop Experience)
+* **Compute:** 2 vCPU, 4GB RAM, 60GB NVMe
+* **Network Adapter:** `VMnet2` (Host-Only)
 
-## Core Concepts
-
-## Lab Environment
-
-## Architecture
-
-## Configuration Steps
-
-## Verification
-
-## Evidence
-
-## Troubleshooting
-
-## Incident Report
-
-## Security Considerations
-
-## Interview Questions
-
-## Lessons Learned
-
-## References
-
+## 3. Architecture
+```text
+      [Host: Windows 11]
+             │
+      (VMware Hypervisor)
+             │
+       [Switch: VMnet2] ── (No DHCP, Isolated)
+             │
+   ┌─────────┴─────────┐
+   │ WindowLabServer   │
+   │ IP: 10.10.10.10   │
+   │ SM: 255.0.0.0     │
+   │ GW: <Blank>       │
+   │ DNS: 127.0.0.1    │
+   └───────────────────┘
