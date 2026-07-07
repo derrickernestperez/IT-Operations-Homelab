@@ -1,8 +1,4 @@
----
 
-### 🚨 STEP 10: Incident Report (Troubleshooting)
-
-Inside `00-Lab-Setup\04-Windows-11\Incident-Reports\`, create a file named `INC-003-OOBE-Network-Bypass.md` and paste this:
 
 ```markdown
 # INC-003: OOBE Network Requirement Bypass
