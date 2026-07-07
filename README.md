@@ -1,91 +1,335 @@
 <div align="center">
 
-![Homelab Infrastructure](https://img.shields.io/badge/🏗️_INFRASTRUCTURE-HOMELAB-0078D6?style=for-the-badge&labelColor=0A0A0A)
+# Windows Infrastructure & Security Homelab
 
-# Enterprise IT Operations & Security Homelab
-### Advanced Identity, Access, & Network Management
+A hands-on enterprise Windows infrastructure lab built using VMware Workstation.
 
-A fully functional, simulated corporate IT environment.  
-Demonstrating Active Directory, RBAC, Endpoint Hardening, and Core Networking.
+This project documents my journey in building, securing, monitoring, and troubleshooting a Windows-based enterprise environment while preparing for roles in IT Support, Systems Administration, Infrastructure Engineering, and Security Operations.
 
-<br />
-
-![Status](https://img.shields.io/badge/Status-Phases_1_to_3_Complete-2EA043?style=for-the-badge&labelColor=0A0A0A)
-![Windows Server](https://img.shields.io/badge/Windows_Server_2022-0078D6?style=for-the-badge&logo=windows&logoColor=white&labelColor=0A0A0A)
-![Active Directory](https://img.shields.io/badge/Active_Directory-0078D6?style=for-the-badge&logo=microsoft&logoColor=white&labelColor=0A0A0A)
-![PowerShell](https://img.shields.io/badge/PowerShell-5391FE?style=for-the-badge&logo=powershell&logoColor=white&labelColor=0A0A0A)
+![Status](https://img.shields.io/badge/Status-In_Progress-brightgreen?style=for-the-badge)
+![Windows Server](https://img.shields.io/badge/Windows_Server-2025-blue?style=for-the-badge&logo=windows)
+![PowerShell](https://img.shields.io/badge/PowerShell-Automation-blue?style=for-the-badge&logo=powershell)
+![GitHub](https://img.shields.io/badge/GitHub-Portfolio-black?style=for-the-badge&logo=github)
 
 </div>
 
 ---
 
-## 🔗 Repository Directory
+# About This Project
 
-> **Navigate the Lab:** Click any folder below to view the configuration files, evidence, and incident reports for that specific domain.
+This repository serves as my technical portfolio while preparing for a career in Infrastructure, Systems Administration, and Cybersecurity.
 
-| Directory | Contents |
-|-----------|----------|
-| **[📂 Network Infrastructure](./01-Infrastructure/01-DHCP/)** | DHCP Scopes, DNS Forwarders, Option Configuration |
-| **[📂 Active Directory](./01-Infrastructure/03-Active-Directory/)** | OU hierarchy, security groups, and user provisioning |
-| **[📂 Group Policy](./01-Infrastructure/04-Group-Policy/)** | Endpoint hardening, UAC interception, policy enforcement |
-| **[📂 File Server](./01-Infrastructure/05-File-Server/)** | Centralized data silos, NTFS permissions, mapped drives |
+Instead of only studying theory, I designed a Windows-based enterprise lab where I can build services, intentionally break configurations, troubleshoot issues, document incident reports, and automate administrative tasks using PowerShell.
 
----
+Every project includes:
 
-## 🏢 Phase 1: Core Identity Architecture & RBAC
-
-**What I Built:**
-I configured Windows Server as a Domain Controller and built out a realistic company directory from scratch. 
-* Designed a tiered Organizational Unit (OU) structure for `HR`, `IT`, and `Sales` to keep users and computers organized.
-* Provisioned specific employee accounts and placed them into Global Security Groups to manage their permissions centrally.
-
-**Why It Matters:** 
-Instead of assigning permissions to individuals one by one, using Role-Based Access Control (RBAC) ensures that access rights automatically follow a user's job title. 
-
-<br />
-
-![Active Directory OU Structure](./01-Infrastructure/03-Active-Directory/Evidence/Screenshots/active-directory-ou.png)
-![Global Security Groups Configuration](./01-Infrastructure/03-Active-Directory/Evidence/Screenshots/security-groups.png)
+- Infrastructure configuration
+- Security hardening
+- Troubleshooting documentation
+- Evidence (screenshots, logs, PowerShell output)
+- Incident reports
+- Lessons learned
 
 ---
 
-## 🔒 Phase 2: Endpoint Hardening & Group Policy
+# Lab Environment
 
-**What I Built:**
-I joined a Windows 11 virtual machine to the domain and locked it down using Group Policy Objects (GPOs) to enforce the "Principle of Least Privilege."
-* **UAC Hardening:** Standard users are blocked from running programs as an Administrator. The system triggers a Secure Desktop prompt requiring IT credentials.
-* **Policy Verification:** I utilized "Hot Desking" (logging into the same machine as different users) and ran `gpresult /r` in the command line to prove the security policies successfully hit the targeted user.
+## Host Machine
 
-**Why It Matters:**
-This shrinks the attack surface. If a standard user accidentally downloads malware, the restricted account blocks the malware from silently installing itself with administrative rights.
-
-<br />
-
-![Command Prompt UAC Secure Desktop Interception](./01-Infrastructure/04-Group-Policy/Evidence/Screenshots/cmd-uac-prompt.png)
-![GPResult Verification for Mapped Policies](./01-Infrastructure/04-Group-Policy/Evidence/Screenshots/gpresult-verification.png)
+| Component | Specification |
+|------------|--------------|
+| Hypervisor | VMware Workstation |
+| Storage Budget | 100 GB |
+| Network | Host-Only (VMnet2) |
 
 ---
 
-## 📂 Phase 3: Centralized Data Silos & Automation
+## Virtual Machines
 
-**What I Built:**
-I created a corporate file server to allow employees to share files, but strictly separated the data so departments cannot see each other's private work.
-* **The "Two Doors" Model:** I used *Share Permissions* to broadcast the folder to the network, but used strict *NTFS Permissions* to lock the actual contents inside so only specific departments can view them.
-* **GPO Automation:** I created a Drive Mapping Group Policy that automatically connects the `S:` Drive to an employee's computer as soon as they log in.
+### VM1
 
-**Why It Matters:**
-It makes data access effortless for employees while preventing critical information leakage between different business departments.
-
-<br />
-
-![Successful Deployment of Mapped Sales Shared S: Drive](./01-Infrastructure/05-File-Server/Evidence/Screenshots/mapped-s-drive.png)
+| Component | Value |
+|-----------|------|
+| OS | Windows Server 2025 |
+| RAM | 4 GB |
+| CPU | 2 vCPU |
+| Roles | Active Directory, DNS, DHCP, File Server, Group Policy |
 
 ---
 
-## 🚀 Future Roadmap
+### VM2
 
-| Phase | Technology | Status | Objective |
-|-------|------------|--------|-----------|
-| **Phase 4** | DHCP & DNS | 🟡 *In Progress* | Deploy automated IP allocation and DNS forwarders |
-| **Phase 5** | Security Monitoring | ⚪ *Pending* | Deploy Sysmon, Wazuh SIEM, and analyze traffic via Wireshark |
-| **Phase 6** | Incident Response | ⚪ *Pending* | Investigate simulated attacks and map to MITRE ATT&CK |
+| Component | Value |
+|-----------|------|
+| OS | Windows 11 Enterprise |
+| RAM | 4 GB |
+| CPU | 2 vCPU |
+| Purpose | Domain-Joined Client, Security Monitoring |
+
+---
+
+# Architecture Overview
+
+```
+                    Internet
+                        │
+                 Cloudflare DNS
+                        │
+────────────────────────────────────
+        VMware Host-Only Network
+────────────────────────────────────
+               │
+     Windows Server 2025
+               │
+      ├── Active Directory
+      ├── DNS
+      ├── DHCP
+      ├── File Server
+      └── Group Policy
+               │
+               │
+      Windows 11 Enterprise
+               │
+      ├── Domain Joined
+      ├── Security Testing
+      ├── Docker Desktop
+      └── Future Wazuh SIEM
+```
+
+---
+
+# Skills Demonstrated
+
+## Windows Infrastructure
+
+- Active Directory Domain Services
+- Organizational Units (OU)
+- Group Policy Objects
+- DNS Server
+- DHCP Server
+- File Server
+- NTFS Permissions
+- Shared Folders
+
+---
+
+## Networking
+
+- IPv4 Addressing
+- DHCP Scope Configuration
+- DNS Resolution
+- Host-Only Networking
+- Network Troubleshooting
+
+---
+
+## Security
+
+- Role-Based Access Control (RBAC)
+- Principle of Least Privilege
+- Windows Firewall
+- Windows LAPS *(Upcoming)*
+- Sysmon *(Upcoming)*
+- Wazuh SIEM *(Upcoming)*
+
+---
+
+## Administration
+
+- Windows Server Administration
+- PowerShell
+- Git & GitHub
+- Documentation
+- Root Cause Analysis
+
+---
+
+# Repository Structure
+
+```
+IT-Operations-Homelab/
+
+docs/
+Interview-Preparation/
+
+01-Infrastructure-Security/
+│
+├── DHCP
+├── DNS
+├── Active-Directory
+├── Group-Policy
+├── File-Server
+└── Windows-LAPS
+
+02-Security-Monitoring/
+│
+├── Sysmon
+├── Wireshark
+├── Wazuh
+└── Event-Logs
+
+03-Threat-Detection-IR/
+│
+├── Incident-Reports
+├── Threat-Hunting
+└── Malware-Triage
+
+04-Purple-Team/
+│
+└── MITRE-ATTACK
+
+05-Capstone/
+```
+
+---
+
+# Current Projects
+
+| Project | Technology | Status |
+|----------|------------|--------|
+| Active Directory | AD DS | ✅ |
+| Organizational Units | Active Directory | ✅ |
+| Security Groups | Active Directory | ✅ |
+| Group Policy | GPO | ✅ |
+| File Server | NTFS / SMB | ✅ |
+| DHCP | Windows Server | 🟡 |
+| DNS | Windows DNS | 🟡 |
+| Windows LAPS | Security | ⏳ |
+| Sysmon | Endpoint Monitoring | ⏳ |
+| Wireshark | Packet Analysis | ⏳ |
+| Wazuh SIEM | Security Monitoring | ⏳ |
+| Threat Hunting | Blue Team | ⏳ |
+
+---
+
+# Documentation Standard
+
+Every project follows the same documentation format.
+
+## 1. What did I build?
+
+Describe the technology implemented.
+
+---
+
+## 2. How did I secure it?
+
+Document hardening techniques and security controls.
+
+---
+
+## 3. How did I verify it?
+
+Include screenshots, PowerShell commands, logs, and testing.
+
+---
+
+## 4. What went wrong?
+
+Document troubleshooting.
+
+Include:
+
+- Problem
+- Investigation
+- Root Cause
+- Resolution
+- Verification
+
+---
+
+## 5. Lessons Learned
+
+Summarize key takeaways.
+
+---
+
+## 6. Skills Demonstrated
+
+List the technologies used.
+
+---
+
+# Evidence Collected
+
+Each project contains an Evidence folder including:
+
+- Screenshots
+- Event Viewer Logs
+- PowerShell Output
+- Network Captures
+- Configuration Files
+- Scripts
+
+---
+
+# Industry Standards
+
+This lab aligns with concepts from:
+
+- CompTIA Network+
+- CompTIA Security+
+- NIST Cybersecurity Framework (CSF)
+- MITRE ATT&CK Framework
+
+---
+
+# Current Learning Roadmap
+
+## Phase 1
+Infrastructure Security
+
+- Active Directory
+- DNS
+- DHCP
+- Group Policy
+- File Server
+- Windows LAPS
+
+---
+
+## Phase 2
+Security Monitoring
+
+- Sysmon
+- Event Viewer
+- Windows Firewall
+- Wireshark
+- Wazuh
+
+---
+
+## Phase 3
+
+Threat Detection & Incident Response
+
+- Log Analysis
+- Threat Hunting
+- Malware Triage
+- Incident Reporting
+
+---
+
+## Phase 4
+
+Purple Team
+
+- MITRE ATT&CK
+- Detection Engineering
+- Attack Simulation
+- Validation
+
+---
+
+# Goal
+
+My goal is to build a practical portfolio demonstrating the skills required for roles such as:
+
+- IT Support Engineer
+- Systems Administrator
+- Infrastructure Engineer
+- SOC Analyst (Tier 1)
+- MSP Support Engineer
+- Security Operations Engineer
+
+Every configuration in this repository is documented, tested, and supported with evidence to demonstrate practical engineering and troubleshooting skills.
