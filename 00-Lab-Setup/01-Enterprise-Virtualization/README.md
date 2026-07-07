@@ -1,25 +1,24 @@
 <div align="center">
-  <h1>🛠️ Module 1: Enterprise Virtualization</h1>
-  <p><i>Building the virtual foundation of an enterprise IT environment using VMware Workstation Pro.</i></p>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Enterprise%20Virtualization&fontSize=50&fontAlignY=35&desc=Module%201%20%7C%20Homelab%20Deployment&descSize=20&descAlignY=55" alt="Enterprise Virtualization Banner" width="100%">
 </div>
 
 ---
 
-## 📖 Overview
+## Overview
 This module documents the deployment of the first virtual machine in my **Enterprise IT Operations Homelab**. 
 
 The goal is to create a Windows Server 2025 virtual machine designated as **SRV01**. This server acts as the primary infrastructure backbone for the lab and will subsequently host core services, including Active Directory, DNS, DHCP, Group Policy, Windows LAPS, Microsoft Entra ID integration, and security monitoring. 
 
 To simulate strict enterprise standards and hardware planning, automated deployment tools (like VMware Easy Install) were bypassed in favor of manual, component-by-component configuration.
 
-## 🏢 Business Scenario
+## Business Scenario
 A company has procured a new server to serve as the foundation of its internal IT infrastructure. Before the Windows Server OS can be installed, the Infrastructure Team must provision a virtual machine and configure its virtual hardware to align with company deployment standards.
 
 While production environments typically rely on hypervisors like **VMware ESXi, Microsoft Hyper-V, Nutanix AHV,** or **Proxmox VE**, this lab utilizes **VMware Workstation Pro** to emulate a scalable enterprise virtualization environment.
 
 ---
 
-## 🎯 Learning Objectives
+## Learning Objectives
 By the end of this module, the following competencies were achieved:
 * **Hypervisor Architecture:** Understand the core purpose of virtualization and the relationship between Host and Guest operating systems.
 * **VM Provisioning:** Deploy a virtual machine manually using VMware Workstation Pro.
@@ -28,7 +27,7 @@ By the end of this module, the following competencies were achieved:
 
 ---
 
-## 🖥️ Lab Environment Specifications
+## Lab Environment Specifications
 
 | Component | Configuration Details |
 | :--- | :--- |
@@ -44,7 +43,7 @@ By the end of this module, the following competencies were achieved:
 
 ---
 
-## 🚀 Step-by-Step Implementation
+## Step-by-Step Implementation
 
 ### Step 1: Create a New Virtual Machine
 Launched the **New Virtual Machine Wizard** to begin provisioning the first enterprise server.
@@ -132,7 +131,7 @@ Conducted a final review of the virtual hardware ledger prior to powering on the
 
 ---
 
-## 📚 Technical Architecture & Justifications
+## Technical Architecture & Justifications
 
 * **Why use UEFI over BIOS?** UEFI is the modern firmware standard for enterprise systems. It enables Secure Boot, supports GPT partitions (allowing drives larger than 2TB), and offers vastly improved hardware compatibility.
 * **Why enable Secure Boot?** It cryptographically verifies trusted boot components during startup, neutralizing rootkits and unauthorized bootloaders.
@@ -141,7 +140,7 @@ Conducted a final review of the virtual hardware ledger prior to powering on the
 
 ---
 
-## ✅ Skills Demonstrated
+## Skills Demonstrated
 * VMware Workstation Pro Administration
 * Enterprise Virtualization Architecture
 * Secure Virtual Machine Provisioning
@@ -150,7 +149,7 @@ Conducted a final review of the virtual hardware ledger prior to powering on the
 
 ---
 
-## 🎤 Mock Interview Q&A
+## Mock Interview Q&A
 
 **Q: Why did you choose a "Custom" configuration instead of "Typical"?**
 > **A:** Custom configuration provides granular control over the virtual hardware stack (firmware, disk controllers, network types). This closely mirrors how systems administrators deploy production VMs via vCenter or Hyper-V, rather than relying on automated defaults.
@@ -161,6 +160,6 @@ Conducted a final review of the virtual hardware ledger prior to powering on the
 ---
 
 <div align="center">
-  <b><a href="#">⏭️ Next Module: Installing Windows Server 2025</a></b><br>
+  <b><a href="#">Next Module: Installing Windows Server 2025</a></b><br>
   <i>Covering OS installation, edition selection, and initial server configuration.</i>
 </div>
