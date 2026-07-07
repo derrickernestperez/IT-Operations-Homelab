@@ -47,58 +47,58 @@ By the end of this module, the following competencies were achieved:
 
 ### Step 1: Create a New Virtual Machine
 Launched the **New Virtual Machine Wizard** to begin provisioning the first enterprise server.
-![New Virtual Machine](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/01-New-Virtual-Machine-Wizard.png)
+![New Virtual Machine](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/01-New-Virtual-Machine-Wizard.png)
 
 ### Step 2: Select Custom Configuration
 Selected **Custom (Advanced)**. This provides granular control over the virtual hardware, reflecting how VMs are strictly defined in production environments.
-![Custom Configuration](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/02-Custom-Configuration.png)
+![Custom Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/02-Custom-Configuration.png)
 
 ### Step 3: Hardware Compatibility
 Maintained the latest VMware hardware compatibility version to ensure seamless integration with modern virtual hardware and Windows Server 2025.
-![Hardware Compatibility](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/03-Hardware-Compatibility.png)
+![Hardware Compatibility](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/03-Hardware-Compatibility.png)
 
 ### Step 4: Operating System Installation
 Selected **"I will install the operating system later."** This disables VMware Easy Install, allowing for a manual OS installation and providing better visibility into the boot process.
-![Install Later](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/04-Install-Operating-System-Later.png)
+![Install Later](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/04-Install-Operating-System-Later.png)
 
 ### Step 5: Guest Operating System
 Configured the profile for **Microsoft Windows Server 2025** so VMware can apply the appropriate driver optimizations.
-![Guest Operating System](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/05-Guest-Operating-System.png)
+![Guest Operating System](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/05-Guest-Operating-System.png)
 
 ### Step 6: Virtual Machine Naming
 Assigned the hostname **SRV01**. Consistent naming conventions are critical for asset management as environments scale.
-![VM Name](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/06-VM-Name.png)
+![VM Name](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/06-VM-Name.png)
 
 ### Step 7: Firmware & Security
 Transitioned firmware to **UEFI** and enabled **Secure Boot**, aligning with modern enterprise security standards to protect the boot sequence.
-![UEFI](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/07-UEFI-SecureBoot.png)
+![UEFI](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/07-UEFI-SecureBoot.png)
 
 ### Step 8: Processor Allocation
 Assigned **1 Processor** and **2 Cores**. This provides adequate processing power for core infrastructure services while preserving host resources.
-![CPU Configuration](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/08-CPU-Configuration.png)
+![CPU Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/08-CPU-Configuration.png)
 
 ### Step 9: Memory Allocation
 Allocated **4 GB (4096 MB)** of memory. This baseline is sufficient for foundational services (AD, DNS, DHCP) and ensures resources remain available for spinning up additional VMs later.
-![Memory Configuration](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/09-Memory-Configuration.png)
+![Memory Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/09-Memory-Configuration.png)
 
 ### Step 10: Storage Provisioning
 Created an **80 GB NVMe virtual disk** utilizing **Thin Provisioning**. This ensures the VM only consumes physical storage as data is written, maximizing host drive efficiency.
-![Storage Configuration](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/10-NVMe-Disk.png)
+![Storage Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/10-NVMe-Disk.png)
 
 ### Step 11: Network Configuration
 Selected **NAT**. This provides the VM with internet access for patching and updates while logically isolating the lab from the physical home network.
-![Network Configuration](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/11-NAT-Network.png)
+![Network Configuration](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/11-NAT-Network.png)
 
 ### Step 12: Hardware Verification
 Conducted a final review of the virtual hardware ledger prior to powering on the VM to prevent deployment failures.
-![Hardware Summary](00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/12-VM-Hardware-Summary.png)
+![Hardware Summary](/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/12-VM-Hardware-Summary.png)
 
 ---
 
 ## 📚 Technical Architecture & Justifications
 
 * **Why use UEFI over BIOS?** UEFI is the modern firmware standard for enterprise systems. It enables Secure Boot, supports GPT partitions (allowing drives larger than 2TB), and offers vastly improved hardware compatibility.
-* **Why enable Secure Boot?** It Cryptographically verifies trusted boot components during startup, neutralizing rootkits and unauthorized bootloaders.
+* **Why enable Secure Boot?** It cryptographically verifies trusted boot components during startup, neutralizing rootkits and unauthorized bootloaders.
 * **Why Thin Provisioning?** It optimizes physical storage by allocating disk space dynamically as data is written, rather than instantly reserving the entire 80 GB block (Thick Provisioning).
 * **Why NAT over Bridged Networking?** NAT acts as a security and routing boundary. It allows the server to fetch external updates while preventing lab traffic (like DHCP broadcasts) from bleeding out and disrupting the physical home network.
 
