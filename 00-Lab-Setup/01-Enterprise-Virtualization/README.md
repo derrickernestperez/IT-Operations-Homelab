@@ -1,211 +1,277 @@
-# Enterprise Virtualization with VMware Workstation Pro
+# Module 1 – Enterprise Virtualization
 
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+> Build the virtual foundation of an enterprise IT environment using VMware Workstation Pro.
 
 ---
 
-# Objectives
+## 📖 Overview
 
-After completing this module, I was able to:
+This module documents the deployment of the first virtual machine in my **Enterprise IT Operations Homelab**.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
+The objective is to create a Windows Server 2025 virtual machine that will become **SRV01**, the primary server for the lab. This server will later host services such as Active Directory, DNS, DHCP, Group Policy, Windows LAPS, Microsoft Entra ID integration, and security monitoring.
+
+Instead of relying on VMware's default settings, I manually configured each component to better understand enterprise virtualization and hardware planning.
+
+---
+
+## 🏢 Business Scenario
+
+A company has purchased a new server that will become the foundation of its internal IT infrastructure.
+
+Before Windows Server can be installed, the Infrastructure Team must create a virtual machine and configure its virtual hardware according to company standards.
+
+In production environments, organizations commonly use platforms such as:
+
+- VMware ESXi
+- Microsoft Hyper-V
+- Nutanix AHV
+- Proxmox VE
+
+For this homelab, **VMware Workstation Pro** is used to simulate an enterprise virtualization environment.
+
+---
+
+# 🎯 Learning Objectives
+
+After completing this module, I can:
+
+- Explain the purpose of virtualization
+- Differentiate between the Host and Guest operating systems
+- Create a virtual machine using VMware Workstation Pro
 - Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+- Allocate CPU, memory, storage, and networking resources
+- Explain why each configuration was selected
 
 ---
 
-# Why Virtualization?
-
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
-
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
-
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
-
----
-
-# Host vs Guest Operating System
-
-### Host Operating System
-
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
-
----
-
-### Guest Operating System
-
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
-
----
-
-# Virtual Machine Configuration
+# 🖥️ Lab Environment
 
 | Component | Configuration |
 |-----------|---------------|
 | Hypervisor | VMware Workstation Pro |
+| Host OS | Windows 11 |
 | Guest OS | Windows Server 2025 |
+| Server Name | SRV01 |
 | Firmware | UEFI |
 | Secure Boot | Enabled |
 | CPU | 2 vCPUs |
 | Memory | 4 GB |
 | Storage | 80 GB NVMe (Thin Provisioned) |
 | Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
 
 ---
 
-# Step-by-Step Deployment
+# 🚀 Implementation
 
-## Step 1 - Create a New Virtual Machine
+## Step 1 — Create a New Virtual Machine
 
-Created a new virtual machine using VMware Workstation Pro.
+Opened VMware Workstation Pro and launched the **New Virtual Machine Wizard** to begin creating the first enterprise server.
 
 **Screenshot**
 
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
+![New Virtual Machine](Evidence/Screenshots/01-New-Virtual-Machine-Wizard.png)
 
 ---
 
-## Step 2 - Select the Installation Media
+## Step 2 — Select Custom Configuration
 
-Attached the Windows Server 2025 ISO image to the virtual machine.
+Selected **Custom (Advanced)** instead of the Typical configuration.
+
+Using the Custom option provides complete control over the virtual hardware configuration, which more closely reflects how virtual machines are deployed in enterprise environments.
 
 **Screenshot**
 
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
+![Custom Configuration](Evidence/Screenshots/02-Custom-Configuration.png)
 
 ---
 
-## Step 3 - Configure Firmware
+## Step 3 — Select Hardware Compatibility
 
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
+Kept the latest VMware hardware compatibility version.
 
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
+This ensures compatibility with modern virtual hardware and Windows Server 2025.
 
 **Screenshot**
 
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+![Hardware Compatibility](Evidence/Screenshots/03-Hardware-Compatibility.png)
 
 ---
 
-## Step 4 - Configure Virtual Hardware
+## Step 4 — Install the Operating System Later
 
-Configured:
+Selected **I will install the operating system later**.
 
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
+This disables VMware Easy Install and allows Windows Server to be installed manually, providing better visibility into the installation process.
 
 **Screenshot**
 
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+![Install Later](Evidence/Screenshots/04-Install-Operating-System-Later.png)
 
 ---
 
-## Step 5 - Configure Storage
+## Step 5 — Select the Guest Operating System
 
-Created a new virtual NVMe disk with:
+Configured the virtual machine for **Microsoft Windows Server 2025**.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
-
-Thin provisioning conserves host storage by allocating disk space only as data is written.
+Selecting the correct operating system ensures VMware applies the appropriate virtual hardware optimizations.
 
 **Screenshot**
 
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+![Guest Operating System](Evidence/Screenshots/05-Guest-Operating-System.png)
 
 ---
 
-# Verification
+## Step 6 — Name the Virtual Machine
 
-Verified that:
+Assigned the virtual machine the name **SRV01**.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+Using a consistent naming convention helps identify servers as the environment grows.
 
----
+**Screenshot**
 
-# Skills Demonstrated
-
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+![VM Name](Evidence/Screenshots/06-VM-Name.png)
 
 ---
 
-# Key Takeaways
+## Step 7 — Configure Firmware
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+Changed the firmware to **UEFI** and enabled **Secure Boot**.
 
----
+These settings reflect current enterprise standards and improve the security of the boot process.
 
-# Interview Questions
+**Screenshot**
 
-### What is virtualization?
-
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+![UEFI](Evidence/Screenshots/07-UEFI-SecureBoot.png)
 
 ---
 
-### What is the difference between a Host and Guest Operating System?
+## Step 8 — Configure the Processor
 
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
+Assigned:
+
+- 1 Processor
+- 2 Cores
+
+This provides enough processing power for Windows Server infrastructure services while leaving resources available for the host system.
+
+**Screenshot**
+
+![CPU Configuration](Evidence/Screenshots/08-CPU-Configuration.png)
 
 ---
 
-### Why did you use NAT networking?
+## Step 9 — Configure Memory
 
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
+Allocated **4 GB (4096 MB)** of memory.
+
+This amount is sufficient for Windows Server in a lab environment while allowing additional virtual machines to run later.
+
+**Screenshot**
+
+![Memory Configuration](Evidence/Screenshots/09-Memory-Configuration.png)
 
 ---
+
+## Step 10 — Configure Storage
+
+Created an **80 GB NVMe virtual disk** using **Thin Provisioning**.
+
+Thin Provisioning allows the virtual disk to consume physical storage only as data is written.
+
+**Screenshot**
+
+![Storage Configuration](Evidence/Screenshots/10-NVMe-Disk.png)
+
+---
+
+## Step 11 — Configure Networking
+
+Selected **NAT** networking.
+
+NAT allows the virtual machine to access the internet while remaining isolated from the home network.
+
+**Screenshot**
+
+![Network Configuration](Evidence/Screenshots/11-NAT-Network.png)
+
+---
+
+## Step 12 — Review the Virtual Hardware
+
+Reviewed all virtual hardware settings before powering on the virtual machine.
+
+Verifying the configuration helps prevent deployment issues before the operating system is installed.
+
+**Screenshot**
+
+![Hardware Summary](Evidence/Screenshots/12-VM-Hardware-Summary.png)
+
+---
+
+# 📚 Technical Notes
+
+### Why use UEFI?
+
+UEFI is the modern firmware standard used by enterprise systems. It supports Secure Boot, GPT partitions, and improved hardware compatibility.
+
+### Why enable Secure Boot?
+
+Secure Boot verifies trusted boot components during startup and helps protect against unauthorized bootloaders.
+
+### Why allocate 4 GB of RAM?
+
+Windows Server infrastructure services such as Active Directory, DNS, and DHCP have relatively low memory requirements in a lab environment. Allocating only the required memory leaves resources available for future virtual machines.
 
 ### Why use Thin Provisioning?
 
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
+Thin Provisioning saves storage by allocating physical disk space only when data is written instead of reserving the full virtual disk size immediately.
+
+### Why use NAT?
+
+NAT provides internet access for updates and downloads while keeping the lab isolated from the home network.
 
 ---
 
-# Next Module
+# ✅ Skills Demonstrated
 
-Windows Server 2025 Installation
+- VMware Workstation Pro Administration
+- Enterprise Virtualization
+- Virtual Machine Deployment
+- Virtual Hardware Configuration
+- Resource Planning
+- Storage Planning
+- Network Planning
+
+---
+
+# 💡 Key Takeaways
+
+Building the virtual machine manually provided a deeper understanding of how enterprise servers are deployed. Each hardware component was configured intentionally to balance performance, security, and efficient resource usage. This virtual machine is now ready for the installation of Windows Server 2025.
+
+---
+
+# 🎤 Interview Questions
+
+### Why did you choose Custom instead of Typical?
+
+Custom configuration provides complete control over virtual hardware settings and more closely reflects how enterprise administrators deploy production virtual machines.
+
+### Why did you choose NAT networking?
+
+NAT provides internet access while keeping the lab isolated from the physical network, making it ideal for the initial deployment.
+
+### Why use Thin Provisioning?
+
+Thin Provisioning conserves storage by allocating physical disk space only as data is written.
+
+### Why did you enable Secure Boot?
+
+Secure Boot helps ensure that only trusted software loads during the boot process, improving system security.
+
+---
+
+# ⏭️ Next Module
+
+**Module 2 – Installing Windows Server 2025**
+
+The next module covers installing Windows Server 2025, selecting the appropriate edition, completing the initial configuration, and preparing the server for infrastructure roles.
