@@ -1,211 +1,281 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Initial%20Server%20Configuration&fontSize=48&fontAlignY=35&desc=Module%203%20%7C%20Preparing%20SRV01%20for%20Active%20Directory&descSize=20&descAlignY=55" alt="Module 3 Banner" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module covers the initial configuration tasks performed immediately after installing Windows Server 2025.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+Rather than deploying Active Directory immediately, enterprise administrators first configure the server with a meaningful hostname, verify network connectivity, assign a static IP address, and validate DNS settings.
+
+These foundational configurations ensure that the server is stable, consistently reachable, and ready to become the first Domain Controller in the environment.
 
 ---
 
-# Why Virtualization?
+# Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+A newly installed Windows Server has been handed over to the Infrastructure Team.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+Before deploying critical services such as Active Directory Domain Services (AD DS), the server must comply with the organization's deployment standards.
 
-Benefits include:
+The preparation process includes:
 
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+- Verifying the installation
+- Reviewing system specifications
+- Renaming the server
+- Configuring a static IP address
+- Assigning the preferred DNS server
+- Validating network connectivity
 
----
-
-# Host vs Guest Operating System
-
-### Host Operating System
-
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
+Completing these tasks first helps prevent future networking and authentication issues throughout the enterprise.
 
 ---
 
-### Guest Operating System
+# Learning Objectives
 
-A guest operating system is installed inside a virtual machine.
+By completing this module, I learned how to:
 
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- Verify a successful Windows Server installation
+- Navigate Server Manager
+- Understand the importance of meaningful server naming
+- Verify DHCP-assigned network settings
+- Interpret `ipconfig /all`
+- Understand private IPv4 addressing
+- Configure a static IPv4 address
+- Configure DNS settings manually
+- Prepare a Windows Server for Active Directory deployment
 
 ---
 
-# Virtual Machine Configuration
+# Lab Environment Specifications
 
 | Component | Configuration |
 |-----------|---------------|
+| Server Name | SRV01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
 | Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+| Network Mode | NAT |
+| IP Address | 192.168.241.10 |
+| Subnet Mask | 255.255.255.0 |
+| Default Gateway | 192.168.241.2 |
+| Preferred DNS | 192.168.241.2 |
 
 ---
 
-# Step-by-Step Deployment
-
-## Step 1 - Create a New Virtual Machine
-
-Created a new virtual machine using VMware Workstation Pro.
-
-**Screenshot**
-
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 2 - Select the Installation Media
+## Step 1 — Verify Windows Server Installation
 
-Attached the Windows Server 2025 ISO image to the virtual machine.
+After signing in, Server Manager launched automatically.
 
-**Screenshot**
+This dashboard provides administrators with an overview of the server's configuration, installed roles, network status, Windows Update status, firewall settings, and server management tools.
 
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
-
----
-
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+<p align="center">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/22-Server-Manager.png" width="900">
+</p>
 
 ---
 
-## Step 4 - Configure Virtual Hardware
+## Step 2 — Review Server Information
+
+Verified the installed operating system and allocated virtual hardware.
+
+Confirmed:
+
+- Windows Server 2025 Standard Evaluation
+- 4 GB RAM
+- Approximately 80 GB virtual disk
+- AMD Ryzen virtual processor presented by VMware
+
+Verifying hardware resources before deployment ensures that the server meets the minimum requirements for future infrastructure roles.
+
+<p align="center">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/23-Server-Information.png" width="650">
+</p>
+
+---
+
+## Step 3 — Rename the Server
+
+Changed the default computer name generated during installation.
+
+Old Name
+
+WIN-XXXXXXXX
+
+New Name
+
+SRV01
+
+Using descriptive hostnames makes enterprise environments easier to manage, especially when dozens or hundreds of servers are deployed.
+
+> **Note:** This step was completed before screenshots were taken.
+
+---
+
+## Step 4 — Verify the New Hostname
+
+After restarting the server, verified that the hostname had successfully changed.
+
+The `hostname` command confirmed that the server is now identified as **SRV01**.
+
+<p align="center">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/24-Hostname-Verification.png" width="750">
+</p>
+
+---
+
+## Step 5 — Review Current Network Configuration
+
+Executed:
+
+```powershell
+ipconfig /all
+```
+
+This command displays detailed TCP/IP configuration information, including:
+
+- Current IP address
+- DHCP status
+- Default gateway
+- DNS server
+- MAC address
+- Lease information
+
+Initially, the server received its IP address dynamically from VMware's NAT DHCP service.
+
+<p align="center">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/25-IPConfig-All.png" width="900">
+</p>
+
+---
+
+## Step 6 — Configure a Static IPv4 Address
+
+Changed the network adapter configuration from DHCP to a manually assigned static IP.
 
 Configured:
 
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
+| Setting | Value |
+|---------|------|
+| IP Address | 192.168.241.10 |
+| Subnet Mask | 255.255.255.0 |
+| Default Gateway | 192.168.241.2 |
+| Preferred DNS | 192.168.241.2 |
 
-These settings provide sufficient resources while maintaining good performance on the host system.
+Enterprise infrastructure servers should always use static IP addresses to ensure predictable network communication.
 
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
-
----
-
-## Step 5 - Configure Storage
-
-Created a new virtual NVMe disk with:
-
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
-
-Thin provisioning conserves host storage by allocating disk space only as data is written.
-
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/26-Static-IP-Configuration.png" width="500">
+</p>
 
 ---
 
-# Verification
+# Technical Concepts
 
-Verified that:
+## Why Rename the Server?
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+Random computer names become difficult to manage as environments grow.
+
+Meaningful hostnames such as:
+
+- SRV01
+- DC01
+- FILE01
+- SQL01
+
+allow administrators to quickly identify each server's purpose.
+
+---
+
+## Why Use a Static IP Address?
+
+Infrastructure services such as:
+
+- Active Directory
+- DNS
+- DHCP
+- Certificate Services
+
+must always be reachable at the same IP address.
+
+If a Domain Controller receives a different address from DHCP after restarting, authentication and DNS resolution may fail across the network.
+
+---
+
+## Understanding 192.168.241.0/24
+
+The server resides within the private IPv4 network:
+
+```
+192.168.241.0/24
+```
+
+Where:
+
+Network ID
+
+```
+192.168.241.0
+```
+
+Gateway
+
+```
+192.168.241.2
+```
+
+Server
+
+```
+192.168.241.10
+```
+
+The `/24` subnet mask (255.255.255.0) provides 254 usable host addresses, making it suitable for small to medium-sized enterprise networks.
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Windows Server Administration
+- Server Manager
+- Computer Renaming
+- IPv4 Addressing
+- Static IP Configuration
+- DNS Configuration
+- Network Verification
+- TCP/IP Fundamentals
 
 ---
 
-# Key Takeaways
+# Mock Interview Questions
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+### Why should a Domain Controller use a static IP address?
 
----
-
-# Interview Questions
-
-### What is virtualization?
-
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+> Active Directory relies heavily on DNS. A changing IP address can prevent clients from locating the Domain Controller, leading to authentication failures and service disruptions.
 
 ---
 
-### What is the difference between a Host and Guest Operating System?
+### What does `ipconfig /all` display?
 
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
+> It provides detailed TCP/IP configuration information, including IP address, subnet mask, gateway, DNS servers, MAC address, DHCP status, and lease details.
 
 ---
 
-### Why use Thin Provisioning?
+### Why rename servers instead of keeping the default Windows-generated name?
 
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
+> Meaningful hostnames improve administration, documentation, troubleshooting, monitoring, and scalability in enterprise environments.
 
 ---
 
-# Next Module
+<div align="center">
 
-Windows Server 2025 Installation
+**Next Module:** Installing Active Directory Domain Services (AD DS)
+
+*Promoting SRV01 to the first Domain Controller in the enterprise homelab.*
+
+</div>
