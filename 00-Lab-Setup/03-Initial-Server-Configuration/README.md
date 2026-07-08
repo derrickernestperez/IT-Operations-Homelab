@@ -1,50 +1,39 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Initial%20Server%20Configuration&fontSize=48&fontAlignY=35&desc=Module%203%20%7C%20Preparing%20SRV01%20for%20Active%20Directory&descSize=20&descAlignY=55" alt="Module 3 Banner" width="100%">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Initial%20Server%20Configuration&fontSize=48&fontAlignY=35&desc=Module%203%20%7C%20Preparing%20SRV01%20for%20Enterprise%20Deployment&descSize=20&descAlignY=55" alt="Initial Server Configuration Banner" width="100%">
 </div>
 
 ---
 
 # Overview
 
-This module covers the initial configuration tasks performed immediately after installing Windows Server 2025.
+This module documents the initial configuration of **SRV01** after successfully installing Windows Server 2025.
 
-Rather than deploying Active Directory immediately, enterprise administrators first configure the server with a meaningful hostname, verify network connectivity, assign a static IP address, and validate DNS settings.
+Before deploying infrastructure services such as Active Directory Domain Services (AD DS), a newly installed Windows Server should be configured according to enterprise standards. This includes verifying the installation, renaming the server, reviewing network settings, assigning a static IP address, and validating the final configuration.
 
-These foundational configurations ensure that the server is stable, consistently reachable, and ready to become the first Domain Controller in the environment.
+Completing these tasks ensures the server is ready to host critical infrastructure services and provides a stable foundation for the remainder of the homelab.
 
 ---
 
 # Business Scenario
 
-A newly installed Windows Server has been handed over to the Infrastructure Team.
+The Infrastructure Team has completed the installation of Windows Server 2025 on the organization's first virtual server.
 
-Before deploying critical services such as Active Directory Domain Services (AD DS), the server must comply with the organization's deployment standards.
-
-The preparation process includes:
-
-- Verifying the installation
-- Reviewing system specifications
-- Renaming the server
-- Configuring a static IP address
-- Assigning the preferred DNS server
-- Validating network connectivity
-
-Completing these tasks first helps prevent future networking and authentication issues throughout the enterprise.
+Before the server can be promoted to a Domain Controller, it must be configured according to company deployment standards. Proper hostname assignment, network configuration, and IP address planning help ensure reliable communication between servers and client devices throughout the enterprise.
 
 ---
 
 # Learning Objectives
 
-By completing this module, I learned how to:
+By the end of this module, I was able to:
 
 - Verify a successful Windows Server installation
 - Navigate Server Manager
-- Understand the importance of meaningful server naming
-- Verify DHCP-assigned network settings
-- Interpret `ipconfig /all`
-- Understand private IPv4 addressing
+- Review Local Server properties
+- Understand the importance of proper server naming
+- Examine current network settings using `ipconfig /all`
 - Configure a static IPv4 address
 - Configure DNS settings manually
+- Verify the completed network configuration
 - Prepare a Windows Server for Active Directory deployment
 
 ---
@@ -52,164 +41,174 @@ By completing this module, I learned how to:
 # Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Server Name | SRV01 |
-| Operating System | Windows Server 2025 Standard Evaluation |
-| Hypervisor | VMware Workstation Pro |
-| Network Mode | NAT |
-| IP Address | 192.168.241.10 |
-| Subnet Mask | 255.255.255.0 |
-| Default Gateway | 192.168.241.2 |
-| Preferred DNS | 192.168.241.2 |
+| :--- | :--- |
+| **Server Name** | SRV01 |
+| **Operating System** | Windows Server 2025 Standard Evaluation |
+| **Hypervisor** | VMware Workstation Pro |
+| **Network Mode** | NAT |
+| **IP Address** | 192.168.241.10 |
+| **Subnet Mask** | 255.255.255.0 |
+| **Default Gateway** | 192.168.241.2 |
+| **Preferred DNS Server** | 192.168.241.2 |
 
 ---
 
 # Step-by-Step Implementation
 
----
+## Step 1 — Open Server Manager
 
-## Step 1 — Verify Windows Server Installation
+After signing in for the first time, **Server Manager** launched automatically.
 
-After signing in, Server Manager launched automatically.
-
-This dashboard provides administrators with an overview of the server's configuration, installed roles, network status, Windows Update status, firewall settings, and server management tools.
+Server Manager serves as the central management console for Windows Server. It allows administrators to monitor server health, install roles and features, manage services, and configure networking from a single interface.
 
 <p align="center">
-<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/22-Server-Manager.png" width="900">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/22-Server-Manager-Dashboard.png" width="900" alt="Server Manager Dashboard">
 </p>
 
 ---
 
-## Step 2 — Review Server Information
+## Step 2 — Review Local Server
 
-Verified the installed operating system and allocated virtual hardware.
+Selected **Local Server** to review the current configuration of the server.
 
-Confirmed:
+This page provides an overview of important system information, including:
 
-- Windows Server 2025 Standard Evaluation
-- 4 GB RAM
-- Approximately 80 GB virtual disk
-- AMD Ryzen virtual processor presented by VMware
+- Computer name
+- Workgroup membership
+- Windows Update status
+- Firewall status
+- Remote Desktop
+- NIC Teaming
+- Installed memory
+- Operating system version
 
-Verifying hardware resources before deployment ensures that the server meets the minimum requirements for future infrastructure roles.
+Reviewing these settings confirms that the operating system was installed successfully before making additional configuration changes.
 
 <p align="center">
-<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/23-Server-Information.png" width="650">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/23-Local-Server.png" width="900" alt="Local Server">
 </p>
 
 ---
 
-## Step 3 — Rename the Server
+## Step 3 — Verify the Server Name
 
-Changed the default computer name generated during installation.
+Confirmed that the server had been renamed to **SRV01** through the System Properties window.
 
-Old Name
-
-WIN-XXXXXXXX
-
-New Name
-
-SRV01
-
-Using descriptive hostnames makes enterprise environments easier to manage, especially when dozens or hundreds of servers are deployed.
-
-> **Note:** This step was completed before screenshots were taken.
-
----
-
-## Step 4 — Verify the New Hostname
-
-After restarting the server, verified that the hostname had successfully changed.
-
-The `hostname` command confirmed that the server is now identified as **SRV01**.
+Using descriptive hostnames instead of randomly generated names makes servers easier to identify, document, and manage in enterprise environments.
 
 <p align="center">
-<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/24-Hostname-Verification.png" width="750">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/24-System-Properties-SRV01.png" width="450" alt="System Properties">
 </p>
 
 ---
 
-## Step 5 — Review Current Network Configuration
+## Step 4 — Review the Current Network Configuration
 
-Executed:
+Before assigning a static IP address, the existing network configuration was reviewed using the following command:
 
 ```powershell
 ipconfig /all
 ```
 
-This command displays detailed TCP/IP configuration information, including:
+This command displays detailed TCP/IP information such as:
 
-- Current IP address
-- DHCP status
+- Host name
+- IPv4 address
+- Subnet mask
 - Default gateway
 - DNS server
+- DHCP status
 - MAC address
-- Lease information
 
-Initially, the server received its IP address dynamically from VMware's NAT DHCP service.
+At this stage, the server was still obtaining its IP address automatically from VMware's NAT DHCP service.
 
 <p align="center">
-<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/25-IPConfig-All.png" width="900">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/25-Current-Network-Configuration.png" width="900" alt="Current Network Configuration">
+</p>
+
+---
+
+## Step 5 — Open IPv4 Properties
+
+Opened the IPv4 properties of the Ethernet adapter.
+
+By default, Windows Server receives its IP address and DNS server automatically through DHCP. While this is appropriate for client devices, enterprise infrastructure servers should use static addressing.
+
+<p align="center">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/26-IPv4-Properties.png" width="450" alt="IPv4 Properties">
 </p>
 
 ---
 
 ## Step 6 — Configure a Static IPv4 Address
 
-Changed the network adapter configuration from DHCP to a manually assigned static IP.
-
-Configured:
+Assigned a static IP configuration to the server.
 
 | Setting | Value |
-|---------|------|
-| IP Address | 192.168.241.10 |
-| Subnet Mask | 255.255.255.0 |
-| Default Gateway | 192.168.241.2 |
-| Preferred DNS | 192.168.241.2 |
+| :--- | :--- |
+| **IP Address** | 192.168.241.10 |
+| **Subnet Mask** | 255.255.255.0 |
+| **Default Gateway** | 192.168.241.2 |
+| **Preferred DNS Server** | 192.168.241.2 |
 
-Enterprise infrastructure servers should always use static IP addresses to ensure predictable network communication.
+Using a static IP ensures that the server always remains reachable at the same network address, which is essential for services such as Active Directory and DNS.
 
 <p align="center">
-<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/26-Static-IP-Configuration.png" width="500">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/27-Static-IP-Configuration.png" width="450" alt="Static IP Configuration">
 </p>
 
 ---
 
-# Technical Concepts
+## Step 7 — Verify the Static Network Configuration
 
-## Why Rename the Server?
+After applying the new settings, the network configuration was verified again using:
 
-Random computer names become difficult to manage as environments grow.
+```powershell
+ipconfig /all
+```
 
-Meaningful hostnames such as:
+The verification confirmed that:
+
+- The hostname was **SRV01**
+- The static IP address was applied successfully
+- DHCP was no longer assigning the address
+- The DNS server was configured correctly
+- The default gateway was configured correctly
+
+Verifying configuration changes immediately helps identify errors before additional server roles are installed.
+
+<p align="center">
+<img src="/00-Lab-Setup/03-Initial-Server-Configuration/Evidence/Screenshots/28-Static-IP-Verification.png" width="900" alt="Static IP Verification">
+</p>
+
+---
+
+# Technical Concepts & Justifications
+
+### Why rename the server?
+
+Meaningful server names improve administration, troubleshooting, monitoring, and documentation. Instead of remembering randomly generated names, administrators can immediately identify a server's purpose.
+
+Examples include:
 
 - SRV01
 - DC01
 - FILE01
 - SQL01
 
-allow administrators to quickly identify each server's purpose.
+---
+
+### Why use a static IP address?
+
+Infrastructure services such as Active Directory, DNS, DHCP, and Certificate Services depend on consistent network addressing.
+
+If these servers receive different IP addresses through DHCP after restarting, clients may fail to locate essential services.
 
 ---
 
-## Why Use a Static IP Address?
+### Understanding the Network
 
-Infrastructure services such as:
-
-- Active Directory
-- DNS
-- DHCP
-- Certificate Services
-
-must always be reachable at the same IP address.
-
-If a Domain Controller receives a different address from DHCP after restarting, authentication and DNS resolution may fail across the network.
-
----
-
-## Understanding 192.168.241.0/24
-
-The server resides within the private IPv4 network:
+The server is configured within the private network:
 
 ```
 192.168.241.0/24
@@ -217,33 +216,22 @@ The server resides within the private IPv4 network:
 
 Where:
 
-Network ID
+| Address | Purpose |
+| :--- | :--- |
+| **192.168.241.0** | Network Address |
+| **192.168.241.2** | Default Gateway |
+| **192.168.241.10** | SRV01 |
+| **255.255.255.0** | Subnet Mask (/24) |
 
-```
-192.168.241.0
-```
-
-Gateway
-
-```
-192.168.241.2
-```
-
-Server
-
-```
-192.168.241.10
-```
-
-The `/24` subnet mask (255.255.255.0) provides 254 usable host addresses, making it suitable for small to medium-sized enterprise networks.
+A `/24` network provides up to **254 usable host addresses**, making it suitable for small and medium-sized enterprise environments.
 
 ---
 
 # Skills Demonstrated
 
 - Windows Server Administration
-- Server Manager
-- Computer Renaming
+- Server Manager Navigation
+- Hostname Configuration
 - IPv4 Addressing
 - Static IP Configuration
 - DNS Configuration
@@ -252,30 +240,27 @@ The `/24` subnet mask (255.255.255.0) provides 254 usable host addresses, making
 
 ---
 
-# Mock Interview Questions
+# Mock Interview Q&A
 
-### Why should a Domain Controller use a static IP address?
+### Q: Why should a Domain Controller use a static IP address?
 
-> Active Directory relies heavily on DNS. A changing IP address can prevent clients from locating the Domain Controller, leading to authentication failures and service disruptions.
-
----
-
-### What does `ipconfig /all` display?
-
-> It provides detailed TCP/IP configuration information, including IP address, subnet mask, gateway, DNS servers, MAC address, DHCP status, and lease details.
+> **A:** Active Directory relies heavily on DNS for authentication and service discovery. A static IP address ensures clients can always locate the Domain Controller without interruption.
 
 ---
 
-### Why rename servers instead of keeping the default Windows-generated name?
+### Q: Why is `ipconfig /all` commonly used by system administrators?
 
-> Meaningful hostnames improve administration, documentation, troubleshooting, monitoring, and scalability in enterprise environments.
+> **A:** It provides detailed network configuration information, including IP addressing, DNS servers, DHCP status, MAC address, and lease information, making it one of the most useful troubleshooting commands.
+
+---
+
+### Q: Why rename servers instead of using the default Windows-generated hostname?
+
+> **A:** Standardized naming conventions improve organization, simplify troubleshooting, and make servers easier to identify as enterprise environments scale.
 
 ---
 
 <div align="center">
-
-**Next Module:** Installing Active Directory Domain Services (AD DS)
-
-*Promoting SRV01 to the first Domain Controller in the enterprise homelab.*
-
+  <b><a href="#">Next Module: Active Directory Domain Services (AD DS)</a></b><br>
+  <i>Installing the AD DS role and promoting SRV01 to the first Domain Controller.</i>
 </div>
