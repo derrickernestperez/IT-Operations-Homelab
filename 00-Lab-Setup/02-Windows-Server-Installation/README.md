@@ -1,211 +1,200 @@
-# Enterprise Virtualization with VMware Workstation Pro
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Windows%20Server%202025%20Installation&fontSize=45&fontAlignY=35&desc=Module%202%20%7C%20Operating%20System%20Deployment&descSize=20&descAlignY=55" alt="Windows Server Installation Banner" width="100%">
+</div>
+
+---
 
 ## Overview
 
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
+This module documents the installation and initial deployment of **Windows Server 2025 Standard Evaluation (Desktop Experience)** on the virtual machine created in Module 1.
 
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+After completing the virtualization configuration, the next phase is to deploy the operating system that will serve as the foundation of the enterprise infrastructure. This server will later host critical services including **Active Directory Domain Services (AD DS), DNS, DHCP, Group Policy, File Services, Windows LAPS, Microsoft Entra ID synchronization, and security monitoring tools such as Wazuh SIEM.**
 
----
-
-# Objectives
-
-After completing this module, I was able to:
-
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+Rather than relying on automated deployment tools, the operating system was installed manually to better understand each stage of the Windows Server installation process.
 
 ---
 
-# Why Virtualization?
+## Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+The Infrastructure Team has successfully provisioned a virtual machine for the organization's first production server.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+The next responsibility is deploying Windows Server 2025 according to enterprise standards. During this stage, the operating system edition is selected, storage is prepared, the installation process is completed, and the initial Administrator account is configured.
 
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+A correctly deployed operating system provides the stable platform required before infrastructure services can be installed.
 
 ---
 
-# Host vs Guest Operating System
+## Learning Objectives
 
-### Host Operating System
+By the end of this module, the following competencies were achieved:
 
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
+* Understand the Windows Server installation workflow.
+* Deploy Windows Server 2025 manually using installation media.
+* Differentiate between Windows Server editions.
+* Configure the initial Administrator account.
+* Understand the Secure Attention Sequence (Ctrl + Alt + Delete).
+* Prepare the server for post-installation configuration.
 
 ---
 
-### Guest Operating System
+## Lab Environment Specifications
 
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
-
----
-
-# Virtual Machine Configuration
-
-| Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+| Component | Configuration Details |
+| :--- | :--- |
+| **Operating System** | Windows Server 2025 Standard Evaluation |
+| **Installation Type** | Desktop Experience |
+| **Virtual Machine** | SRV01 |
+| **Disk** | 80 GB NVMe (Thin Provisioned) |
+| **Firmware** | UEFI |
+| **Secure Boot** | Enabled |
+| **Hypervisor** | VMware Workstation Pro |
 
 ---
 
-# Step-by-Step Deployment
+# Step-by-Step Implementation
 
-## Step 1 - Create a New Virtual Machine
+## Step 1: Windows Setup Language
 
-Created a new virtual machine using VMware Workstation Pro.
+After booting the virtual machine from the Windows Server installation media, Windows Setup prompted for the installation language, regional format, and keyboard layout.
 
-**Screenshot**
+The default English (United States) settings were retained to maintain consistency with Microsoft documentation and enterprise administration practices.
 
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
+<p align="center">
+<img src="/00-Lab-Setup/02-Windows-Server-Installation/Evidence/Screenshots/14-Windows-Setup-Language.png" width="800" alt="Windows Setup Language">
+</p>
 
 ---
 
-## Step 3 - Configure Firmware
+## Step 2: Start Windows Installation
 
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
+Selected **Install Windows Server** to begin the operating system deployment.
 
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
+At this stage, Windows Setup prepares the installation environment before copying the operating system files.
 
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
-
----
-
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+<p align="center">
+<img src="/00-Lab-Setup/02-Windows-Server-Installation/Evidence/Screenshots/15-Install-Now.png" width="800" alt="Install Windows Server">
+</p>
 
 ---
 
-## Step 5 - Configure Storage
+## Step 3: Select Windows Server Edition
 
-Created a new virtual NVMe disk with:
+Selected:
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
+**Windows Server 2025 Standard Evaluation (Desktop Experience)**
 
-Thin provisioning conserves host storage by allocating disk space only as data is written.
+The Standard edition provides all of the infrastructure services required throughout this homelab, while Desktop Experience offers a graphical interface that simplifies administration during the learning process.
 
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/00-Lab-Setup/02-Windows-Server-Installation/Evidence/Screenshots/16-Select-Windows-Server-Edition.png" width="800" alt="Windows Server Edition">
+</p>
 
 ---
 
-# Verification
+## Step 4: Select Installation Disk
 
-Verified that:
+Selected the previously created **80 GB virtual NVMe disk**.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+Windows Setup automatically creates the required system partitions before installing the operating system.
+
+<p align="center">
+<img src="/00-Lab-Setup/02-Windows-Server-Installation/Evidence/Screenshots/17-Select-Installation-Disk.png" width="800" alt="Installation Disk">
+</p>
+
+---
+
+## Step 5: Ready to Install
+
+Reviewed the installation summary before proceeding with the deployment.
+
+Verifying the selected edition and installation settings helps prevent configuration mistakes before the operating system is installed.
+
+<p align="center">
+<img src="/00-Lab-Setup/02-Windows-Server-Installation/Evidence/Screenshots/18-Ready-To-Install.png" width="800" alt="Ready to Install">
+</p>
+
+---
+
+## Step 6: Windows Installation Progress
+
+Windows Server copied files, installed required components, configured system settings, and restarted the virtual machine several times during the deployment process.
+
+This stage completed the operating system installation.
+
+<p align="center">
+<img src="/00-Lab-Setup/02-Windows-Server-Installation/Evidence/Screenshots/19-Windows-Installation-Progress.png" width="800" alt="Installation Progress">
+</p>
+
+---
+
+## Step 7: Configure the Administrator Account
+
+Configured a strong password for the built-in **Administrator** account.
+
+This account provides full administrative access to the local server before Active Directory is deployed.
+
+<p align="center">
+<img src="/00-Lab-Setup/02-Windows-Server-Installation/Evidence/Screenshots/20-Administrator-Password-Setup.png" width="800" alt="Administrator Password">
+</p>
+
+---
+
+## Step 8: First Login
+
+After completing the installation, Windows Server presented the Secure Attention Sequence (**Ctrl + Alt + Delete**) login screen.
+
+Successfully reaching this screen confirmed that Windows Server had been installed correctly and was ready for initial configuration.
+
+<p align="center">
+<img src="/00-Lab-Setup/02-Windows-Server-Installation/Evidence/Screenshots/21-Ctrl-Alt-Delete-Login-Screen.png" width="800" alt="Windows Server Login">
+</p>
+
+---
+
+# Technical Architecture & Justifications
+
+* **Why choose Windows Server Standard?** The Standard edition provides all the infrastructure services required for this homelab, including Active Directory, DNS, DHCP, Group Policy, and File Services, without the additional virtualization features included in Datacenter.
+
+* **Why use Desktop Experience?** Desktop Experience provides a graphical user interface that simplifies administration and learning. Once familiar with Windows Server, transitioning to Server Core becomes significantly easier.
+
+* **Why configure a strong Administrator password?** The built-in Administrator account has unrestricted privileges over the server. Following strong password practices reduces the risk of unauthorized access during the early deployment stages.
+
+* **Why use English (United States)?** Using Microsoft's default language improves consistency with official documentation, PowerShell output, troubleshooting guides, and enterprise support resources.
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+* Windows Server Deployment
+* Operating System Installation
+* Windows Server Edition Selection
+* Virtual Disk Deployment
+* Local Administrator Configuration
+* Enterprise Server Provisioning
 
 ---
 
-# Key Takeaways
+# Mock Interview Q&A
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+**Q: Why did you choose Windows Server Standard instead of Datacenter?**
 
----
-
-# Interview Questions
-
-### What is virtualization?
-
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+> **A:** Windows Server Standard includes all of the core infrastructure roles required for Active Directory, DNS, DHCP, Group Policy, and File Services. Datacenter is primarily intended for highly virtualized enterprise environments and includes additional features that are unnecessary for this homelab.
 
 ---
 
-### What is the difference between a Host and Guest Operating System?
+**Q: Why did you install Desktop Experience instead of Server Core?**
 
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
+> **A:** Desktop Experience provides a graphical interface that simplifies administration while learning Windows Server. Once the fundamentals are mastered, Server Core becomes easier to manage using PowerShell and Windows Admin Center.
 
 ---
 
-### Why use Thin Provisioning?
+**Q: Why is Ctrl + Alt + Delete required before logging in?**
 
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
+> **A:** Ctrl + Alt + Delete triggers the Secure Attention Sequence, ensuring that login credentials are entered directly into the Windows authentication process. This helps protect against credential spoofing and malicious login screens.
 
 ---
 
-# Next Module
-
-Windows Server 2025 Installation
+<div align="center">
+<b><a href="#">Next Module: Initial Windows Server Configuration</a></b><br>
+<i>Renaming the server, configuring a static IP address, enabling Remote Desktop, and preparing the server for Active Directory deployment.</i>
+</div>
