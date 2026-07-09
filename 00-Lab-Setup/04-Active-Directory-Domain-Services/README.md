@@ -1,207 +1,172 @@
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11&height=250&section=header&text=Active%20Directory%20Domain%20Services&fontSize=46&fontAlignY=35&desc=Module%204%20%7C%20Deploying%20the%20First%20Domain%20Controller&descSize=20&descAlignY=55" alt="AD DS Banner" width="100%">
+</div>
+
+---
+
+# Overview
+
+This module documents the deployment of **Active Directory Domain Services (AD DS)** on **SRV01**, transforming the standalone Windows Server into the organization's first **Domain Controller**.
+
+As organizations grow, managing local user accounts on every workstation becomes inefficient and difficult to secure. Active Directory centralizes identity management, authentication, authorization, and policy enforcement across the enterprise.
+
+By promoting SRV01 to a Domain Controller, the server becomes the core identity service responsible for authenticating users, managing computers, applying Group Policies, and hosting the Active Directory database.
+
+This module establishes the foundation for every remaining lab, including Organizational Units (OUs), Group Policy, DNS, DHCP, Windows LAPS, Microsoft Entra ID synchronization, and enterprise identity management.
+
+---
+
+# Business Scenario
+
+Your company has expanded from a small office with a handful of computers into an organization supporting multiple departments, including Human Resources, Sales, IT, and Finance.
+
+Managing separate local user accounts on every workstation has become time-consuming, inconsistent, and difficult to secure.
+
+The Infrastructure Team has decided to deploy **Active Directory Domain Services (AD DS)** to centralize authentication, simplify administration, and enforce consistent security policies across all domain-joined devices.
+
+Your objective is to promote **SRV01** into the organization's first **Domain Controller**, creating a new Active Directory forest that will serve as the foundation of the company's identity infrastructure.
+
+---
+
+# Learning Objectives
+
+By the end of this module, I was able to:
+
+- Explain the purpose of Windows Server Roles
+- Understand Active Directory Domain Services (AD DS)
+- Differentiate Domains, Forests, and Domain Controllers
+- Understand why DNS is required by Active Directory
+- Install the Active Directory Domain Services role
+- Install the required management tools
+- Promote a Windows Server into a Domain Controller
+- Create the first Active Directory Forest
+- Understand the purpose of NTDS.dit and SYSVOL
+- Verify a successful Domain Controller deployment
+
+---
+
+# Lab Environment Specifications
+
+| Component | Configuration |
+| :--- | :--- |
+| **Server Name** | SRV01 |
+| **Operating System** | Windows Server 2025 Standard Evaluation |
+| **Hypervisor** | VMware Workstation Pro |
+| **Domain Name** | homelab.local |
+| **NetBIOS Name** | HOMELAB |
+| **Forest Functional Level** | Windows Server 2025 |
+| **Domain Functional Level** | Windows Server 2025 |
+| **DNS Server** | Installed Automatically |
+| **Database Path** | C:\Windows\NTDS |
+| **SYSVOL Path** | C:\Windows\SYSVOL |
+
+---
+
 # Step-by-Step Implementation
 
 ## Step 1 — Open Add Roles and Features Wizard
 
 Opened **Add Roles and Features** from **Server Manager** to begin installing a new Windows Server role.
 
+Server roles extend the functionality of Windows Server by enabling services such as Active Directory, DNS, DHCP, File Services, Hyper-V, and many others.
+
 <p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/29-Add-Roles-And-Features.png" width="800">
+<img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/29-Add-Roles-And-Features.png" width="900" alt="Add Roles and Features">
 </p>
 
 ---
 
-## Step 2 — Select Target Server
+## Step 2 — Select the Target Server
 
-Selected **SRV01** as the destination server where Active Directory Domain Services will be installed.
+Selected **SRV01** as the destination server where the Active Directory Domain Services role would be installed.
+
+Since this lab currently contains a single server, SRV01 will host all identity services for the environment.
 
 <p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/30-Server-Selection.png" width="800">
+<img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/30-Server-Selection.png" width="900" alt="Server Selection">
 </p>
 
 ---
 
 ## Step 3 — Select Active Directory Domain Services
 
-Selected the **Active Directory Domain Services (AD DS)** server role.
+Selected **Active Directory Domain Services (AD DS)** from the list of available server roles.
 
-Windows detected additional management tools required for administering Active Directory.
+Active Directory Domain Services provides centralized authentication, directory services, identity management, and policy enforcement across Windows enterprise environments.
+
+Unlike local accounts, domain accounts allow users to access multiple computers using a single set of credentials.
 
 <p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/31-Server-Roles.png" width="800">
+<img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/31-Server-Roles.png" width="900" alt="Server Roles">
 </p>
 
 ---
 
-## Step 4 — Install Required Features
+## Step 4 — Install Required Management Features
 
-Accepted the required management tools including:
+Windows detected several additional management tools required to administer Active Directory.
 
+Accepted the installation of:
+
+- Group Policy Management
 - Active Directory Users and Computers
 - Active Directory Administrative Center
-- Active Directory PowerShell Module
-- Group Policy Management
+- Active Directory Module for Windows PowerShell
+- AD DS Snap-ins and Command-Line Tools
 
-These tools allow administrators to manage the domain after deployment.
+These management consoles are automatically installed alongside the AD DS role.
 
 <p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/32-Add-Required-Features.png" width="800">
+<img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/32-Add-Required-Features.png" width="500" alt="Required Features">
 </p>
 
 ---
 
-## Step 5 — Promote the Server to a Domain Controller
+## Step 5 — Promote SRV01 to a Domain Controller
 
-After installing the AD DS role, selected:
+After successfully installing the AD DS role, selected:
 
 **Promote this server to a domain controller**
 
-This launches the Active Directory Domain Services Configuration Wizard.
+This launches the **Active Directory Domain Services Configuration Wizard**, which converts the server into a fully functional Domain Controller.
 
 <p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/33-Promote-This-Server-to-a-Domain-Controller.png" width="800">
+<img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/33-Promote-This-Server-to-a-Domain-Controller.png" width="900" alt="Promote Server">
 </p>
 
 ---
 
 ## Step 6 — Create a New Active Directory Forest
 
-Selected **Add a new forest** and created the organization's first Active Directory domain.
+Selected **Add a new forest** and created the organization's first Active Directory forest.
 
-**Root Domain Name**
+Configured the following:
 
-```text
-homelab.local
-```
+| Setting | Value |
+| :--- | :--- |
+| **Root Domain Name** | homelab.local |
 
-This becomes the highest-level identity boundary for the entire enterprise environment.
+A forest represents the highest-level security boundary in Active Directory and contains one or more domains.
+
+Since this is a brand-new environment, a new forest was created.
 
 <p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/34-Deployment-Configuration.png" width="800">
+<img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/34-Deployment-Configuration.png" width="900" alt="Deployment Configuration">
 </p>
 
 ---
 
-## Step 7 — Configure DNS
+## Step 7 — Configure Domain Controller Options
 
-Reviewed the DNS delegation warning.
+Configured the Domain Controller settings.
 
-Because this homelab creates a brand-new forest rather than joining an existing DNS infrastructure, the warning is expected and can safely be ignored.
+Selected:
 
-Windows automatically installs and integrates the DNS Server role with Active Directory.
+- DNS Server
+- Global Catalog (GC)
 
-<p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/35-DNS-Delegation.png" width="800">
-</p>
+Configured the **Directory Services Restore Mode (DSRM)** password.
 
----
+The DSRM account is used to recover Active Directory if the database becomes corrupted or requires offline maintenance.
 
-## Step 8 — Verify NetBIOS Name
-
-Verified the automatically generated NetBIOS domain name.
-
-```text
-HOMELAB
-```
-
-The NetBIOS name provides backward compatibility for legacy Windows applications and authentication protocols.
-
-<p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/36-NetBIOS-Name.png" width="800">
-</p>
-
----
-
-## Step 9 — Verify Active Directory Database Paths
-
-Reviewed the default storage locations used by Active Directory.
-
-- Database (NTDS.dit)
-- Log Files
-- SYSVOL
-
-These locations store the directory database, transaction logs, and Group Policy files.
-
-<p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/37-Active-Directory-Paths.png" width="800">
-</p>
-
----
-
-## Step 10 — Review Configuration
-
-Reviewed the deployment summary generated by Windows.
-
-The wizard also displayed the PowerShell script that could automate the same deployment.
-
-This demonstrates that every GUI installation can also be performed using PowerShell automation.
-
-<p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/38-Review-Options.png" width="800">
-</p>
-
----
-
-## Step 11 — Validate Prerequisites
-
-Windows performed a final validation before promoting SRV01.
-
-All prerequisite checks passed successfully.
-
-The only warning related to DNS delegation was expected because no parent DNS infrastructure exists.
-
-<p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/39-Prerequisites-Check.png" width="800">
-</p>
-
----
-
-## Step 12 — Verify Domain Controller Deployment
-
-After installation completed, the server automatically restarted.
-
-Server Manager now recognizes SRV01 as a Domain Controller and displays Active Directory management capabilities.
-
-<p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/40-Server-Manager-After-Promotion.png" width="800">
-</p>
-
----
-
-## Step 13 — Verify Administrative Tools
-
-Opened the **Tools** menu in Server Manager.
-
-New management consoles are now available, including:
-
-- Active Directory Users and Computers
-- DNS Manager
-- Group Policy Management
-- Active Directory Administrative Center
-- Active Directory Sites and Services
-
-These tools are used daily by Windows Server administrators.
-
-<p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/41-Administrative-Tools.png" width="800">
-</p>
-
----
-
-## Step 14 — Verify Active Directory Structure
-
-Opened **Active Directory Users and Computers**.
-
-Confirmed the successful creation of the default Active Directory containers, including:
-
-- Builtin
-- Computers
-- Domain Controllers
-- Users
-- Managed Service Accounts
-- ForeignSecurityPrincipals
-
-This verifies that SRV01 has been successfully promoted into the first Domain Controller of the **homelab.local** forest.
-
-<p align="center">
-  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/42-Default-Active-Directory.png" width="800">
-</p>****
+Unlike domain accounts, this password only functions while the server is booted into Directory Services Restore Mode.
