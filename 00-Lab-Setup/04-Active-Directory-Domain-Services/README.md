@@ -97,9 +97,8 @@ Active Directory Domain Services provides centralized authentication, directory 
 Unlike local accounts, domain accounts allow users to access multiple computers using a single set of credentials.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/31-Server-Roles.png" width="900" alt="Server Roles">
+<img src="00-Lab-Setup/04-Active-Directory-Domain-Services/Evidence/Screenshots/22-Server-Manager-Dashboard.png" width="900" alt="Server Roles">
 </p>
-
 ---
 
 ## Step 4 — Install Required Management Features
@@ -117,8 +116,10 @@ Accepted the installation of:
 These management consoles are automatically installed alongside the AD DS role.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/32-Add-Required-Features.png" width="500" alt="Required Features">
+<img src="/00-Lab-Setup//01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/32-Add-Required-Features.png" width="500" alt="Required Features">
 </p>
+
+
 
 ---
 
