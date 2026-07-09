@@ -71,7 +71,7 @@ Opened **Add Roles and Features** from **Server Manager** to begin installing a 
 Server roles extend the functionality of Windows Server by enabling services such as Active Directory, DNS, DHCP, File Services, Hyper-V, and many others.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/29-Add-Roles-And-Features.png" width="900" alt="Add Roles and Features">
+<img src="/00-Lab-Setup/04-Active-Directory-Domain-Services/Evidence/Screenshots/29-Add-Roles-And-Features.png" width="900" alt="Add Roles and Features">
 </p>
 
 ---
