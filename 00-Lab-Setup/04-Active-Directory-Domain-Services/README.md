@@ -1,211 +1,207 @@
-# Enterprise Virtualization with VMware Workstation Pro
+# Step-by-Step Implementation
 
-## Overview
+## Step 1 — Open Add Roles and Features Wizard
 
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
+Opened **Add Roles and Features** from **Server Manager** to begin installing a new Windows Server role.
 
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
-
----
-
-# Objectives
-
-After completing this module, I was able to:
-
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/29-Add-Roles-And-Features.png" width="800">
+</p>
 
 ---
 
-# Why Virtualization?
+## Step 2 — Select Target Server
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+Selected **SRV01** as the destination server where Active Directory Domain Services will be installed.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
-
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/30-Server-Selection.png" width="800">
+</p>
 
 ---
 
-# Host vs Guest Operating System
+## Step 3 — Select Active Directory Domain Services
 
-### Host Operating System
+Selected the **Active Directory Domain Services (AD DS)** server role.
 
-The host operating system is the physical computer running VMware Workstation Pro.
+Windows detected additional management tools required for administering Active Directory.
 
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/31-Server-Roles.png" width="800">
+</p>
 
 ---
 
-### Guest Operating System
+## Step 4 — Install Required Features
 
-A guest operating system is installed inside a virtual machine.
+Accepted the required management tools including:
 
-For this module:
+- Active Directory Users and Computers
+- Active Directory Administrative Center
+- Active Directory PowerShell Module
+- Group Policy Management
 
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
+These tools allow administrators to manage the domain after deployment.
 
-Each guest has its own virtual hardware and operates independently from the host system.
-
----
-
-# Virtual Machine Configuration
-
-| Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/32-Add-Required-Features.png" width="800">
+</p>
 
 ---
 
-# Step-by-Step Deployment
+## Step 5 — Promote the Server to a Domain Controller
 
-## Step 1 - Create a New Virtual Machine
+After installing the AD DS role, selected:
 
-Created a new virtual machine using VMware Workstation Pro.
+**Promote this server to a domain controller**
 
-**Screenshot**
+This launches the Active Directory Domain Services Configuration Wizard.
 
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/33-Promote-This-Server-to-a-Domain-Controller.png" width="800">
+</p>
 
 ---
 
-## Step 3 - Configure Firmware
+## Step 6 — Create a New Active Directory Forest
 
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
+Selected **Add a new forest** and created the organization's first Active Directory domain.
 
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
+**Root Domain Name**
 
-**Screenshot**
+```text
+homelab.local
+```
 
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+This becomes the highest-level identity boundary for the entire enterprise environment.
 
----
-
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/34-Deployment-Configuration.png" width="800">
+</p>
 
 ---
 
-## Step 5 - Configure Storage
+## Step 7 — Configure DNS
 
-Created a new virtual NVMe disk with:
+Reviewed the DNS delegation warning.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
+Because this homelab creates a brand-new forest rather than joining an existing DNS infrastructure, the warning is expected and can safely be ignored.
 
-Thin provisioning conserves host storage by allocating disk space only as data is written.
+Windows automatically installs and integrates the DNS Server role with Active Directory.
 
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/35-DNS-Delegation.png" width="800">
+</p>
 
 ---
 
-# Verification
+## Step 8 — Verify NetBIOS Name
 
-Verified that:
+Verified the automatically generated NetBIOS domain name.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+```text
+HOMELAB
+```
 
----
+The NetBIOS name provides backward compatibility for legacy Windows applications and authentication protocols.
 
-# Skills Demonstrated
-
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/36-NetBIOS-Name.png" width="800">
+</p>
 
 ---
 
-# Key Takeaways
+## Step 9 — Verify Active Directory Database Paths
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+Reviewed the default storage locations used by Active Directory.
 
----
+- Database (NTDS.dit)
+- Log Files
+- SYSVOL
 
-# Interview Questions
+These locations store the directory database, transaction logs, and Group Policy files.
 
-### What is virtualization?
-
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
-
----
-
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/37-Active-Directory-Paths.png" width="800">
+</p>
 
 ---
 
-### Why did you use NAT networking?
+## Step 10 — Review Configuration
 
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
+Reviewed the deployment summary generated by Windows.
+
+The wizard also displayed the PowerShell script that could automate the same deployment.
+
+This demonstrates that every GUI installation can also be performed using PowerShell automation.
+
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/38-Review-Options.png" width="800">
+</p>
 
 ---
 
-### Why use Thin Provisioning?
+## Step 11 — Validate Prerequisites
 
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
+Windows performed a final validation before promoting SRV01.
+
+All prerequisite checks passed successfully.
+
+The only warning related to DNS delegation was expected because no parent DNS infrastructure exists.
+
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/39-Prerequisites-Check.png" width="800">
+</p>
 
 ---
 
-# Next Module
+## Step 12 — Verify Domain Controller Deployment
 
-Windows Server 2025 Installation
+After installation completed, the server automatically restarted.
+
+Server Manager now recognizes SRV01 as a Domain Controller and displays Active Directory management capabilities.
+
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/40-Server-Manager-After-Promotion.png" width="800">
+</p>
+
+---
+
+## Step 13 — Verify Administrative Tools
+
+Opened the **Tools** menu in Server Manager.
+
+New management consoles are now available, including:
+
+- Active Directory Users and Computers
+- DNS Manager
+- Group Policy Management
+- Active Directory Administrative Center
+- Active Directory Sites and Services
+
+These tools are used daily by Windows Server administrators.
+
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/41-Administrative-Tools.png" width="800">
+</p>
+
+---
+
+## Step 14 — Verify Active Directory Structure
+
+Opened **Active Directory Users and Computers**.
+
+Confirmed the successful creation of the default Active Directory containers, including:
+
+- Builtin
+- Computers
+- Domain Controllers
+- Users
+- Managed Service Accounts
+- ForeignSecurityPrincipals
+
+This verifies that SRV01 has been successfully promoted into the first Domain Controller of the **homelab.local** forest.
+
+<p align="center">
+  <img src="/01-Identity-and-Access-Management/04-Active-Directory-Domain-Services/Evidence/Screenshots/42-Default-Active-Directory.png" width="800">
+</p>****
