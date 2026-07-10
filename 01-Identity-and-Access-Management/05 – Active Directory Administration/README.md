@@ -51,7 +51,7 @@ By the end of this document, the following competencies were achieved:
 Launched **Active Directory Users and Computers (ADUC)** from the Server Manager Tools menu. ADUC is the primary Microsoft Management Console (MMC) utilized for daily directory administration, identity management, and resource provisioning.
 
 <p align="center">
-<img src="01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/21-Open-Active-Directory-Users-and-Computers.png" width="800" alt="Open ADUC">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/21-Open-Active-Directory-Users-and-Computers.png" width="800" alt="Open ADUC">
 </p>
 
 ---
@@ -71,7 +71,7 @@ To establish a management boundary, a top-level parent Organizational Unit named
 This acts as the master container for all corporate assets, allowing global IT policies to be applied from a single point without accidentally affecting built-in domain administrative accounts. The "Protect object from accidental deletion" safeguard was enabled.
 
 <p align="center">
-<img src="01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/XX-Create-Company-OU.png" width="800" alt="Create Company OU">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/XX-Create-Company-OU.png" width="800" alt="Create Company OU">
 </p>
 
 ---
@@ -83,14 +83,16 @@ Within the parent `Company` OU, dedicated child OUs were provisioned for each sp
 This granular tiering ensures that policies (like mapping a Finance network drive or enforcing a strict Server firewall) only apply to the exact objects residing within their respective containers.
 
 <p align="center">
-<img src="01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/XX-Enterprise-OU-Structure.png" width="800" alt="Enterprise OU Structure">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/XX-Enterprise-OU-Structure.png" width="800" alt="Enterprise OU Structure">
 </p>
 
 <p align="center">
-<img src="01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/31-Completed-Enterprise-OU-Structure.png" width="800" alt="Completed Enterprise OU Structure">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/31-Completed-Enterprise-OU-Structure.png" width="800" alt="Completed Enterprise OU Structure">
 </p>
 
 ---
 
 <div align="center">
-<b><a href="./Security-Groups-and-RBAC.md">Next
+<b><a href="./Security-Groups-and-RBAC.md">Next: Part 2 — Security Groups & Role-Based Access Control</a></b><br>
+<i>Implementing RBAC, provisioning department security groups, and creating enterprise user accounts.</i>
+</div>
