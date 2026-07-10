@@ -45,22 +45,22 @@ Created the following Global Security Groups:
 * `SG-Management-Users`
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/24-Create-HR-Security-Group.png" width="800" alt="Create HR Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/22-Create-HR-Security-Group.png" width="800" alt="Create HR Security Group">
 </p>
 
 *(Additional groups provisioned for Sales, IT, Finance, and Management)*
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/25-Create-Sales-Security-Group.png" width="800" alt="Create Sales Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/23-Create-Sales-Security-Group.png" width="800" alt="Create Sales Security Group">
 </p>
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/26-Create-IT-Security-Group.png" width="800" alt="Create IT Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/24-Create-IT-Security-Group.png" width="800" alt="Create IT Security Group">
 </p>
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/27-Create-Finance-Security-Group.png" width="800" alt="Create Finance Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/25-Create-Finance-Security-Group.png" width="800" alt="Create Finance Security Group">
 </p>
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/28-Create-Management-Security-Group.png" width="800" alt="Create Management Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/26-Create-Management-Security-Group.png" width="800" alt="Create Management Security Group">
 </p>
 
 ---
@@ -72,7 +72,7 @@ Provisioned the first standard domain user, **John Smith**, inside the HR OU.
 Configured the User Principal Name (UPN) to standard enterprise formats (e.g., `jsmith@homelab.local`). A temporary complex password was generated, and the account was flagged to force a password change at the next login, ensuring administrative non-repudiation.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/29-Create-HR-User-John-Smith.png" width="800" alt="Create HR User">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/27-Create-HR-User-John-Smith.png" width="800" alt="Create HR User">
 </p>
 
 ---
@@ -84,7 +84,7 @@ Opened the user properties for John Smith and navigated to the **Member Of** tab
 By nesting the user inside this group, John Smith will automatically inherit all HR file share and printer permissions deployed to this group without the need for manual, individual folder permission assignments.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/30-HR-User-Added-to-Security-Group.png" width="800" alt="Add User to Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/28-HR-User-Added-to-Security-Group.png" width="800" alt="Add User to Group">
 </p>
 
 ---
