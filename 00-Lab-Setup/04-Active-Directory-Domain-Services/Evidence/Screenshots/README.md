@@ -1,211 +1,178 @@
-# Enterprise Virtualization with VMware Workstation Pro
+## Step 12 — Verify Successful Domain Controller Promotion
 
-## Overview
+After selecting **Install**, Windows promoted **SRV01** into the organization's first Domain Controller.
 
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
+The server automatically restarted to complete the installation.
 
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+Following the reboot, **Server Manager** recognized the server as a fully functional Domain Controller capable of hosting centralized identity and directory services for the **homelab.local** domain.
 
----
+The successful installation of the Active Directory Domain Services role can also be confirmed by the green status indicator in Server Manager, showing that no further configuration is required.
 
-# Objectives
-
-After completing this module, I was able to:
-
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+<p align="center">
+<img src="/00-Lab-Setup/04-Active-Directory-Domain-Services/Evidence/Screenshots/22-Server-Manager-Dashboard.png" width="900" alt="Server Manager Dashboard">
+</p>
 
 ---
 
-# Why Virtualization?
+## Step 13 — Verify Administrative Tools
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+Opened **Server Manager → Tools**.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+Several new management consoles became available after the Domain Controller promotion, including:
 
-Benefits include:
+- Active Directory Users and Computers
+- Active Directory Administrative Center
+- DNS Manager
+- Active Directory Domains and Trusts
+- Active Directory Sites and Services
+- Group Policy Management
+- ADSI Edit
 
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+These administrative tools provide centralized management for users, computers, Organizational Units (OUs), Group Policies, DNS, trusts, and other Active Directory services.
 
----
-
-# Host vs Guest Operating System
-
-### Host Operating System
-
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
+<p align="center">
+<img src="/00-Lab-Setup/04-Active-Directory-Domain-Services/Evidence/Screenshots/41-Administrative-Tools.png" width="900" alt="Administrative Tools">
+</p>
 
 ---
 
-### Guest Operating System
+## Step 14 — Verify Active Directory Deployment
 
-A guest operating system is installed inside a virtual machine.
+Opened **Active Directory Users and Computers** to confirm that the new domain had been created successfully.
 
-For this module:
+Windows automatically generated several default containers, including:
 
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
+- Builtin
+- Computers
+- Domain Controllers
+- ForeignSecurityPrincipals
+- Managed Service Accounts
+- Users
 
-Each guest has its own virtual hardware and operates independently from the host system.
+The successful creation of these default containers confirms that Active Directory was deployed correctly and that **SRV01** is now functioning as the first Domain Controller for the **homelab.local** forest.
 
----
-
-# Virtual Machine Configuration
-
-| Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+<p align="center">
+<img src="/00-Lab-Setup/04-Active-Directory-Domain-Services/Evidence/Screenshots/42-Default-Active-Directory.png" width="900" alt="Default Active Directory">
+</p>
 
 ---
 
-# Step-by-Step Deployment
+# Technical Concepts & Justifications
 
-## Step 1 - Create a New Virtual Machine
+### Why install Active Directory Domain Services?
 
-Created a new virtual machine using VMware Workstation Pro.
+Active Directory centralizes authentication, authorization, and administration across an organization.
 
-**Screenshot**
+Instead of maintaining separate local user accounts on every workstation, administrators create a single domain account that users can access from any domain-joined computer.
 
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
+This approach simplifies user management, improves security, and enables centralized policy enforcement.
 
 ---
 
-## Step 3 - Configure Firmware
+### What is a Domain Controller?
 
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
+A Domain Controller (DC) is a Windows Server responsible for:
 
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
+- Authenticating users
+- Managing computer accounts
+- Hosting the Active Directory database
+- Applying Group Policy
+- Providing centralized identity management
+- Replicating directory data with other Domain Controllers
 
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
-
----
-
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+Every authentication request within a Windows domain is processed by a Domain Controller.
 
 ---
 
-## Step 5 - Configure Storage
+### Why is DNS required?
 
-Created a new virtual NVMe disk with:
+Active Directory relies on DNS to locate Domain Controllers and directory services.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
+Without DNS:
 
-Thin provisioning conserves host storage by allocating disk space only as data is written.
+- Domain joins fail
+- User authentication fails
+- Group Policy processing fails
+- Clients cannot locate Active Directory services
+- Enterprise applications cannot discover directory resources
 
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+DNS is one of the core infrastructure services required for a healthy Active Directory environment.
 
 ---
 
-# Verification
+### What is NTDS.dit?
 
-Verified that:
+**NTDS.dit** is the Active Directory database.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+It stores:
+
+- User accounts
+- Computer accounts
+- Security groups
+- Organizational Units (OUs)
+- Password hashes
+- Domain configuration
+- Directory objects
+
+This database is one of the most critical components of every Active Directory deployment.
+
+---
+
+### What is SYSVOL?
+
+SYSVOL stores files that are shared across Domain Controllers, including:
+
+- Group Policy Objects (GPOs)
+- Logon scripts
+- Administrative templates
+- Public domain files
+
+When multiple Domain Controllers exist, SYSVOL is automatically replicated to maintain consistency across the entire Active Directory forest.
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Active Directory Deployment
+- Domain Controller Promotion
+- Windows Server Administration
+- Active Directory Forest Creation
+- DNS Integration
+- Identity and Access Management
+- Enterprise Infrastructure Deployment
+- Windows Server Role Installation
+- Active Directory Verification
+- Server Manager Administration
 
 ---
 
-# Key Takeaways
+# Mock Interview Q&A
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+### Q: What is the difference between installing the AD DS role and promoting a Domain Controller?
 
----
-
-# Interview Questions
-
-### What is virtualization?
-
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+> **A:** Installing the AD DS role only copies the required software components onto Windows Server. Promoting the server creates the Active Directory database, configures DNS, establishes the domain and forest, creates SYSVOL, and transforms the server into a fully functional Domain Controller.
 
 ---
 
-### What is the difference between a Host and Guest Operating System?
+### Q: Why does Active Directory automatically install DNS?
 
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
+> **A:** Active Directory depends on DNS for service discovery. Clients use DNS to locate Domain Controllers for authentication, Group Policy processing, directory searches, and other domain services.
 
 ---
 
-### Why use Thin Provisioning?
+### Q: What is the purpose of the NTDS database?
 
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
+> **A:** NTDS.dit is the central database of Active Directory. It stores users, computers, security groups, Organizational Units, password hashes, security identifiers (SIDs), and all directory objects required for authentication and centralized administration.
 
 ---
 
-# Next Module
+### Q: Why is SYSVOL important?
 
-Windows Server 2025 Installation
+> **A:** SYSVOL stores Group Policy Objects, logon scripts, and other shared files required by the domain. It is automatically replicated between Domain Controllers to ensure every controller provides the same policies and authentication experience.
+
+---
+
+<div align="center">
+  <b><a href="#">Next Module: Active Directory Administration</a></b><br>
+  <i>Creating Organizational Units (OUs), domain users, security groups, and designing an enterprise Active Directory structure.</i>
+</div>
