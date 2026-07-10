@@ -1,211 +1,230 @@
-# Enterprise Virtualization with VMware Workstation Pro
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Enterprise%20Active%20Directory%20Administration&fontSize=45&fontAlignY=35&desc=Module%205%20%7C%20Organizational%20Units%20and%20Security%20Groups&descSize=20&descAlignY=55" alt="Enterprise Active Directory Administration Banner" width="100%">
+</div>
+
+---
 
 ## Overview
 
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
+This module documents the initial administration of **Active Directory Domain Services (AD DS)** after successfully promoting **SRV01** to the organization's first Domain Controller.
 
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+With the Active Directory infrastructure now operational, the next phase is organizing the directory according to enterprise best practices. This includes creating a logical Organizational Unit (OU) hierarchy, separating departments, implementing infrastructure containers, and creating Security Groups that will later be used for Role-Based Access Control (RBAC), Group Policy deployment, and resource permissions.
 
----
-
-# Objectives
-
-After completing this module, I was able to:
-
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+Rather than storing all objects inside the default Active Directory containers, the directory was designed using a structured enterprise layout that mirrors how production Windows environments are commonly administered.
 
 ---
 
-# Why Virtualization?
+## Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+The company has expanded from a small office into multiple departments including Human Resources, Sales, Information Technology, Finance, and Management.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+Managing hundreds of users inside the default Active Directory containers is inefficient and difficult to maintain.
 
-Benefits include:
+To prepare the environment for future growth, the Infrastructure Team has been tasked with designing an enterprise Organizational Unit structure and implementing departmental Security Groups following Microsoft's recommended Active Directory administration practices.
 
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+This directory design will become the foundation for Group Policy, delegated administration, shared folder permissions, printer deployment, and future identity management services.
 
 ---
 
-# Host vs Guest Operating System
+## Learning Objectives
 
-### Host Operating System
+By the end of this module, the following competencies were achieved:
 
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
-
----
-
-### Guest Operating System
-
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+* Understand the purpose of Organizational Units (OUs).
+* Design an enterprise Active Directory hierarchy.
+* Organize departments using Organizational Units.
+* Create infrastructure Organizational Units.
+* Understand the purpose of Security Groups.
+* Implement Role-Based Access Control (RBAC).
+* Apply enterprise naming conventions.
+* Prepare Active Directory for future Group Policy deployment.
+* Prepare the directory for enterprise user provisioning.
 
 ---
 
-# Virtual Machine Configuration
+## Lab Environment Specifications
 
-| Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+| Component | Configuration Details |
+| :--- | :--- |
+| **Server Name** | SRV01 |
+| **Operating System** | Windows Server 2025 Standard Evaluation |
+| **Directory Service** | Active Directory Domain Services |
+| **Domain Name** | homelab.local |
+| **Management Tool** | Active Directory Users and Computers |
+| **Hypervisor** | VMware Workstation Pro |
 
 ---
 
-# Step-by-Step Deployment
+# Step-by-Step Implementation
 
-## Step 1 - Create a New Virtual Machine
+## Step 1: Open Active Directory Users and Computers
 
-Created a new virtual machine using VMware Workstation Pro.
+Opened **Active Directory Users and Computers (ADUC)** from **Server Manager → Tools**.
 
-**Screenshot**
+ADUC is Microsoft's primary management console for administering users, groups, computers, Organizational Units, and other Active Directory objects.
 
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
+This console will be used throughout the remainder of the homelab to manage enterprise identities and infrastructure resources.
 
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/21-Open-Active-Directory-Users-and-Computers.png" width="800" alt="Open Active Directory Users and Computers">
+</p>
 
 ---
 
-## Step 3 - Configure Firmware
+## Step 2: Create the Company Organizational Unit
 
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
+Created a top-level Organizational Unit named **Company**.
 
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
+Rather than placing objects directly under the domain root, enterprise environments commonly use a dedicated Organizational Unit to logically separate company resources from Microsoft's default containers.
 
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+This approach simplifies administration, improves organization, and prepares the directory for delegated administration and Group Policy deployment.
 
 ---
 
-## Step 4 - Configure Virtual Hardware
+## Step 3: Create Department Organizational Units
 
-Configured:
+Inside the **Company** Organizational Unit, created dedicated Organizational Units for each business department:
 
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
+* HR
+* Sales
+* IT
+* Finance
+* Management
 
-These settings provide sufficient resources while maintaining good performance on the host system.
+Each department will later contain its own users, computers, and Security Groups.
 
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
-
----
-
-## Step 5 - Configure Storage
-
-Created a new virtual NVMe disk with:
-
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
-
-Thin provisioning conserves host storage by allocating disk space only as data is written.
-
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+Separating departments into individual Organizational Units allows administrators to apply department-specific Group Policy Objects (GPOs) and administrative permissions.
 
 ---
 
-# Verification
+## Step 4: Create Infrastructure Organizational Units
 
-Verified that:
+Created additional Organizational Units for enterprise infrastructure resources:
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+* Servers
+* Workstations
+* Printers
+* Service Accounts
+* Admin Accounts
+* Test Lab
+
+Separating infrastructure resources from user accounts improves directory organization and follows Microsoft's enterprise Active Directory recommendations.
+
+---
+
+## Step 5: Review the Completed Organizational Unit Hierarchy
+
+Verified the completed Active Directory structure.
+
+The resulting hierarchy now provides a scalable and organized foundation for managing enterprise resources.
+
+This structure supports future Group Policy deployment, delegated administration, security filtering, and identity management.
+
+---
+
+## Step 6: Create the Human Resources Security Group
+
+Navigated to:
+
+Company
+
+└── HR
+
+  └── Security Groups
+
+Created the first departmental Security Group using the following configuration:
+
+| Setting | Value |
+| :--- | :--- |
+| **Group Name** | SG-HR-Users |
+| **Group Scope** | Global |
+| **Group Type** | Security |
+
+Following a standardized naming convention improves readability and administration within enterprise environments.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/22-Create-HR-Security-Group.png" width="800" alt="Create HR Security Group">
+</p>
+
+---
+
+## Step 7: Create Remaining Department Security Groups
+
+Repeated the same process for the remaining departments.
+
+Created:
+
+* SG-Sales-Users
+* SG-IT-Users
+* SG-Finance-Users
+* SG-Management-Users
+
+Each group was configured as a **Global Security Group**, following Microsoft's recommended Role-Based Access Control (RBAC) model.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/23-Create-Sales-Security-Group.png" width="800" alt="Create Sales Security Group">
+</p>
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/24-Create-IT-Security-Group.png" width="800" alt="Create IT Security Group">
+</p>
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/25-Create-Finance-Security-Group.png" width="800" alt="Create Finance Security Group">
+</p>
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/26-Create-Management-Security-Group.png" width="800" alt="Create Management Security Group">
+</p>
+
+---
+
+# Technical Architecture & Justifications
+
+* **Why use Organizational Units?** Organizational Units provide a logical structure for organizing Active Directory objects. They enable delegated administration, simplify management, and allow Group Policy Objects (GPOs) to target specific departments or infrastructure resources.
+
+* **Why create separate department OUs?** Separating departments into dedicated Organizational Units allows administrators to apply different security policies, desktop configurations, software deployments, and administrative permissions without affecting other departments.
+
+* **Why create infrastructure OUs?** Servers, workstations, printers, and service accounts often require different Group Policies and security settings than standard user accounts. Keeping these resources separate improves manageability and reduces administrative complexity.
+
+* **Why use Security Groups?** Security Groups simplify permission management by assigning access rights to groups rather than individual users. This approach supports Role-Based Access Control (RBAC) and reduces administrative effort as organizations grow.
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+* Active Directory Administration
+* Organizational Unit Design
+* Enterprise Directory Planning
+* Security Group Administration
+* Role-Based Access Control (RBAC)
+* Microsoft Naming Conventions
+* Identity and Access Management (IAM)
+* Windows Server Administration
 
 ---
 
-# Key Takeaways
+# Mock Interview Q&A
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+**Q: What is an Organizational Unit (OU)?**
 
----
-
-# Interview Questions
-
-### What is virtualization?
-
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+> **A:** An Organizational Unit is a logical container within Active Directory used to organize users, computers, groups, and other directory objects. OUs simplify administration, support delegated management, and allow Group Policy Objects (GPOs) to be applied to specific sections of the directory.
 
 ---
 
-### What is the difference between a Host and Guest Operating System?
+**Q: Why do companies use Security Groups instead of assigning permissions directly to users?**
 
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
+> **A:** Security Groups simplify administration by allowing permissions to be assigned once to the group rather than individually to each user. As employees join, leave, or change departments, administrators only update group membership instead of modifying permissions across multiple resources.
 
 ---
 
-### Why use Thin Provisioning?
+**Q: What is Role-Based Access Control (RBAC)?**
 
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
+> **A:** RBAC is a security model that assigns permissions based on job roles rather than individual users. In Active Directory, this is commonly implemented using Security Groups, ensuring consistent and scalable access management.
 
 ---
 
-# Next Module
-
-Windows Server 2025 Installation
+<div align="center">
+<b><a href="./User-Provisioning.md">Next Document: Enterprise User Provisioning</a></b><br>
+<i>Creating enterprise user accounts, assigning Security Group membership, and preparing Active Directory for Group Policy deployment.</i>
+</div>
