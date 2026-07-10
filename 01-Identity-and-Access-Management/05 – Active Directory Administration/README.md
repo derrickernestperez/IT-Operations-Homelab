@@ -51,7 +51,7 @@ By the end of this module, the following competencies were achieved:
 Launched **Active Directory Users and Computers (ADUC)** from the Server Manager Dashboard. This is the primary Microsoft Management Console (MMC) snap-in used for daily identity management tasks.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/01-Open-ADUC.png" width="800" alt="Open ADUC">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/21-Open-Active-Directory-Users-and-Computers.png" width="800" alt="Open ADUC">
 </p>
 
 ---
@@ -63,7 +63,7 @@ Examined the default Active Directory deployment. By default, AD places objects 
 These default containers cannot have Group Policy Objects (GPOs) linked directly to them, which necessitates the creation of custom Organizational Units for enterprise management.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/02-Review-Default-Structure.png" width="800" alt="Default AD Structure">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/02-Review-Default-Structure.png" width="800" alt="Default AD Structure">
 </p>
 
 ---
@@ -75,7 +75,7 @@ Created a top-level parent OU representing the organization (e.g., `Company_Corp
 This acts as the root boundary for all enterprise objects, allowing administrative delegation and global policies to be applied from a single, controlled point without affecting built-in domain administrator accounts.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/03-Create-Company-OU.png" width="800" alt="Company OU">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/03-Create-Company-OU.png" width="800" alt="Company OU">
 </p>
 
 ---
@@ -87,7 +87,7 @@ Inside the parent OU, created child OUs for each specific business department: *
 This logical separation ensures that department-specific Group Policies (like mapping a Finance network drive or deploying HR software) only apply to the relevant users.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/04-Create-Department-OUs.png" width="800" alt="Department OUs">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/04-Create-Department-OUs.png" width="800" alt="Department OUs">
 </p>
 
 ---
@@ -99,7 +99,7 @@ Created dedicated OUs for infrastructure assets, including **Servers**, **Workst
 Isolating computer objects from user objects is a critical security practice. Servers require entirely different security baselines, patch schedules, and audit policies than standard user laptops.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/05-Create-Infrastructure-OUs.png" width="800" alt="Infrastructure OUs">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/05-Create-Infrastructure-OUs.png" width="800" alt="Infrastructure OUs">
 </p>
 
 ---
@@ -109,7 +109,7 @@ Isolating computer objects from user objects is a critical security practice. Se
 The completed structure provides a scalable framework. **Users** and **Computers** are strictly separated within each department. "Protect object from accidental deletion" was enabled across all custom OUs to prevent catastrophic administrative errors.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/06-Enterprise-Hierarchy-Complete.png" width="800" alt="Enterprise OU Hierarchy">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/06-Enterprise-Hierarchy-Complete.png" width="800" alt="Enterprise OU Hierarchy">
 </p>
 
 ---
@@ -121,17 +121,17 @@ Created a Global Security Group named `SG-HR-Users` within the HR OU.
 Instead of assigning folder permissions directly to individual users, permissions are assigned to this Security Group. When new HR employees are hired, they are simply added to the group.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/07-Create-HR-Security-Group.png" width="800" alt="HR Security Group">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/22-Create-HR-Security-Group.png" width="800" alt="HR Security Group">
 </p>
 
 ---
 
 ## Step 8 — Create Remaining Security Groups
 
-Replicated the security group creation process for the remaining departments, establishing `SG-IT-Users`, `SG-Finance-Users`, and `SG-Sales-Users`. Additional specialized groups, such as `SG-IT-Admins`, were created to support tiered access models.
+Replicated the security group creation process for the remaining departments, establishing `SG-IT-Users`, `SG-Finance-Users`, `SG-Sales-Users`, and `SG-Management-Users`. Additional specialized groups were created to support tiered access models.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/08-Remaining-Security-Groups.png" width="800" alt="Remaining Security Groups">
+<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/24-Create-IT-Security-Group.png" width="800" alt="Remaining Security Groups">
 </p>
 
 ---
