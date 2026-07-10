@@ -1,44 +1,34 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Enterprise%20Active%20Directory%20Administration&fontSize=45&fontAlignY=35&desc=Module%205%20%7C%20Organizational%20Units%20and%20Security%20Groups&descSize=20&descAlignY=55" alt="Enterprise Active Directory Administration Banner" width="100%">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Active%20Directory%20Administration&fontSize=42&fontAlignY=35&desc=Module%205%20Part%201%20%7C%20Organizational%20Units&descSize=20&descAlignY=55" alt="Active Directory Administration Banner" width="100%">
 </div>
 
 ---
 
 ## Overview
 
-This module documents the initial administration of **Active Directory Domain Services (AD DS)** after successfully promoting **SRV01** to the organization's first Domain Controller.
+This module documents the initial configuration and architectural layout of **Active Directory Domain Services (AD DS)** following the deployment of the first Domain Controller. 
 
-With the Active Directory infrastructure now operational, the next phase is organizing the directory according to enterprise best practices. This includes creating a logical Organizational Unit (OU) hierarchy, separating departments, implementing infrastructure containers, and creating Security Groups that will later be used for Role-Based Access Control (RBAC), Group Policy deployment, and resource permissions.
-
-Rather than storing all objects inside the default Active Directory containers, the directory was designed using a structured enterprise layout that mirrors how production Windows environments are commonly administered.
+Rather than relying on the flat, default Active Directory containers, this phase focuses on designing a scalable, tiered enterprise directory structure using Organizational Units (OUs). This foundation is critical for future Group Policy Object (GPO) deployment, administrative delegation, and logical resource grouping.
 
 ---
 
 ## Business Scenario
 
-The company has expanded from a small office into multiple departments including Human Resources, Sales, Information Technology, Finance, and Management.
+Following the successful promotion of the first Domain Controller, the Infrastructure Team is now responsible for organizing the Active Directory environment. 
 
-Managing hundreds of users inside the default Active Directory containers is inefficient and difficult to maintain.
-
-To prepare the environment for future growth, the Infrastructure Team has been tasked with designing an enterprise Organizational Unit structure and implementing departmental Security Groups following Microsoft's recommended Active Directory administration practices.
-
-This directory design will become the foundation for Group Policy, delegated administration, shared folder permissions, printer deployment, and future identity management services.
+The company is expanding and requires a directory structure that reflects its internal departmental breakdown (HR, Sales, IT, Finance, Management) while cleanly separating infrastructure assets (Servers, Workstations, Service Accounts). The team must design and implement a scalable Organizational Unit (OU) hierarchy to move away from the unmanaged default AD containers and prepare the environment for centralized enterprise management.
 
 ---
 
 ## Learning Objectives
 
-By the end of this module, the following competencies were achieved:
+By the end of this document, the following competencies were achieved:
 
-* Understand the purpose of Organizational Units (OUs).
-* Design an enterprise Active Directory hierarchy.
-* Organize departments using Organizational Units.
-* Create infrastructure Organizational Units.
-* Understand the purpose of Security Groups.
-* Implement Role-Based Access Control (RBAC).
-* Apply enterprise naming conventions.
-* Prepare Active Directory for future Group Policy deployment.
-* Prepare the directory for enterprise user provisioning.
+* Explain the function and benefits of Organizational Units (OUs).
+* Design and implement an enterprise OU hierarchy.
+* Navigate and utilize Active Directory Users and Computers (ADUC).
+* Differentiate between default AD containers and custom OUs.
+* Prepare the directory structure for targeted Group Policy deployment.
 
 ---
 
@@ -48,183 +38,61 @@ By the end of this module, the following competencies were achieved:
 | :--- | :--- |
 | **Server Name** | SRV01 |
 | **Operating System** | Windows Server 2025 Standard Evaluation |
-| **Directory Service** | Active Directory Domain Services |
-| **Domain Name** | homelab.local |
-| **Management Tool** | Active Directory Users and Computers |
-| **Hypervisor** | VMware Workstation Pro |
+| **Directory Service** | Active Directory Domain Services (AD DS) |
+| **Domain** | homelab.local |
+| **Management Tool** | Active Directory Users and Computers (ADUC) |
 
 ---
 
 # Step-by-Step Implementation
 
-## Step 1: Open Active Directory Users and Computers
+## Step 1 — Open Active Directory Users and Computers
 
-Opened **Active Directory Users and Computers (ADUC)** from **Server Manager → Tools**.
-
-ADUC is Microsoft's primary management console for administering users, groups, computers, Organizational Units, and other Active Directory objects.
-
-This console will be used throughout the remainder of the homelab to manage enterprise identities and infrastructure resources.
+Launched **Active Directory Users and Computers (ADUC)** from the Server Manager Tools menu. ADUC is the primary Microsoft Management Console (MMC) utilized for daily directory administration, identity management, and resource provisioning.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/21-Open-Active-Directory-Users-and-Computers.png" width="800" alt="Open Active Directory Users and Computers">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/21-Open-Active-Directory-Users-and-Computers.png" width="800" alt="Open ADUC">
 </p>
 
 ---
 
-## Step 2: Create the Company Organizational Unit
+## Step 2 — Review the Default Active Directory Structure
 
-Created a top-level Organizational Unit named **Company**.
+Examined the out-of-the-box Active Directory layout. By default, AD places users and computers into generic containers (e.g., `CN=Users`, `CN=Computers`). 
 
-Rather than placing objects directly under the domain root, enterprise environments commonly use a dedicated Organizational Unit to logically separate company resources from Microsoft's default containers.
-
-This approach simplifies administration, improves organization, and prepares the directory for delegated administration and Group Policy deployment.
+These default containers lack the ability to have Group Policy Objects (GPOs) directly linked to them, making them unsuitable for scalable enterprise management. 
 
 ---
 
-## Step 3: Create Department Organizational Units
+## Step 3 — Create the Company OU
 
-Inside the **Company** Organizational Unit, created dedicated Organizational Units for each business department:
+To establish a management boundary, a top-level parent Organizational Unit named **Company** was created at the root of the domain. 
 
-* HR
-* Sales
-* IT
-* Finance
-* Management
-
-Each department will later contain its own users, computers, and Security Groups.
-
-Separating departments into individual Organizational Units allows administrators to apply department-specific Group Policy Objects (GPOs) and administrative permissions.
-
----
-
-## Step 4: Create Infrastructure Organizational Units
-
-Created additional Organizational Units for enterprise infrastructure resources:
-
-* Servers
-* Workstations
-* Printers
-* Service Accounts
-* Admin Accounts
-* Test Lab
-
-Separating infrastructure resources from user accounts improves directory organization and follows Microsoft's enterprise Active Directory recommendations.
-
----
-
-## Step 5: Review the Completed Organizational Unit Hierarchy
-
-Verified the completed Active Directory structure.
-
-The resulting hierarchy now provides a scalable and organized foundation for managing enterprise resources.
-
-This structure supports future Group Policy deployment, delegated administration, security filtering, and identity management.
-
----
-
-## Step 6: Create the Human Resources Security Group
-
-Navigated to:
-
-Company
-
-└── HR
-
-  └── Security Groups
-
-Created the first departmental Security Group using the following configuration:
-
-| Setting | Value |
-| :--- | :--- |
-| **Group Name** | SG-HR-Users |
-| **Group Scope** | Global |
-| **Group Type** | Security |
-
-Following a standardized naming convention improves readability and administration within enterprise environments.
+This acts as the master container for all corporate assets, allowing global IT policies to be applied from a single point without accidentally affecting built-in domain administrative accounts. The "Protect object from accidental deletion" safeguard was enabled.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/22-Create-HR-Security-Group.png" width="800" alt="Create HR Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/22-Create-Company-OU.png" width="800" alt="Create Company OU">
 </p>
 
 ---
 
-## Step 7: Create Remaining Department Security Groups
+## Step 4 — Build the Enterprise OU Structure
 
-Repeated the same process for the remaining departments.
+Within the parent `Company` OU, dedicated child OUs were provisioned for each specific business department (HR, IT, Sales, Finance, Management) and infrastructure asset type (Servers, Workstations, Printers, Service Accounts). 
 
-Created:
-
-* SG-Sales-Users
-* SG-IT-Users
-* SG-Finance-Users
-* SG-Management-Users
-
-Each group was configured as a **Global Security Group**, following Microsoft's recommended Role-Based Access Control (RBAC) model.
+This granular tiering ensures that policies (like mapping a Finance network drive or enforcing a strict Server firewall) only apply to the exact objects residing within their respective containers.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/23-Create-Sales-Security-Group.png" width="800" alt="Create Sales Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/23-Enterprise-OU-Structure.png" width="800" alt="Enterprise OU Structure">
 </p>
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/24-Create-IT-Security-Group.png" width="800" alt="Create IT Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/31-Completed-Enterprise-OU-Structure.png" width="800" alt="Completed Enterprise OU Structure">
 </p>
-
-<p align="center">
-<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/25-Create-Finance-Security-Group.png" width="800" alt="Create Finance Security Group">
-</p>
-
-<p align="center">
-<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/26-Create-Management-Security-Group.png" width="800" alt="Create Management Security Group">
-</p>
-
----
-
-# Technical Architecture & Justifications
-
-* **Why use Organizational Units?** Organizational Units provide a logical structure for organizing Active Directory objects. They enable delegated administration, simplify management, and allow Group Policy Objects (GPOs) to target specific departments or infrastructure resources.
-
-* **Why create separate department OUs?** Separating departments into dedicated Organizational Units allows administrators to apply different security policies, desktop configurations, software deployments, and administrative permissions without affecting other departments.
-
-* **Why create infrastructure OUs?** Servers, workstations, printers, and service accounts often require different Group Policies and security settings than standard user accounts. Keeping these resources separate improves manageability and reduces administrative complexity.
-
-* **Why use Security Groups?** Security Groups simplify permission management by assigning access rights to groups rather than individual users. This approach supports Role-Based Access Control (RBAC) and reduces administrative effort as organizations grow.
-
----
-
-# Skills Demonstrated
-
-* Active Directory Administration
-* Organizational Unit Design
-* Enterprise Directory Planning
-* Security Group Administration
-* Role-Based Access Control (RBAC)
-* Microsoft Naming Conventions
-* Identity and Access Management (IAM)
-* Windows Server Administration
-
----
-
-# Mock Interview Q&A
-
-**Q: What is an Organizational Unit (OU)?**
-
-> **A:** An Organizational Unit is a logical container within Active Directory used to organize users, computers, groups, and other directory objects. OUs simplify administration, support delegated management, and allow Group Policy Objects (GPOs) to be applied to specific sections of the directory.
-
----
-
-**Q: Why do companies use Security Groups instead of assigning permissions directly to users?**
-
-> **A:** Security Groups simplify administration by allowing permissions to be assigned once to the group rather than individually to each user. As employees join, leave, or change departments, administrators only update group membership instead of modifying permissions across multiple resources.
-
----
-
-**Q: What is Role-Based Access Control (RBAC)?**
-
-> **A:** RBAC is a security model that assigns permissions based on job roles rather than individual users. In Active Directory, this is commonly implemented using Security Groups, ensuring consistent and scalable access management.
 
 ---
 
 <div align="center">
-<b><a href="./User-Provisioning.md">Next Document: Enterprise User Provisioning</a></b><br>
-<i>Creating enterprise user accounts, assigning Security Group membership, and preparing Active Directory for Group Policy deployment.</i>
+<b><a href="./Security-Groups-and-RBAC.md">Next: Part 2 — Security Groups & Role-Based Access Control</a></b><br>
+<i>Implementing RBAC, provisioning department security groups, and creating enterprise user accounts.</i>
 </div>
