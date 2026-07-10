@@ -83,7 +83,7 @@ Within the parent `Company` OU, dedicated child OUs were provisioned for each sp
 This granular tiering ensures that policies (like mapping a Finance network drive or enforcing a strict Server firewall) only apply to the exact objects residing within their respective containers.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/30-Enterprise-OU-Structure.png" width="800" alt="Enterprise OU Structure">
+<img src="/01-Identity-and-Access-Management/05–Active Directory Administration/Evidence/Screenshots/30-Enterprise-OU-Structure.png" width="800" alt="Enterprise OU Structure">
 </p>
 
 
