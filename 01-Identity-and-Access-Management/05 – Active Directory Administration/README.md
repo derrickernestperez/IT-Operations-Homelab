@@ -86,9 +86,6 @@ This granular tiering ensures that policies (like mapping a Finance network driv
 <img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/30-Enterprise-OU-Structure.png" width="800" alt="Enterprise OU Structure">
 </p>
 
-<p align="center">
-<img src="/01-Identity-and-Access-Management/05 – Active Directory Administration/Evidence/Screenshots/31-Completed-Enterprise-OU-Structure.png" width="800" alt="Completed Enterprise OU Structure">
-</p>
 
 ---
 
