@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Active%20Directory%20Administration&fontSize=42&fontAlignY=35&desc=Module%205%20Part%202%20%7C%20Security%20Groups%20%26%20RBAC&descSize=20&descAlignY=55" alt="Active Directory Administration Banner" width="100%">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Active%20Directory%20Administration&fontSize=42&fontAlignY=35&desc=Module%205%20Part%201%20%7C%20Organizational%20Units&descSize=20&descAlignY=55" alt="Active Directory Administration Banner" width="100%">
 </div>
 
 ---
