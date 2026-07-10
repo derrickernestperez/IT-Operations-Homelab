@@ -66,7 +66,7 @@ ADUC is Microsoft's primary management console for administering users, groups, 
 This console will be used throughout the remainder of the homelab to manage enterprise identities and infrastructure resources.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/21-Open-Active-Directory-Users-and-Computers.png" width="800" alt="Open Active Directory Users and Computers">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/21-Open-Active-Directory-Users-and-Computers.png" width="800" alt="Open Active Directory Users and Computers">
 </p>
 
 ---
@@ -143,7 +143,7 @@ Created the first departmental Security Group using the following configuration:
 Following a standardized naming convention improves readability and administration within enterprise environments.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/22-Create-HR-Security-Group.png" width="800" alt="Create HR Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/22-Create-HR-Security-Group.png" width="800" alt="Create HR Security Group">
 </p>
 
 ---
@@ -162,19 +162,19 @@ Created:
 Each group was configured as a **Global Security Group**, following Microsoft's recommended Role-Based Access Control (RBAC) model.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/23-Create-Sales-Security-Group.png" width="800" alt="Create Sales Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/23-Create-Sales-Security-Group.png" width="800" alt="Create Sales Security Group">
 </p>
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/24-Create-IT-Security-Group.png" width="800" alt="Create IT Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/24-Create-IT-Security-Group.png" width="800" alt="Create IT Security Group">
 </p>
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/25-Create-Finance-Security-Group.png" width="800" alt="Create Finance Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/25-Create-Finance-Security-Group.png" width="800" alt="Create Finance Security Group">
 </p>
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/05-Enterprise-Active-Directory-Administration/Evidence/Screenshots/26-Create-Management-Security-Group.png" width="800" alt="Create Management Security Group">
+<img src="/01-Identity-and-Access-Management/05-Active-Directory-Administration/Evidence/Screenshots/26-Create-Management-Security-Group.png" width="800" alt="Create Management Security Group">
 </p>
 
 ---
