@@ -79,17 +79,17 @@ Step 2 — Rename the Workstation
 
 Renamed the workstation from the default hostname to CLIENT01 following enterprise naming conventions.
 
-<p align="center"> <img src="03-Client-and-Profile-Management/13-Windows-11-Domain-Join/Evidence/Screenshots/02-System-Properties-CLIENT01.png" width="850"> </p>
+<img src="03-Client-and-Profile-Management/13-Windows-11-Domain-Join/Evidence/Screenshots/02-Current-Network-Configuration.png" width="850">
 Step 3 — Configure Active Directory DNS
 
 Configured the workstation to use the Domain Controller (192.168.241.10) as its preferred DNS server while retaining a DHCP-assigned IP address.
 
-<p align="center"> <img src="03-Client-and-Profile-Management/13-Windows-11-Domain-Join/Evidence/Screenshots/03-Network-Adapter-IPv4-Settings.png" width="850"> </p>
+<i<img src="03-Client-and-Profile-Management/13-Windows-11-Domain-Join/Evidence/Screenshots/03-DNS-Server-Configuration.png" width="850">
 Step 4 — Verify Network Configuration
 
 Validated the workstation configuration using ipconfig /all to confirm the correct DNS server assignment.
 
-<p align="center"> <img src="03-Client-and-Profile-Management/13-Windows-11-Domain-Join/Evidence/Screenshots/04-IPConfig-Verification.png" width="850"> </p>
+<img src="03-Client-and-Profile-Management/13-Windows-11-Domain-Join/Evidence/Screenshots/04-DNS-Configuration-Verification.png" width="850">
 Step 5 — Test Connectivity
 
 Verified communication with the Domain Controller using ICMP.
