@@ -6,19 +6,19 @@
 
 ## Overview
 
-This module documents the deployment and validation of a Microsoft Active Directory-integrated Domain Name System (DNS) infrastructure within the homelab environment.
+This module documents the deployment, configuration, and validation of a Microsoft Active Directory-integrated Domain Name System (DNS) infrastructure within the homelab environment.
 
-DNS serves as one of the most critical services in an Active Directory environment, enabling domain authentication, resource discovery, Group Policy processing, and hostname resolution across the network.
+DNS is one of the most critical services in an Active Directory environment, providing hostname resolution, domain controller discovery, authentication support, Group Policy processing, and service location functionality.
 
-This implementation includes the creation and verification of Forward Lookup Zones, Reverse Lookup Zones, Host (A) Records, Pointer (PTR) Records, and DNS resolution testing using native Windows administration tools.
+This implementation includes verification of Forward Lookup Zones, creation of DNS Host (A) Records, deployment of a Reverse Lookup Zone, validation of Pointer (PTR) Records, and testing of forward and reverse DNS resolution using native Windows networking tools.
 
 ---
 
 ## Business Scenario
 
-The organization has successfully deployed Active Directory Domain Services and domain-joined workstations. To ensure reliable communication between systems, centralized name resolution services must be implemented.
+Following the deployment of Active Directory Domain Services and successful domain joining of enterprise workstations, the organization requires centralized name resolution services.
 
-The Infrastructure Team is responsible for configuring and validating DNS services to support:
+The Infrastructure Team is responsible for implementing and validating DNS services to support:
 
 - Active Directory authentication
 - Domain controller discovery
@@ -27,7 +27,7 @@ The Infrastructure Team is responsible for configuring and validating DNS servic
 - Future DHCP integration
 - Enterprise network administration
 
-The objective is to establish a resilient DNS infrastructure capable of supporting enterprise services and future network expansion.
+The objective is to establish a reliable DNS infrastructure capable of supporting current operations while preparing the environment for future growth.
 
 ---
 
@@ -35,15 +35,15 @@ The objective is to establish a resilient DNS infrastructure capable of supporti
 
 By completing this module, the following competencies were demonstrated:
 
-- Understand the role of DNS within Active Directory environments
-- Navigate and manage DNS Manager
-- Examine Active Directory-integrated DNS zones
-- Create and manage Host (A) records
-- Create and manage Reverse Lookup Zones
-- Understand and validate PTR records
-- Perform forward and reverse DNS resolution testing
-- Troubleshoot DNS resolution using nslookup and ping
-- Validate enterprise DNS functionality
+- Understand DNS functionality within Active Directory environments
+- Navigate and administer DNS Manager
+- Manage Active Directory-integrated DNS zones
+- Create and validate Host (A) Records
+- Configure Reverse Lookup Zones
+- Validate PTR Records
+- Perform DNS troubleshooting using nslookup
+- Verify hostname resolution using ICMP testing
+- Understand enterprise DNS architecture and administration
 
 ---
 
@@ -65,9 +65,9 @@ By completing this module, the following competencies were demonstrated:
 
 ## Step 1 — Open DNS Manager
 
-Launched DNS Manager from Server Manager administrative tools.
+Launched DNS Manager from the Windows Server administrative tools.
 
-DNS Manager provides centralized administration of DNS zones, records, replication settings, and name resolution services across the enterprise environment.
+DNS Manager serves as the centralized console used to manage DNS zones, records, replication settings, and enterprise name resolution services.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/01-Open-DNS-Manager.png" width="800">
@@ -77,9 +77,9 @@ DNS Manager provides centralized administration of DNS zones, records, replicati
 
 ## Step 2 — Review Forward Lookup Zones
 
-Verified the default Active Directory-integrated Forward Lookup Zones automatically created during Active Directory deployment.
+Reviewed the Forward Lookup Zones automatically created during Active Directory deployment.
 
-These zones allow hostname-to-IP address resolution for domain resources.
+These zones provide hostname-to-IP address resolution and contain records required for Active Directory operations.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/02-Forward-Lookup-Zone.png" width="800">
@@ -87,16 +87,16 @@ These zones allow hostname-to-IP address resolution for domain resources.
 
 ---
 
-## Step 3 — Examine the homelab.local DNS Zone
+## Step 3 — Examine the homelab.local Zone
 
-Opened the primary DNS zone and reviewed Active Directory DNS records.
+Opened the primary Active Directory-integrated DNS zone and reviewed existing DNS records.
 
-The zone contains critical records used by Active Directory services including:
+The zone contains records used for:
 
-- Domain Controller registration
-- Service Locator (SRV) records
+- Domain controller discovery
 - Authentication services
-- Hostname resolution
+- Service registration
+- Enterprise name resolution
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/03-homelab.local-Zone.png" width="800">
@@ -104,11 +104,11 @@ The zone contains critical records used by Active Directory services including:
 
 ---
 
-## Step 4 — Review Existing Domain Controller A Record
+## Step 4 — Review Domain Controller DNS Registration
 
-Created a test Host (A) record within the homelab.local DNS zone.
+Reviewed the automatically registered DNS A Record for the domain controller (SRV01).
 
-Reviewed the automatically registered DNS A Record for the Domain Controller (SRV01). Active Directory-integrated DNS dynamically registers domain controllers to support authentication, service discovery, and name resolution.
+Active Directory-integrated DNS dynamically registers domain controllers to ensure clients can locate authentication and directory services.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/04-Domain-Controller-A-Record.png" width="800">
@@ -116,9 +116,11 @@ Reviewed the automatically registered DNS A Record for the Domain Controller (SR
 
 ---
 
-## Step 5 —  Create Test A Record
+## Step 5 — Create a Test Host (A) Record
 
-Created a custom test A Record to demonstrate manual DNS record administration and forward lookup functionality.
+Created a custom test Host (A) Record within the homelab.local zone.
+
+Host records provide forward DNS resolution by mapping hostnames to IPv4 addresses and are commonly used for servers, applications, and internal resources.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/05-Create-Test-A-Record.png" width="800">
@@ -126,9 +128,11 @@ Created a custom test A Record to demonstrate manual DNS record administration a
 
 ---
 
-## Step 6 — Verify Test A Record Creation
+## Step 6 — Verify Test Record Creation
 
-Confirmed successful creation and registration of the test A Record within the homelab.local zone.
+Confirmed successful creation of the new DNS A Record.
+
+Verification ensures the record has been properly registered within the DNS zone and is available for client resolution requests.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/06-Test-A-Record-Created.png" width="800">
@@ -138,9 +142,9 @@ Confirmed successful creation and registration of the test A Record within the h
 
 ## Step 7 — Create a Reverse Lookup Zone
 
-Launched the Reverse Lookup Zone Wizard and configured a new Active Directory-integrated reverse lookup zone for the 192.168.241.0/24 network.
+Launched the Reverse Lookup Zone Wizard and configured a new Active Directory-integrated reverse lookup zone for the 192.168.241.0/24 subnet.
 
-Reverse zones enable IP address-to-hostname resolution.
+Reverse lookup zones provide IP-to-hostname resolution capabilities.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/07-Reverse-Lookup-Zone-Wizard.png" width="800">
@@ -148,11 +152,11 @@ Reverse zones enable IP address-to-hostname resolution.
 
 ---
 
-## Step 8 — Verify Reverse Lookup Zone Creation
+## Step 8 — Verify Reverse Lookup Zone Deployment
 
-Confirmed successful deployment of the reverse lookup zone.
+Confirmed successful creation of the reverse lookup zone.
 
-The newly created zone will be used to host PTR records for reverse DNS resolution.
+This zone will host PTR records used for reverse DNS resolution throughout the environment.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/08-Reverse-Lookup-Zone-Created.png" width="800">
@@ -162,11 +166,11 @@ The newly created zone will be used to host PTR records for reverse DNS resoluti
 
 ## Step 9 — Verify PTR Records
 
-Reviewed Pointer (PTR) records within the reverse lookup zone.
+Reviewed Pointer (PTR) records stored within the reverse lookup zone.
 
-PTR records provide reverse DNS functionality by mapping IP addresses back to hostnames.
+PTR records enable reverse DNS functionality by translating IP addresses back into hostnames.
 
-This capability is commonly used in enterprise troubleshooting, logging, monitoring, and security investigations.
+This capability is commonly used in enterprise troubleshooting, monitoring, logging, and security investigations.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/09-PTR-Records-Verification.png" width="800">
@@ -174,11 +178,11 @@ This capability is commonly used in enterprise troubleshooting, logging, monitor
 
 ---
 
-## Step 10 — Perform Reverse DNS Resolution Testing
+## Step 10 — Test DNS Resolution Using NSLookup
 
-Used nslookup to validate reverse DNS functionality.
+Executed nslookup to validate DNS functionality and confirm successful hostname resolution.
 
-Successful reverse lookups confirm PTR records are functioning correctly and returning expected hostnames.
+The test verified that the DNS infrastructure can successfully resolve DNS records within the Active Directory environment.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/10-NSLookup-Test.png" width="800">
@@ -186,11 +190,11 @@ Successful reverse lookups confirm PTR records are functioning correctly and ret
 
 ---
 
-## Step 11 — Perform Forward DNS Resolution Testing
+## Step 11 — Test Reverse DNS Resolution
 
-Executed nslookup against the SRV01 hostname to verify forward DNS resolution.
+Performed reverse DNS testing using nslookup against an IP address.
 
-This test confirms the DNS server can successfully translate hostnames into IP addresses.
+Successful results confirmed that PTR records were functioning correctly and returning the expected hostname.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/11-Reverse-NSLookup-Test.png" width="800">
@@ -198,11 +202,11 @@ This test confirms the DNS server can successfully translate hostnames into IP a
 
 ---
 
-## Step 12 — Validate Name Resolution Using Ping
+## Step 12 — Validate Hostname Resolution Using Ping
 
-Performed hostname-based ICMP testing.
+Executed ICMP testing using a hostname rather than an IP address.
 
-The successful resolution of SRV01 demonstrates that DNS services are operating correctly from the client perspective.
+The successful resolution of the hostname demonstrates that DNS services are functioning correctly from a client perspective.
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/12-Ping-Name-Resolution-Test.png" width="800">
@@ -212,17 +216,17 @@ The successful resolution of SRV01 demonstrates that DNS services are operating 
 
 ## Step 13 — Review Final DNS Configuration
 
-Conducted a final review of the DNS infrastructure.
+Performed a final review of the DNS infrastructure.
 
-The environment now includes:
+The completed implementation includes:
 
 - Active Directory-integrated DNS
-- Forward Lookup Zone
-- Reverse Lookup Zone
+- Forward Lookup Zones
+- Reverse Lookup Zones
 - Host (A) Records
 - Pointer (PTR) Records
-- Verified forward resolution
-- Verified reverse resolution
+- Forward DNS Resolution
+- Reverse DNS Resolution
 
 <p align="center">
 <img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/13-DNS-Manager-Final-Configuration.png" width="800">
@@ -232,19 +236,19 @@ The environment now includes:
 
 # Security & Administrative Value
 
-From a systems administration and security perspective, DNS is a foundational enterprise service.
+DNS is a foundational service within enterprise environments and Active Directory infrastructures.
 
 This implementation supports:
 
 - Active Directory authentication
 - Domain controller discovery
 - Group Policy processing
-- Centralized resource access
-- Troubleshooting and monitoring
-- Security investigations using reverse lookups
+- Enterprise resource access
+- Network troubleshooting
+- Security monitoring
 - Future DHCP integration
 
-Improper DNS configuration is one of the most common causes of Active Directory failures. Validating both forward and reverse DNS resolution helps ensure operational stability and supports future security monitoring initiatives.
+Improper DNS configuration is one of the most common causes of Active Directory failures. Verifying both forward and reverse resolution ensures operational stability and provides a strong foundation for future infrastructure services.
 
 ---
 
@@ -265,5 +269,5 @@ Improper DNS configuration is one of the most common causes of Active Directory 
 
 <div align="center">
 <b><a href="../09-DHCP-Infrastructure/README.md">Next: Module 9 — DHCP Infrastructure</a></b><br>
-<i>Deploying centralized IP address management, DHCP scopes, reservations, exclusions, and DNS integration.</i>
+<i>Deploying centralized IP address management, DHCP scopes, exclusions, reservations, lease management, and DNS integration.</i>
 </div>
