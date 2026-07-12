@@ -1,211 +1,273 @@
-# Enterprise Virtualization with VMware Workstation Pro
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=DNS%20Infrastructure&fontSize=42&fontAlignY=35&desc=Module%208%20%7C%20Active%20Directory-Integrated%20DNS&descSize=20&descAlignY=55" alt="DNS Infrastructure Banner" width="100%">
+</div>
+
+---
 
 ## Overview
 
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
+This module documents the deployment and validation of a Microsoft Active Directory-integrated Domain Name System (DNS) infrastructure within the homelab environment.
 
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+DNS serves as one of the most critical services in an Active Directory environment, enabling domain authentication, resource discovery, Group Policy processing, and hostname resolution across the network.
 
----
-
-# Objectives
-
-After completing this module, I was able to:
-
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+This implementation includes the creation and verification of Forward Lookup Zones, Reverse Lookup Zones, Host (A) Records, Pointer (PTR) Records, and DNS resolution testing using native Windows administration tools.
 
 ---
 
-# Why Virtualization?
+## Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+The organization has successfully deployed Active Directory Domain Services and domain-joined workstations. To ensure reliable communication between systems, centralized name resolution services must be implemented.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+The Infrastructure Team is responsible for configuring and validating DNS services to support:
 
-Benefits include:
+- Active Directory authentication
+- Domain controller discovery
+- Hostname resolution
+- Reverse DNS lookups
+- Future DHCP integration
+- Enterprise network administration
 
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
-
----
-
-# Host vs Guest Operating System
-
-### Host Operating System
-
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
+The objective is to establish a resilient DNS infrastructure capable of supporting enterprise services and future network expansion.
 
 ---
 
-### Guest Operating System
+## Learning Objectives
 
-A guest operating system is installed inside a virtual machine.
+By completing this module, the following competencies were demonstrated:
 
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- Understand the role of DNS within Active Directory environments
+- Navigate and manage DNS Manager
+- Examine Active Directory-integrated DNS zones
+- Create and manage Host (A) records
+- Create and manage Reverse Lookup Zones
+- Understand and validate PTR records
+- Perform forward and reverse DNS resolution testing
+- Troubleshoot DNS resolution using nslookup and ping
+- Validate enterprise DNS functionality
 
 ---
 
-# Virtual Machine Configuration
+## Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Domain | homelab.local |
+| DNS Type | Active Directory-Integrated DNS |
+| Management Tool | DNS Manager |
+| Client Device | CLIENT01 |
+| Network Range | 192.168.241.0/24 |
 
 ---
 
-# Step-by-Step Deployment
+# Step-by-Step Implementation
 
-## Step 1 - Create a New Virtual Machine
+## Step 1 — Open DNS Manager
 
-Created a new virtual machine using VMware Workstation Pro.
+Launched DNS Manager from Server Manager administrative tools.
 
-**Screenshot**
+DNS Manager provides centralized administration of DNS zones, records, replication settings, and name resolution services across the enterprise environment.
 
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/01-Open-DNS-Manager.png" width="800">
+</p>
 
 ---
 
-## Step 3 - Configure Firmware
+## Step 2 — Review Forward Lookup Zones
 
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
+Verified the default Active Directory-integrated Forward Lookup Zones automatically created during Active Directory deployment.
 
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
+These zones allow hostname-to-IP address resolution for domain resources.
 
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
-
----
-
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/02-Forward-Lookup-Zone.png" width="800">
+</p>
 
 ---
 
-## Step 5 - Configure Storage
+## Step 3 — Examine the homelab.local DNS Zone
 
-Created a new virtual NVMe disk with:
+Opened the primary DNS zone and reviewed Active Directory DNS records.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
+The zone contains critical records used by Active Directory services including:
 
-Thin provisioning conserves host storage by allocating disk space only as data is written.
+- Domain Controller registration
+- Service Locator (SRV) records
+- Authentication services
+- Hostname resolution
 
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/03-homelab.local-Zone.png" width="800">
+</p>
 
 ---
 
-# Verification
+## Step 4 — Create a Host (A) Record
 
-Verified that:
+Created a test Host (A) record within the homelab.local DNS zone.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+Host records map hostnames to IPv4 addresses and are used by clients to locate resources across the network.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/04-New-Host-A-Record-Configuration.png" width="800">
+</p>
+
+---
+
+## Step 5 — Verify Host Record Creation
+
+Confirmed successful creation of the new DNS A Record.
+
+This record allows forward DNS resolution from hostname to IP address.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/05-Test-A-Record-Created.png" width="800">
+</p>
+
+---
+
+## Step 6 — Validate Forward Lookup Records
+
+Reviewed DNS zone contents to verify the newly created host record was properly registered.
+
+This confirms DNS is capable of resolving hostnames within the environment.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/06-Test-A-Record-Verification.png" width="800">
+</p>
+
+---
+
+## Step 7 — Create a Reverse Lookup Zone
+
+Launched the Reverse Lookup Zone Wizard and configured a new Active Directory-integrated reverse lookup zone for the 192.168.241.0/24 network.
+
+Reverse zones enable IP address-to-hostname resolution.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/07-Reverse-Lookup-Zone-Wizard.png" width="800">
+</p>
+
+---
+
+## Step 8 — Verify Reverse Lookup Zone Creation
+
+Confirmed successful deployment of the reverse lookup zone.
+
+The newly created zone will be used to host PTR records for reverse DNS resolution.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/08-Reverse-Lookup-Zone-Created.png" width="800">
+</p>
+
+---
+
+## Step 9 — Verify PTR Records
+
+Reviewed Pointer (PTR) records within the reverse lookup zone.
+
+PTR records provide reverse DNS functionality by mapping IP addresses back to hostnames.
+
+This capability is commonly used in enterprise troubleshooting, logging, monitoring, and security investigations.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/09-PTR-Records-Verification.png" width="800">
+</p>
+
+---
+
+## Step 10 — Perform Reverse DNS Resolution Testing
+
+Used nslookup to validate reverse DNS functionality.
+
+Successful reverse lookups confirm PTR records are functioning correctly and returning expected hostnames.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/10-Reverse-NSLookup-Test.png" width="800">
+</p>
+
+---
+
+## Step 11 — Perform Forward DNS Resolution Testing
+
+Executed nslookup against the SRV01 hostname to verify forward DNS resolution.
+
+This test confirms the DNS server can successfully translate hostnames into IP addresses.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/11-Forward-NSLookup-Test.png" width="800">
+</p>
+
+---
+
+## Step 12 — Validate Name Resolution Using Ping
+
+Performed hostname-based ICMP testing.
+
+The successful resolution of SRV01 demonstrates that DNS services are operating correctly from the client perspective.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/12-Ping-Name-Resolution-Test.png" width="800">
+</p>
+
+---
+
+## Step 13 — Review Final DNS Configuration
+
+Conducted a final review of the DNS infrastructure.
+
+The environment now includes:
+
+- Active Directory-integrated DNS
+- Forward Lookup Zone
+- Reverse Lookup Zone
+- Host (A) Records
+- Pointer (PTR) Records
+- Verified forward resolution
+- Verified reverse resolution
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/13-DNS-Manager-Final-Configuration.png" width="800">
+</p>
+
+---
+
+# Security & Administrative Value
+
+From a systems administration and security perspective, DNS is a foundational enterprise service.
+
+This implementation supports:
+
+- Active Directory authentication
+- Domain controller discovery
+- Group Policy processing
+- Centralized resource access
+- Troubleshooting and monitoring
+- Security investigations using reverse lookups
+- Future DHCP integration
+
+Improper DNS configuration is one of the most common causes of Active Directory failures. Validating both forward and reverse DNS resolution helps ensure operational stability and supports future security monitoring initiatives.
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Windows Server Administration
+- Active Directory DNS Management
+- DNS Zone Administration
+- Forward Lookup Configuration
+- Reverse Lookup Configuration
+- A Record Management
+- PTR Record Management
+- DNS Troubleshooting
+- Network Diagnostics
+- Enterprise Infrastructure Administration
 
 ---
 
-# Key Takeaways
-
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
-
----
-
-# Interview Questions
-
-### What is virtualization?
-
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
-
----
-
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+<div align="center">
+<b><a href="../09-DHCP-Infrastructure/README.md">Next: Module 9 — DHCP Infrastructure</a></b><br>
+<i>Deploying centralized IP address management, DHCP scopes, reservations, exclusions, and DNS integration.</i>
+</div>
