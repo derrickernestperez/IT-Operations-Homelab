@@ -1,211 +1,302 @@
-# Enterprise Virtualization with VMware Workstation Pro
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=File%20and%20Print%20Services&fontSize=42&fontAlignY=35&desc=Module%2010%20%7C%20Enterprise%20File%20Sharing&descSize=20&descAlignY=55" alt="File Services Banner" width="100%">
+</div>
+
+---
 
 ## Overview
 
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
+This module documents the deployment and administration of enterprise file sharing services within the Windows Server environment.
 
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+The objective was to create centralized departmental file shares, apply role-based access control through Active Directory security groups, configure share and NTFS permissions, and validate that users can only access resources authorized for their department.
 
----
-
-# Objectives
-
-After completing this module, I was able to:
-
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+This implementation simulates a real-world corporate file server used to securely store and distribute departmental data across the organization.
 
 ---
 
-# Why Virtualization?
+## Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+The organization requires a centralized file server where departments can store and access shared business documents.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+The Infrastructure Team must implement file shares for Human Resources, Finance, Information Technology, and Sales while ensuring users can only access data belonging to their respective departments.
 
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+Access control must be enforced using Active Directory security groups and NTFS permissions to protect sensitive organizational information.
 
 ---
 
-# Host vs Guest Operating System
+## Learning Objectives
 
-### Host Operating System
+By completing this module, the following competencies were demonstrated:
 
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
-
----
-
-### Guest Operating System
-
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- Deploy enterprise file sharing services
+- Configure departmental network shares
+- Configure Share Permissions
+- Configure NTFS Permissions
+- Implement Role-Based Access Control (RBAC)
+- Validate effective permissions
+- Troubleshoot file share access
+- Manage shared resources using Windows Server
 
 ---
 
-# Virtual Machine Configuration
+## Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Domain | homelab.local |
+| File Server | SRV01 |
+| Client Device | CLIENT01 |
+| Management Tools | Computer Management, File Explorer |
+| Security Model | Active Directory Security Groups |
 
 ---
 
-# Step-by-Step Deployment
+# Step-by-Step Implementation
 
-## Step 1 - Create a New Virtual Machine
+## Step 1 — Open Server Manager
 
-Created a new virtual machine using VMware Workstation Pro.
+Opened Server Manager to begin file services administration.
 
-**Screenshot**
+Server Manager provides centralized management for Windows Server roles, services, and infrastructure resources.
 
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/01-Open-Server-Manager.png" width="800">
+</p>
 
 ---
 
-## Step 3 - Configure Firmware
+## Step 2 — Verify File Server Role
 
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
+Verified that File and Storage Services were installed and operational.
 
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
+This role provides the core functionality required for hosting and managing network file shares.
 
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
-
----
-
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/02-File-Server-Role-Verification.png" width="800">
+</p>
 
 ---
 
-## Step 5 - Configure Storage
+## Step 3 — Review Department Share Structure
 
-Created a new virtual NVMe disk with:
+Verified the departmental folder structure used for centralized file storage.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
+```text
+C:\Shares
+├── HR
+├── Finance
+├── IT
+└── Sales
+```
 
-Thin provisioning conserves host storage by allocating disk space only as data is written.
+Each folder serves as a dedicated departmental repository.
 
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/03-Shares-Folder-Structure.png" width="800">
+</p>
 
 ---
 
-# Verification
+## Step 4 — Configure HR Share Permissions
 
-Verified that:
+Reviewed Share Permissions for the HR department share.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+Access was granted only to authorized administrative accounts and Human Resources personnel.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/04-HR-Share-Permissions.png" width="800">
+</p>
+
+---
+
+## Step 5 — Configure HR NTFS Permissions
+
+Verified NTFS permissions on the HR folder.
+
+NTFS permissions provide granular access control and serve as the primary security layer protecting departmental data.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/05-HR-NTFS-Permissions.png" width="800">
+</p>
+
+---
+
+## Step 6 — Configure Finance Share Permissions
+
+Reviewed Share Permissions for the Finance department share.
+
+Finance resources were restricted to authorized Finance personnel and administrative accounts.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/06-Finance-Share-Permissions.png" width="800">
+</p>
+
+---
+
+## Step 7 — Configure IT Share Permissions
+
+Reviewed Share Permissions for the Information Technology department share.
+
+The share was configured to support secure access by IT personnel while preventing unauthorized access.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/07-IT-Share-Permissions.png" width="800">
+</p>
+
+---
+
+## Step 8 — Configure Sales Share Permissions
+
+Reviewed Share Permissions for the Sales department share.
+
+Access was restricted to members of the Sales department security group.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/08-Sales-Share-Permissions.png" width="800">
+</p>
+
+---
+
+## Step 9 — Review Shared Folders Console
+
+Opened the Shared Folders management console.
+
+This interface provides visibility into:
+
+- Active Shares
+- Open Files
+- Connected Users
+- Administrative Shares
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/09-Shared-Folders-Console.png" width="800">
+</p>
+
+---
+
+## Step 10 — Validate HR Access
+
+Logged into CLIENT01 as an HR user and successfully accessed the HR departmental share.
+
+This confirmed that Share and NTFS permissions were functioning correctly.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/10-HR-Access-Success.png" width="800">
+</p>
+
+---
+
+## Step 11 — Validate Finance Access Restrictions
+
+Attempted to access the Finance share while logged in as an HR user.
+
+Access was denied as expected.
+
+This validated departmental segregation and RBAC enforcement.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/11-Finance-Access-Denied.png" width="800">
+</p>
+
+---
+
+## Step 12 — Validate IT Access Restrictions
+
+Attempted to access the IT share while logged in as an HR user.
+
+Access was denied according to the configured permissions.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/12-IT-Access-Denied.png" width="800">
+</p>
+
+---
+
+## Step 13 — Validate Sales Access Restrictions
+
+Attempted to access the Sales share while logged in as an HR user.
+
+The file server correctly prevented unauthorized access.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/13-Sales-Access-Denied.png" width="800">
+</p>
+
+---
+
+## Step 14 — Final File Server Validation
+
+Performed a final review of the file server configuration using the Shared Folders console.
+
+The server successfully hosted departmental shares for:
+
+- HR
+- Finance
+- IT
+- Sales
+
+as well as centralized folder redirection storage.
+
+Client connections confirmed that the shares were active and accessible to authorized users.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/10-File-and-Print-Services/Evidence/Screenshots/14-File-Server-Final-Configuration.png" width="800">
+</p>
+
+---
+
+# Access Control Model
+
+The file server uses Role-Based Access Control (RBAC) through Active Directory Security Groups.
+
+```text
+HR Users
+   └── HR Share
+
+Finance Users
+   └── Finance Share
+
+IT Users
+   └── IT Share
+
+Sales Users
+   └── Sales Share
+```
+
+This approach simplifies administration and ensures permissions are managed through group membership rather than individual user assignments.
+
+---
+
+# Share Permissions vs NTFS Permissions
+
+| Permission Type | Purpose |
+|-----------------|----------|
+| Share Permissions | Control access over the network |
+| NTFS Permissions | Control access to files and folders |
+| Effective Permissions | Most restrictive combination of both |
+
+Together, these layers provide secure access control for enterprise file services.
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Windows Server Administration
+- File Server Management
+- Share Management
+- NTFS Permissions
+- Share Permissions
+- RBAC Implementation
+- Active Directory Integration
+- Access Control Management
+- Network Resource Administration
+- Enterprise File Services
 
 ---
 
-# Key Takeaways
-
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
-
----
-
-# Interview Questions
-
-### What is virtualization?
-
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
-
----
-
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+<div align="center">
+<b><a href="../11-Windows-LAPS/README.md">Next: Module 11 — Windows LAPS</a></b><br>
+<i>Implementing Local Administrator Password Solution (LAPS) for secure credential management.</i>
+</div>
