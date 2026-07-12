@@ -104,38 +104,34 @@ The zone contains critical records used by Active Directory services including:
 
 ---
 
-## Step 4 — Create a Host (A) Record
+## Step 4 — Review Existing Domain Controller A Record
 
 Created a test Host (A) record within the homelab.local DNS zone.
 
-Host records map hostnames to IPv4 addresses and are used by clients to locate resources across the network.
+Reviewed the automatically registered DNS A Record for the Domain Controller (SRV01). Active Directory-integrated DNS dynamically registers domain controllers to support authentication, service discovery, and name resolution.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/04-New-Host-A-Record-Configuration.png" width="800">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/04-Domain-Controller-A-Record.png" width="800">
 </p>
 
 ---
 
-## Step 5 — Verify Host Record Creation
+## Step 5 —  Create Test A Record
 
-Confirmed successful creation of the new DNS A Record.
-
-This record allows forward DNS resolution from hostname to IP address.
+Created a custom test A Record to demonstrate manual DNS record administration and forward lookup functionality.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/05-Test-A-Record-Created.png" width="800">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/05-Create-Test-A-Record.png" width="800">
 </p>
 
 ---
 
-## Step 6 — Validate Forward Lookup Records
+## Step 6 — Verify Test A Record Creation
 
-Reviewed DNS zone contents to verify the newly created host record was properly registered.
-
-This confirms DNS is capable of resolving hostnames within the environment.
+Confirmed successful creation and registration of the test A Record within the homelab.local zone.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/06-Test-A-Record-Verification.png" width="800">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/06-Test-A-Record-Created.png" width="800">
 </p>
 
 ---
@@ -185,7 +181,7 @@ Used nslookup to validate reverse DNS functionality.
 Successful reverse lookups confirm PTR records are functioning correctly and returning expected hostnames.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/10-Reverse-NSLookup-Test.png" width="800">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/10-NSLookup-Test.png" width="800">
 </p>
 
 ---
@@ -197,7 +193,7 @@ Executed nslookup against the SRV01 hostname to verify forward DNS resolution.
 This test confirms the DNS server can successfully translate hostnames into IP addresses.
 
 <p align="center">
-<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/11-Forward-NSLookup-Test.png" width="800">
+<img src="/01-Identity-and-Access-Management/08-DNS-Infrastructure/Evidence/Screenshots/11-Reverse-NSLookup-Test.png" width="800">
 </p>
 
 ---
