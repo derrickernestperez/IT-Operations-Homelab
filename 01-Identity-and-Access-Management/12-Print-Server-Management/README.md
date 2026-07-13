@@ -1,211 +1,332 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Print%20Server%20Management&fontSize=42&fontAlignY=35&desc=Module%2012%20%7C%20Enterprise%20Printer%20Deployment&descSize=20&descAlignY=55" alt="Print Server Management Banner" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module documents the deployment and administration of a centralized Print Server within the Windows Server environment.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+The objective was to install Print Services, create and share a network printer, configure printer permissions, and automatically deploy printers to domain-joined workstations using Group Policy.
+
+This implementation simulates how organizations centrally manage printers and automate printer deployment across multiple departments.
 
 ---
 
-# Why Virtualization?
+# Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+The organization requires centralized printer management to reduce administrative overhead and ensure users automatically receive printers without manual installation.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+The Infrastructure Team must deploy a shared printer hosted on the Print Server, configure appropriate permissions, and automate printer deployment using Active Directory and Group Policy.
 
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+This solution provides consistent printer availability while simplifying endpoint administration.
 
 ---
 
-# Host vs Guest Operating System
+# Learning Objectives
 
-### Host Operating System
+By completing this module, the following competencies were demonstrated:
 
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
-
----
-
-### Guest Operating System
-
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- Deploy Print and Document Services
+- Configure Shared Printers
+- Manage Printer Permissions
+- Deploy Printers using Group Policy
+- Validate Group Policy Printer Deployment
+- Administer Print Management Console
+- Centralize Printer Administration
+- Troubleshoot Printer Deployment
 
 ---
 
-# Virtual Machine Configuration
+# Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Client Device | CLIENT01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Client OS | Windows 11 Enterprise |
+| Domain | homelab.local |
+| Print Server | SRV01 |
+| Management Tool | Print Management |
+| Deployment Method | Group Policy Preferences |
 
 ---
 
-# Step-by-Step Deployment
-
-## Step 1 - Create a New Virtual Machine
-
-Created a new virtual machine using VMware Workstation Pro.
-
-**Screenshot**
-
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 2 - Select the Installation Media
+## Step 1 — Install Print Services
 
-Attached the Windows Server 2025 ISO image to the virtual machine.
+Installed the Print and Document Services role on SRV01.
 
-**Screenshot**
+This role provides the infrastructure required to host and manage network printers within the organization.
 
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
-
----
-
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/01-Install-Print-Services.png" width="900">
+</p>
 
 ---
 
-## Step 4 - Configure Virtual Hardware
+## Step 2 — Open Print Management
 
-Configured:
+Opened the Print Management Console to administer printers and print servers.
 
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
+Print Management provides centralized control over printer deployment and monitoring.
 
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/02-Open-Print-Management.png" width="900">
+</p>
 
 ---
 
-## Step 5 - Configure Storage
+## Step 3 — Create Shared Printer
 
-Created a new virtual NVMe disk with:
+Created a printer named:
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
+```text
+HR-Printer
+```
 
-Thin provisioning conserves host storage by allocating disk space only as data is written.
+using the Generic / Text Only driver for homelab simulation purposes.
 
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/03-Create-HR-Printer.png" width="900">
+</p>
 
 ---
 
-# Verification
+## Step 4 — Share the Printer
 
-Verified that:
+Configured the printer as a shared network resource.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+Share Name:
+
+```text
+HR-Printer
+```
+
+This allows clients to access the printer through the Print Server.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/04-Share-Printer.png" width="900">
+</p>
+
+---
+
+## Step 5 — Verify Printer Installation
+
+Verified successful printer installation and driver assignment.
+
+The printer was successfully registered on SRV01 and became available for management.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/05-Printer-Installed.png" width="900">
+</p>
+
+---
+
+## Step 6 — Verify Printer Visibility
+
+Confirmed that HR-Printer appeared in the Print Management Console.
+
+The printer status displayed as Ready, indicating successful deployment.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/06-Printer-Visible-In-Print-Management.png" width="900">
+</p>
+
+---
+
+## Step 7 — Configure Printer Sharing
+
+Reviewed printer sharing configuration to ensure the printer was available for client deployment.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/07-Printer-Sharing-Configured.png" width="900">
+</p>
+
+---
+
+## Step 8 — Review Printer Permissions
+
+Reviewed printer security settings and validated administrative access.
+
+Printer permissions determine who can print, manage printers, and manage print jobs.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/08-Printer-Permissions.png" width="900">
+</p>
+
+---
+
+## Step 9 — Create Printer Deployment GPO
+
+Created a dedicated Group Policy Object:
+
+```text
+Workstation - Printer Deployment
+```
+
+and linked it to the Workstations Organizational Unit.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/09-Create-Printer-GPO.png" width="900">
+</p>
+
+---
+
+## Step 10 — Configure Printer Deployment via Group Policy
+
+Configured Group Policy Preferences to automatically deploy the shared printer.
+
+Printer Path:
+
+```text
+\\SRV01\HR-Printer
+```
+
+This ensures users receive the printer automatically without manual installation.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/10-Deploy-Printer-Via-GPO.png" width="900">
+</p>
+
+---
+
+## Step 11 — Update Group Policy
+
+Forced Group Policy processing on CLIENT01.
+
+Command used:
+
+```powershell
+gpupdate /force
+```
+
+This ensured printer deployment settings were applied immediately.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/11-GPUpdate-Client01.png" width="900">
+</p>
+
+---
+
+## Step 12 — Verify GPO Application
+
+Validated that the Printer Deployment GPO was successfully applied to CLIENT01.
+
+This confirmed proper Group Policy processing and policy inheritance.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/12-GPO-Applied-Client01.png" width="900">
+</p>
+
+---
+
+## Step 13 — Verify Automatic Printer Installation
+
+Confirmed that the printer automatically appeared on CLIENT01.
+
+Printer:
+
+```text
+\\SRV01\HR-Printer
+```
+
+This validated successful deployment through Group Policy.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/13-Printer-Installed-On-Client01.png" width="900">
+</p>
+
+---
+
+## Step 14 — Final Print Server Validation
+
+Performed a final validation using Print Management.
+
+The printer remained:
+
+- Ready
+- Shared
+- Available for Deployment
+
+This confirmed successful implementation of centralized print services.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/12-Print-Server-Management/Evidence/Screenshots/14-Print-Server-Final-Configuration.png" width="900">
+</p>
+
+---
+
+# Printer Deployment Architecture
+
+```text
+SRV01
+│
+├── HR-Printer
+│
+└── Group Policy
+      │
+      ▼
+Workstations OU
+      │
+      ▼
+CLIENT01
+      │
+      ▼
+Printer Automatically Installed
+```
+
+---
+
+# Validation Results
+
+| Validation Check | Status |
+|------------------|--------|
+| Print Services Installed | ✅ |
+| Printer Created | ✅ |
+| Printer Shared | ✅ |
+| Printer Permissions Reviewed | ✅ |
+| Printer GPO Created | ✅ |
+| GPO Applied Successfully | ✅ |
+| Printer Deployed Automatically | ✅ |
+| Client Printer Verification | ✅ |
+| Print Server Validation Completed | ✅ |
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Windows Server Administration
+- Print Server Administration
+- Printer Deployment
+- Group Policy Management
+- Active Directory Integration
+- Group Policy Preferences
+- Endpoint Configuration Management
+- Enterprise Print Services
+- Centralized Resource Management
 
 ---
 
 # Key Takeaways
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+This module demonstrated the deployment of a centralized Print Server using Windows Server and Active Directory.
+
+By combining Print Services with Group Policy Preferences, printers can be automatically delivered to users without requiring manual installation. This approach simplifies printer administration, improves consistency, and reflects how enterprise environments manage shared printing resources.
 
 ---
 
-# Interview Questions
+<div align="center">
 
-### What is virtualization?
+### Module Status
 
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+✅ Completed Successfully
 
----
+**Next Module:** PowerShell Automation
 
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+</div>
