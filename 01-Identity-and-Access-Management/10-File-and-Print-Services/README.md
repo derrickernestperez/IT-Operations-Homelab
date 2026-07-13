@@ -1,7 +1,6 @@
 <div align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=File%20Services&fontSize=42&fontAlignY=35&desc=Module%2010%20%7C%20Enterprise%20File%20Sharing&descSize=20&descAlignY=55" alt="File Services Banner" width="100%">
-</div>type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=File%20and%20Print%20Services&fontSize=42&fontAlignY=35&desc=Module%2010%20%7C%20Enterprise%20File%20Sharing&descSize=20&descAlignY=55" alt="File Services Banner" width="100%">
-</div>
+
 
 ---
 
