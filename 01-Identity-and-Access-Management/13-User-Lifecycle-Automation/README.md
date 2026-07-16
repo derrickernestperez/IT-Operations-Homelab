@@ -1,211 +1,357 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=User%20Lifecycle%20Automation&fontSize=42&fontAlignY=35&desc=Module%2013%20%7C%20PowerShell%20Onboarding%20Automation&descSize=20&descAlignY=55" alt="User Lifecycle Automation Banner" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module documents the development of a PowerShell-based User Lifecycle Automation solution within a Windows Server 2025 Active Directory environment.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+The objective was to simulate a real-world enterprise onboarding workflow by importing employee records from a CSV file, validating user information, generating usernames, assigning Organizational Units (OUs), mapping Security Groups, generating reports, and preparing employee accounts for provisioning.
+
+This implementation reflects how enterprise IT teams automate repetitive onboarding tasks to improve consistency, reduce administrative overhead, and accelerate employee provisioning.
 
 ---
 
-# Why Virtualization?
+# Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+The Human Resources department submits employee onboarding requests through standardized forms and spreadsheets.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+The Infrastructure Team is responsible for:
 
-Benefits include:
+- Validating employee information
+- Generating usernames
+- Assigning Organizational Units
+- Assigning Security Groups
+- Preventing duplicate accounts
+- Producing onboarding reports
 
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
-
----
-
-# Host vs Guest Operating System
-
-### Host Operating System
-
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
+To reduce manual administration and human error, PowerShell automation is used to process onboarding requests consistently and efficiently.
 
 ---
 
-### Guest Operating System
+# Learning Objectives
 
-A guest operating system is installed inside a virtual machine.
+By completing this module, the following competencies were demonstrated:
 
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- CSV Data Processing
+- PowerShell Automation
+- Active Directory User Validation
+- Username Generation
+- Department-Based Access Control
+- Organizational Unit Assignment
+- Security Group Mapping
+- Report Generation
+- Enterprise User Provisioning Workflows
+- Administrative Automation
 
 ---
 
-# Virtual Machine Configuration
+# Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Client Device | CLIENT01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Client OS | Windows 11 Enterprise |
+| Domain | homelab.local |
+| Automation Tool | PowerShell 5.1 |
+| User Source | Employees.csv |
+| Report Output | SuccessReport.csv / ErrorReport.csv |
 
 ---
 
-# Step-by-Step Deployment
+# Organizational Structure
 
-## Step 1 - Create a New Virtual Machine
+## Departments
 
-Created a new virtual machine using VMware Workstation Pro.
+```text
+HR
+IT
+Finance
+Sales
+Management
+```
 
-**Screenshot**
+## Security Groups
 
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
-
----
-
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+```text
+SG-HR-Users
+SG-IT-Users
+SG-Finance-Users
+SG-Sales-Users
+SG-Management-Users
+```
 
 ---
 
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 5 - Configure Storage
+## Step 1 — Active Directory Environment
 
-Created a new virtual NVMe disk with:
+Verified Active Directory environment and organizational structure before automation development.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
-
-Thin provisioning conserves host storage by allocating disk space only as data is written.
-
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/01-AD-Module.png" width="900">
+</p>
 
 ---
 
-# Verification
+## Step 2 — Review Organizational Units
 
-Verified that:
+Validated department-specific Organizational Units used for automated placement.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/02-OU-Structure.png" width="900">
+</p>
+
+---
+
+## Step 3 — Review Security Groups
+
+Validated department-specific security groups used for access management.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/03-Security-Groups.png" width="900">
+</p>
+
+---
+
+## Step 4 — Prepare Project Structure
+
+Created the automation project directory structure containing scripts, reports, and onboarding datasets.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/04-Project-Folder.png" width="900">
+</p>
+
+---
+
+## Step 5 — Create Employee Dataset
+
+Created Employees.csv containing employee onboarding information.
+
+Fields included:
+
+```text
+FirstName
+LastName
+Department
+JobTitle
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/05-Employees-CSV.png" width="900">
+</p>
+
+---
+
+## Step 6 — Validate CSV Import
+
+Imported employee records using PowerShell to verify data integrity.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/06-CSV-Validation.png" width="900">
+</p>
+
+---
+
+## Step 7 — Generate Usernames
+
+Automatically generated usernames based on employee first and last names.
+
+Example:
+
+```text
+Kevin Reyes
+↓
+kevin.reyes
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/07-Username-Generation.png" width="900">
+</p>
+
+---
+
+## Step 8 — Department Mapping
+
+Mapped departments to Organizational Units and Security Groups.
+
+Example:
+
+```text
+IT
+↓
+OU=Users,OU=IT,OU=Company
+↓
+SG-IT-Users
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/08-Department-Mapping.png" width="900">
+</p>
+
+---
+
+## Step 9 — Existing User Validation
+
+Validated Active Directory accounts to prevent duplicate user creation.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/09-Existing-User-Check.png" width="900">
+</p>
+
+---
+
+## Step 10 — Generate Success Report
+
+Successfully processed records were exported to SuccessReport.csv.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/10-Success-Report-Generated.png" width="900">
+</p>
+
+---
+
+## Step 11 — Generate Error Report
+
+Invalid or duplicate records were exported to ErrorReport.csv.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/11-Error-Report-Generated.png" width="900">
+</p>
+
+---
+
+## Step 12 — Generate Temporary Passwords
+
+Temporary onboarding passwords were generated for employee provisioning.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/12-Password-Generation.png" width="900">
+</p>
+
+---
+
+## Step 13 — Create Active Directory Accounts
+
+Automated creation of Active Directory user accounts.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/13-AD-Account-Creation.png" width="900">
+</p>
+
+---
+
+## Step 14 — Assign Security Groups
+
+Automatically assigned users to department-specific security groups.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/14-Security-Group-Assignment.png" width="900">
+</p>
+
+---
+
+## Step 15 — Verify Organizational Unit Placement
+
+Validated successful placement of users into department-specific Organizational Units.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/13-User-Lifecycle-Automation/Evidence/Screenshots/15-Users-Created-In-OU.png" width="900">
+</p>
+
+---
+
+# Automation Workflow
+
+```text
+Employees.csv
+        │
+        ▼
+Import CSV
+        │
+        ▼
+Generate Username
+        │
+        ▼
+Validate Department
+        │
+        ▼
+Assign OU
+        │
+        ▼
+Assign Security Group
+        │
+        ▼
+Check Existing User
+        │
+        ▼
+Generate Reports
+        │
+        ▼
+Generate Temporary Password
+        │
+        ▼
+Provision Active Directory User
+```
+
+---
+
+# Validation Results
+
+| Validation Check | Status |
+|------------------|--------|
+| CSV Imported Successfully | ✅ |
+| Username Generation Completed | ✅ |
+| Department Mapping Completed | ✅ |
+| Security Group Mapping Completed | ✅ |
+| Existing User Validation Completed | ✅ |
+| Success Report Generated | ✅ |
+| Error Report Generated | ✅ |
+| Temporary Password Generated | ✅ |
+| Active Directory User Created | ✅ |
+| OU Placement Verified | ✅ |
+| Security Group Membership Verified | ✅ |
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- PowerShell Automation
+- Active Directory Administration
+- CSV Data Processing
+- User Lifecycle Management
+- Organizational Unit Administration
+- Security Group Administration
+- Administrative Reporting
+- Identity Management
+- Enterprise Onboarding Workflows
+- IT Operations Automation
 
 ---
 
 # Key Takeaways
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+This module demonstrated how PowerShell can automate repetitive onboarding tasks commonly performed by Enterprise System Administrators.
+
+By combining CSV processing, Active Directory validation, Security Group assignment, Organizational Unit mapping, and reporting capabilities, employee onboarding can be standardized, accelerated, and managed consistently across the organization.
+
+The project reflects real-world user provisioning workflows used in enterprise IT environments and serves as a foundation for future automation projects such as Offboarding Automation, Compliance Reporting, and Active Directory Auditing.
 
 ---
 
-# Interview Questions
+<div align="center">
 
-### What is virtualization?
+### Module Status
 
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+✅ Completed Successfully
 
----
+**Next Module:** Real SysAdmin PowerShell Tasks
 
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+</div>
