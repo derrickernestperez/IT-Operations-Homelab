@@ -1,211 +1,292 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Offboarding%20Automation&fontSize=42&fontAlignY=35&desc=Module%2014%20%7C%20Active%20Directory%20Deprovisioning&descSize=20&descAlignY=55" alt="Offboarding Automation Banner" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module documents the development of an Active Directory Offboarding Automation solution using PowerShell.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+The objective was to automate employee deprovisioning by importing terminated employee records from a CSV file, validating Active Directory accounts, disabling user access, removing security group memberships, relocating accounts to a Disabled Users Organizational Unit, and generating audit reports.
+
+This implementation reflects how enterprise IT teams securely remove user access while maintaining proper documentation and audit trails.
 
 ---
 
-# Why Virtualization?
+# Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+When an employee leaves the organization, IT must immediately revoke access to company resources.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+Traditionally, administrators manually:
 
-Benefits include:
+- Disable accounts
+- Remove security groups
+- Move users to archive locations
+- Generate reports
 
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+Manual offboarding introduces delays and security risks.
 
----
-
-# Host vs Guest Operating System
-
-### Host Operating System
-
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
+To reduce human error and improve operational efficiency, PowerShell automation is used to standardize the offboarding process.
 
 ---
 
-### Guest Operating System
+# Learning Objectives
 
-A guest operating system is installed inside a virtual machine.
+By completing this module, the following competencies were demonstrated:
 
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- Active Directory User Management
+- User Deprovisioning
+- PowerShell Automation
+- Security Group Administration
+- Organizational Unit Administration
+- Administrative Reporting
+- CSV Processing
+- Identity and Access Management
+- Enterprise Offboarding Workflows
+- Audit Trail Generation
 
 ---
 
-# Virtual Machine Configuration
+# Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Client Device | CLIENT01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Client OS | Windows 11 Enterprise |
+| Domain | homelab.local |
+| Automation Tool | PowerShell 5.1 |
+| User Source | TerminatedEmployees.csv |
+| Report Output | OffboardingReport.csv |
 
 ---
 
-# Step-by-Step Deployment
+# Organizational Structure
 
-## Step 1 - Create a New Virtual Machine
+## Disabled Users OU
 
-Created a new virtual machine using VMware Workstation Pro.
+```text
+OU=Disabled Users
+OU=Company
+DC=homelab
+DC=local
+```
 
-**Screenshot**
-
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
+This Organizational Unit is used to archive deactivated user accounts after offboarding.
 
 ---
 
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 4 - Configure Virtual Hardware
+## Step 1 — Prepare Offboarding Project Structure
 
-Configured:
+Created the project structure containing scripts, employee datasets, reports, and evidence.
 
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/01-Offboarding-Project-Folder.png" width="900">
+</p>
 
 ---
 
-## Step 5 - Configure Storage
+## Step 2 — Create Terminated Employee Dataset
 
-Created a new virtual NVMe disk with:
+Created a CSV file containing employee records scheduled for offboarding.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
+Fields included:
 
-Thin provisioning conserves host storage by allocating disk space only as data is written.
+```text
+FirstName
+LastName
+Username
+```
 
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/02-TerminatedEmployees-CSV.png" width="900">
+</p>
 
 ---
 
-# Verification
+## Step 3 — Import Employee Records
 
-Verified that:
+Imported employee records into PowerShell using Import-Csv.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+This validates that employee data can be processed correctly before administrative actions occur.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/03-TerminatedEmployees-Import.png" width="900">
+</p>
+
+---
+
+## Step 4 — Validate Active Directory Accounts
+
+Validated that specified users existed in Active Directory before processing.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/04-Offboarding-User-Validation.png" width="900">
+</p>
+
+---
+
+## Step 5 — Create Disabled Users Organizational Unit
+
+Created a dedicated Organizational Unit used for storing disabled accounts.
+
+This ensures proper segregation and management of inactive users.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/05-Disabled-Users-OU.png" width="900">
+</p>
+
+---
+
+## Step 6 — Disable Active Directory Accounts
+
+Automatically disabled user accounts identified within the offboarding dataset.
+
+This immediately revoked user authentication access.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/06-Disable-Accounts.png" width="900">
+</p>
+
+---
+
+## Step 7 — Verify Account Disablement
+
+Validated that employee accounts were successfully disabled.
+
+Expected result:
+
+```text
+Enabled : False
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/07-Accounts-Disabled-Verification.png" width="900">
+</p>
+
+---
+
+## Step 8 — Remove Security Group Memberships
+
+Removed user memberships from department-specific security groups.
+
+This prevents continued access to protected resources.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/08-Security-Groups-Removed.png" width="900">
+</p>
+
+---
+
+## Step 9 — Move Accounts to Disabled Users OU
+
+Relocated disabled accounts into the Disabled Users Organizational Unit.
+
+This provides administrative separation and simplifies account management.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/09-Users-Moved-To-Disabled-OU.png" width="900">
+</p>
+
+---
+
+## Step 10 — Generate Offboarding Report
+
+Generated OffboardingReport.csv documenting completed actions.
+
+Report fields:
+
+```text
+Username
+Status
+GroupsRemoved
+MovedToOU
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/14-Offboarding-Automation/Evidence/Screenshots/10-Offboarding-Report.png" width="900">
+</p>
+
+---
+
+# Offboarding Workflow
+
+```text
+TerminatedEmployees.csv
+            │
+            ▼
+Import CSV
+            │
+            ▼
+Validate User
+            │
+            ▼
+Disable Account
+            │
+            ▼
+Remove Security Groups
+            │
+            ▼
+Move To Disabled Users OU
+            │
+            ▼
+Generate Report
+```
+
+---
+
+# Validation Results
+
+| Validation Check | Status |
+|------------------|--------|
+| CSV Imported Successfully | ✅ |
+| User Validation Completed | ✅ |
+| Disabled Users OU Created | ✅ |
+| Accounts Disabled | ✅ |
+| Account Disablement Verified | ✅ |
+| Security Groups Removed | ✅ |
+| Users Moved To Disabled OU | ✅ |
+| Offboarding Report Generated | ✅ |
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Active Directory Administration
+- User Deprovisioning
+- PowerShell Automation
+- Identity and Access Management
+- Security Group Administration
+- Organizational Unit Management
+- CSV Processing
+- Administrative Reporting
+- Enterprise Offboarding
+- IT Operations Automation
 
 ---
 
 # Key Takeaways
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+This module demonstrated how PowerShell can automate enterprise offboarding processes within Active Directory.
+
+By combining account disablement, security group removal, Organizational Unit relocation, and reporting capabilities, organizations can reduce administrative overhead while improving security and compliance.
+
+The implementation reflects real-world deprovisioning workflows used by enterprise IT Operations and System Administration teams.
 
 ---
 
-# Interview Questions
+<div align="center">
 
-### What is virtualization?
+### Module Status
 
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+✅ Completed Successfully
 
----
+**Next Module:** Active Directory Auditing
 
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+</div>
