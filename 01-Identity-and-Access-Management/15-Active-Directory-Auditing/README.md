@@ -1,211 +1,265 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Active%20Directory%20Auditing&fontSize=42&fontAlignY=35&desc=Module%2015%20%7C%20Identity%20Monitoring%20and%20Reporting&descSize=20&descAlignY=55" alt="Active Directory Auditing Banner" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module documents the development of an Active Directory Auditing solution using PowerShell.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+The objective was to automate the collection of Active Directory information and generate audit reports for administrative review.
 
----
+The solution gathers information regarding:
 
-# Why Virtualization?
+- Disabled Users
+- Security Groups
+- Organizational Units
+- Active Directory Structure
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
-
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
-
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+and exports the data into CSV reports for operational visibility and auditing purposes.
 
 ---
 
-# Host vs Guest Operating System
+# Business Scenario
 
-### Host Operating System
+System Administrators regularly perform audits to answer questions such as:
 
-The host operating system is the physical computer running VMware Workstation Pro.
+- Which user accounts are disabled?
+- Which security groups exist?
+- What Organizational Units are configured?
+- What Active Directory objects currently exist?
 
-In this homelab:
+Manually collecting this information is time-consuming and prone to human error.
 
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
-
----
-
-### Guest Operating System
-
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+To improve efficiency and visibility, PowerShell automation was used to generate repeatable audit reports.
 
 ---
 
-# Virtual Machine Configuration
+# Learning Objectives
+
+By completing this module, the following competencies were demonstrated:
+
+- Active Directory Auditing
+- PowerShell Automation
+- Administrative Reporting
+- CSV Export Operations
+- Organizational Unit Enumeration
+- Security Group Enumeration
+- Identity Administration
+- IT Operations Reporting
+- Windows Server Administration
+- Active Directory Analysis
+
+---
+
+# Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Domain | homelab.local |
+| Automation Tool | PowerShell 5.1 |
+| Directory Service | Active Directory Domain Services |
+| Report Format | CSV |
+| Report Storage | Reports Folder |
 
 ---
 
-# Step-by-Step Deployment
+# Folder Structure
 
-## Step 1 - Create a New Virtual Machine
-
-Created a new virtual machine using VMware Workstation Pro.
-
-**Screenshot**
-
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
-
----
-
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+```text
+15-Active-Directory-Auditing
+│
+├── README.md
+│
+├── Scripts
+│   └── ADAudit.ps1
+│
+├── Reports
+│   ├── DisabledUsers.csv
+│   ├── SecurityGroups.csv
+│   └── OUSummary.csv
+│
+└── Evidence
+    └── Screenshots
+        ├── 01-Audit-Project-Folder.png
+        ├── 02-Audit-Script-Execution.png
+        ├── 03-Audit-Reports-Generated.png
+        ├── 04-Disabled-Users-Report.png
+        ├── 05-Security-Groups-Report.png
+        ├── 06-OU-Summary-Report.png
+        └── 07-Final-Audit-Reports.png
+```
 
 ---
 
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 5 - Configure Storage
+## Step 1 — Create Project Structure
 
-Created a new virtual NVMe disk with:
+Created the auditing project structure used to store scripts, reports, and evidence.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
-
-Thin provisioning conserves host storage by allocating disk space only as data is written.
-
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/15-Active-Directory-Auditing/Evidence/Screenshots/01-Audit-Project-Folder.png" width="900">
+</p>
 
 ---
 
-# Verification
+## Step 2 — Develop Audit Script
 
-Verified that:
+Created ADAudit.ps1 to automate Active Directory auditing tasks.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+The script collects information from Active Directory and exports the results into CSV reports.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/15-Active-Directory-Auditing/Evidence/Screenshots/02-Audit-Script-Execution.png" width="900">
+</p>
+
+---
+
+## Step 3 — Generate Audit Reports
+
+Executed the audit script and generated multiple reports.
+
+Generated files:
+
+```text
+DisabledUsers.csv
+SecurityGroups.csv
+OUSummary.csv
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/15-Active-Directory-Auditing/Evidence/Screenshots/03-Audit-Reports-Generated.png" width="900">
+</p>
+
+---
+
+## Step 4 — Review Disabled Users Report
+
+Reviewed disabled accounts discovered during the audit process.
+
+This report provides visibility into inactive user accounts.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/15-Active-Directory-Auditing/Evidence/Screenshots/04-Disabled-Users-Report.png" width="900">
+</p>
+
+---
+
+## Step 5 — Review Security Groups Report
+
+Reviewed Active Directory security groups.
+
+This report assists with access control reviews and identity audits.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/15-Active-Directory-Auditing/Evidence/Screenshots/05-Security-Groups-Report.png" width="900">
+</p>
+
+---
+
+## Step 6 — Review Organizational Unit Report
+
+Reviewed the Organizational Unit hierarchy.
+
+This report provides visibility into the Active Directory structure.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/15-Active-Directory-Auditing/Evidence/Screenshots/06-OU-Summary-Report.png" width="900">
+</p>
+
+---
+
+## Step 7 — Final Report Validation
+
+Validated successful report generation and confirmed the presence of all exported files.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/15-Active-Directory-Auditing/Evidence/Screenshots/07-Final-Audit-Reports.png" width="900">
+</p>
+
+---
+
+# Audit Workflow
+
+```text
+Active Directory
+        │
+        ▼
+PowerShell Audit Script
+        │
+        ▼
+Collect AD Information
+        │
+        ▼
+Generate CSV Reports
+        │
+        ▼
+Administrative Review
+```
+
+---
+
+# Generated Reports
+
+| Report | Purpose |
+|----------|----------|
+| DisabledUsers.csv | Identify disabled accounts |
+| SecurityGroups.csv | Review group structure |
+| OUSummary.csv | Review OU hierarchy |
+
+---
+
+# Validation Results
+
+| Validation Check | Status |
+|------------------|--------|
+| Audit Script Created | ✅ |
+| Audit Script Executed | ✅ |
+| Disabled User Report Generated | ✅ |
+| Security Group Report Generated | ✅ |
+| OU Summary Report Generated | ✅ |
+| Reports Validated | ✅ |
+| Administrative Review Completed | ✅ |
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Active Directory Administration
+- Active Directory Auditing
+- PowerShell Automation
+- Identity Management
+- CSV Reporting
+- Organizational Unit Administration
+- Security Group Management
+- Windows Server Administration
+- IT Operations Reporting
+- Enterprise Auditing
 
 ---
 
 # Key Takeaways
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+This module demonstrated how PowerShell can be used to automate Active Directory auditing and reporting tasks.
+
+By generating structured reports, administrators can improve visibility, simplify compliance reviews, and reduce manual administrative effort.
+
+The implementation reflects real-world auditing activities commonly performed by System Administrators, IT Operations teams, and Identity & Access Management professionals.
 
 ---
 
-# Interview Questions
+<div align="center">
 
-### What is virtualization?
+### Module Status
 
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+✅ Completed Successfully
 
----
+**Next Module:** Security Monitoring & Honey Account Detection
 
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+</div>
