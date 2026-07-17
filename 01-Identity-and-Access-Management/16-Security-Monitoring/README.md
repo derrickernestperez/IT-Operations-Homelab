@@ -1,211 +1,308 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Security%20Monitoring&fontSize=42&fontAlignY=35&desc=Module%2016%20%7C%20Honey%20Account%20Detection&descSize=20&descAlignY=55" alt="Security Monitoring Banner" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module documents the implementation of a Security Monitoring solution using a Honey Account within Active Directory.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+The objective was to simulate how Security Operations teams detect suspicious activity by monitoring a dormant account that should never be used by legitimate users.
+
+The solution uses PowerShell to monitor activity and generate alerts whenever the honey account is referenced.
 
 ---
 
-# Why Virtualization?
+# Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+Security Operations Centers (SOCs) often deploy Honey Accounts to detect unauthorized access attempts.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+These accounts:
 
-Benefits include:
+- Are never assigned to users
+- Have no legitimate business purpose
+- Generate alerts when accessed
 
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+Any activity involving the honey account may indicate:
 
----
+- Credential harvesting
+- Unauthorized enumeration
+- Insider threats
+- Lateral movement attempts
+- Privilege escalation reconnaissance
 
-# Host vs Guest Operating System
-
-### Host Operating System
-
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
+This implementation simulates an enterprise detection mechanism used by Blue Teams and SOC Analysts.
 
 ---
 
-### Guest Operating System
+# Learning Objectives
 
-A guest operating system is installed inside a virtual machine.
+By completing this module, the following competencies were demonstrated:
 
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- Security Monitoring
+- PowerShell Scripting
+- Active Directory Security
+- Threat Detection Concepts
+- Honey Account Deployment
+- Alert Logging
+- Security Operations
+- Blue Team Methodologies
+- Windows Security Monitoring
+- Identity Protection
 
 ---
 
-# Virtual Machine Configuration
+# Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Domain | homelab.local |
+| Monitoring Tool | PowerShell |
+| Detection Method | Honey Account |
+| Honey Account | sql_backup_admin |
+| Alert Output | Log File |
+| Log Location | HoneyAccountAlerts.log |
 
 ---
 
-# Step-by-Step Deployment
+# Folder Structure
 
-## Step 1 - Create a New Virtual Machine
-
-Created a new virtual machine using VMware Workstation Pro.
-
-**Screenshot**
-
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
-
----
-
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+```text
+16-Security-Monitoring
+│
+├── README.md
+│
+├── Scripts
+│   └── Watch-HoneyAccount.ps1
+│
+├── Logs
+│   └── HoneyAccountAlerts.log
+│
+├── Reports
+│
+└── Evidence
+    └── Screenshots
+        ├── 01-Security-Monitoring-Project-Folder.png
+        ├── 02-Honey-Account-Created.png
+        ├── 03-Verify-Honey-Account.png
+        ├── 04-Monitoring-Script-Created.png
+        ├── 05-Monitoring-Script-Running.png
+        ├── 06-Security-Event-Detected.png
+        ├── 07-HoneyAccount-Alert-Generated.png
+        ├── 08-HoneyAccount-Log-File.png
+        └── 09-Security-Monitoring-Complete.png
+```
 
 ---
 
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 5 - Configure Storage
+## Step 1 — Create Project Structure
 
-Created a new virtual NVMe disk with:
+Created the project structure used to store monitoring scripts, logs, reports, and evidence.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
-
-Thin provisioning conserves host storage by allocating disk space only as data is written.
-
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/16-Security-Monitoring/Evidence/Screenshots/01-Security-Monitoring-Project-Folder.png" width="900">
+</p>
 
 ---
 
-# Verification
+## Step 2 — Create Honey Account
 
-Verified that:
+Created a dormant Active Directory account:
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+```text
+sql_backup_admin
+```
+
+This account serves as a security monitoring trigger.
+
+No legitimate user should ever access this account.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/16-Security-Monitoring/Evidence/Screenshots/02-Honey-Account-Created.png" width="900">
+</p>
+
+---
+
+## Step 3 — Verify Honey Account
+
+Verified successful account creation within Active Directory.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/16-Security-Monitoring/Evidence/Screenshots/03-Verify-Honey-Account.png" width="900">
+</p>
+
+---
+
+## Step 4 — Create Monitoring Script
+
+Developed a PowerShell monitoring solution.
+
+Script:
+
+```text
+Watch-HoneyAccount.ps1
+```
+
+The script continuously monitors for references to the honey account and records detection events.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/16-Security-Monitoring/Evidence/Screenshots/04-Monitoring-Script-Created.png" width="900">
+</p>
+
+---
+
+## Step 5 — Execute Monitoring Script
+
+Executed the monitoring solution.
+
+The script entered continuous monitoring mode and waited for account activity.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/16-Security-Monitoring/Evidence/Screenshots/05-Monitoring-Script-Running.png" width="900">
+</p>
+
+---
+
+## Step 6 — Simulate Detection Event
+
+Generated activity involving the honey account.
+
+The monitoring process detected the event and triggered an alert.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/16-Security-Monitoring/Evidence/Screenshots/06-Security-Event-Detected.png" width="900">
+</p>
+
+---
+
+## Step 7 — Generate Security Alert
+
+The monitoring solution created a log entry documenting the detection.
+
+Alert information included:
+
+- Timestamp
+- Alert Type
+- Honey Account Name
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/16-Security-Monitoring/Evidence/Screenshots/07-HoneyAccount-Alert-Generated.png" width="900">
+</p>
+
+---
+
+## Step 8 — Validate Log File
+
+Reviewed the generated security log.
+
+File:
+
+```text
+HoneyAccountAlerts.log
+```
+
+This log serves as the security event record.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/16-Security-Monitoring/Evidence/Screenshots/08-HoneyAccount-Log-File.png" width="900">
+</p>
+
+---
+
+## Step 9 — Final Monitoring Validation
+
+Validated successful deployment of the monitoring solution.
+
+Confirmed:
+
+- Honey Account Exists
+- Monitoring Script Executes
+- Detection Event Logged
+- Alert File Generated
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/16-Security-Monitoring/Evidence/Screenshots/09-Security-Monitoring-Complete.png" width="900">
+</p>
+
+---
+
+# Detection Workflow
+
+```text
+Honey Account
+(sql_backup_admin)
+        │
+        ▼
+Monitoring Script
+        │
+        ▼
+Account Activity Detected
+        │
+        ▼
+Alert Generated
+        │
+        ▼
+Log File Created
+        │
+        ▼
+SOC Review
+```
+
+---
+
+# Validation Results
+
+| Validation Check | Status |
+|------------------|--------|
+| Honey Account Created | ✅ |
+| Honey Account Verified | ✅ |
+| Monitoring Script Created | ✅ |
+| Monitoring Script Executed | ✅ |
+| Detection Event Generated | ✅ |
+| Alert Logged | ✅ |
+| Log File Validated | ✅ |
+| Security Monitoring Operational | ✅ |
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Security Monitoring
+- Blue Team Operations
+- Threat Detection
+- PowerShell Automation
+- Active Directory Security
+- Security Event Logging
+- Identity Monitoring
+- Security Operations Concepts
+- Enterprise Security Practices
+- Windows Server Administration
 
 ---
 
 # Key Takeaways
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+This module demonstrated how security monitoring concepts can be implemented using a Honey Account and PowerShell automation.
+
+By deploying a dormant account and monitoring activity against it, organizations can improve visibility into suspicious behavior and detect unauthorized access attempts earlier in the attack lifecycle.
+
+This approach reflects real-world detection techniques used by Security Operations Centers and Blue Team defenders.
 
 ---
 
-# Interview Questions
+<div align="center">
 
-### What is virtualization?
+### Module Status
 
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+✅ Completed Successfully
 
----
+**Next Module:** Helpdesk Automation
 
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+</div>
