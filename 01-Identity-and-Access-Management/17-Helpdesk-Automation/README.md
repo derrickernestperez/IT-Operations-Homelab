@@ -1,211 +1,262 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Helpdesk%20Automation&fontSize=42&fontAlignY=35&desc=Module%2017%20%7C%20PowerShell%20Support%20Toolkit&descSize=20&descAlignY=55" alt="Helpdesk Automation Banner" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module documents the development of a PowerShell-based Helpdesk Automation Toolkit.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+The objective was to automate common Help Desk tasks such as:
 
----
+- User Lookup
+- Group Membership Verification
+- User Reporting
 
-# Why Virtualization?
-
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
-
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
-
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+This implementation demonstrates how PowerShell can improve operational efficiency by reducing repetitive administrative tasks performed by support teams.
 
 ---
 
-# Host vs Guest Operating System
+# Business Scenario
 
-### Host Operating System
+The organization's Help Desk receives frequent requests involving:
 
-The host operating system is the physical computer running VMware Workstation Pro.
+- Verifying user information
+- Checking group memberships
+- Generating user reports
 
-In this homelab:
+Performing these tasks manually through Active Directory Users and Computers increases response times and administrative overhead.
 
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
-
----
-
-### Guest Operating System
-
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+To improve efficiency, the IT Operations team developed a PowerShell toolkit that allows technicians to perform these actions through a simple menu-driven interface.
 
 ---
 
-# Virtual Machine Configuration
+# Learning Objectives
+
+By completing this module, the following competencies were demonstrated:
+
+- PowerShell Automation
+- Active Directory Administration
+- Help Desk Operations
+- User Account Management
+- Group Membership Auditing
+- CSV Reporting
+- Administrative Scripting
+- IT Operations Support
+
+---
+
+# Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Domain | homelab.local |
+| Tool | Windows PowerShell |
+| Directory Service | Active Directory |
+| Script | HelpdeskToolkit.ps1 |
+| Report Output | UserReport.csv |
 
 ---
 
-# Step-by-Step Deployment
+# Folder Structure
 
-## Step 1 - Create a New Virtual Machine
-
-Created a new virtual machine using VMware Workstation Pro.
-
-**Screenshot**
-
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
-
----
-
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+```text
+17-Helpdesk-Automation
+│
+├── README.md
+│
+├── Scripts
+│   └── HelpdeskToolkit.ps1
+│
+├── Reports
+│   └── UserReport.csv
+│
+└── Evidence
+    └── Screenshots
+        ├── 01-Project-Folder.png
+        ├── 02-Create-Helpdesk-Script.png
+        ├── 03-Menu-Displayed.png
+        ├── 04-Find-User-Function.png
+        ├── 05-Display-Group-Membership.png
+        ├── 06-Generate-User-Report.png
+        ├── 07-UserReport-CSV.png
+        └── 08-Helpdesk-Toolkit-Complete.png
+```
 
 ---
 
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 5 - Configure Storage
+## Step 1 — Create Project Structure
 
-Created a new virtual NVMe disk with:
+Created folders for scripts, reports, and evidence.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
-
-Thin provisioning conserves host storage by allocating disk space only as data is written.
-
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/17-Helpdesk-Automation/Evidence/Screenshots/01-Project-Folder.png" width="900">
+</p>
 
 ---
 
-# Verification
+## Step 2 — Create Helpdesk Toolkit Script
 
-Verified that:
+Developed a menu-driven PowerShell toolkit.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+Functions included:
+
+- Find User
+- View Group Membership
+- Generate User Report
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/17-Helpdesk-Automation/Evidence/Screenshots/02-Create-Helpdesk-Script.png" width="900">
+</p>
+
+---
+
+## Step 3 — Display Menu Interface
+
+Executed the toolkit and displayed the available Help Desk functions.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/17-Helpdesk-Automation/Evidence/Screenshots/03-Menu-Displayed.png" width="900">
+</p>
+
+---
+
+## Step 4 — Test User Lookup
+
+Validated the user search functionality.
+
+The toolkit successfully retrieved Active Directory user information.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/17-Helpdesk-Automation/Evidence/Screenshots/04-Find-User-Function.png" width="900">
+</p>
+
+---
+
+## Step 5 — Verify Group Membership
+
+Validated Active Directory group membership retrieval.
+
+The toolkit successfully displayed assigned security groups.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/17-Helpdesk-Automation/Evidence/Screenshots/05-Display-Group-Membership.png" width="900">
+</p>
+
+---
+
+## Step 6 — Generate User Report
+
+Generated a CSV report containing Active Directory user information.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/17-Helpdesk-Automation/Evidence/Screenshots/06-Generate-User-Report.png" width="900">
+</p>
+
+---
+
+## Step 7 — Verify Report Output
+
+Validated successful report creation.
+
+Report:
+
+```text
+UserReport.csv
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/17-Helpdesk-Automation/Evidence/Screenshots/07-UserReport-CSV.png" width="900">
+</p>
+
+---
+
+## Step 8 — Final Validation
+
+Validated complete Helpdesk Automation deployment.
+
+Confirmed:
+
+- Script Execution
+- User Lookup
+- Group Membership Verification
+- CSV Reporting
+
+<p align="center">
+<img src="/01-Identity-andAccess-Management/17-Helpdesk-Automation/Evidence/Screenshots/08-Helpdesk-Toolkit-Complete.png" width="900">
+</p>
+
+---
+
+# Helpdesk Workflow
+
+```text
+Technician
+     │
+     ▼
+Helpdesk Toolkit
+     │
+     ├── Find User
+     ├── Group Membership
+     └── Generate Report
+             │
+             ▼
+      Active Directory
+```
+
+---
+
+# Validation Results
+
+| Validation Check | Status |
+|------------------|--------|
+| Script Created | ✅ |
+| Menu Displayed | ✅ |
+| User Lookup Tested | ✅ |
+| Group Membership Tested | ✅ |
+| CSV Report Generated | ✅ |
+| Report Validated | ✅ |
+| Toolkit Operational | ✅ |
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- PowerShell Scripting
+- Active Directory Administration
+- User Management
+- Group Membership Auditing
+- CSV Reporting
+- IT Operations
+- Help Desk Support
+- Administrative Automation
+- Windows Server Administration
 
 ---
 
 # Key Takeaways
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+This module demonstrated how PowerShell can automate repetitive Help Desk tasks and improve operational efficiency.
+
+By providing a simple menu-driven interface, technicians can quickly retrieve user information, verify group memberships, and generate reports without manually navigating Active Directory tools.
+
+This approach reflects real-world IT Operations practices where automation reduces response times and improves service quality.
 
 ---
 
-# Interview Questions
+<div align="center">
 
-### What is virtualization?
+### Module Status
 
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+✅ Completed Successfully
 
----
+**Next Module:** Windows Admin Center
 
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+</div>
