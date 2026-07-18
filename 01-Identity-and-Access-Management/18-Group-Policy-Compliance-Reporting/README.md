@@ -1,211 +1,281 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Group%20Policy%20Compliance%20Reporting&fontSize=42&fontAlignY=35&desc=Module%2018%20%7C%20GPO%20Validation%20and%20Compliance%20Auditing&descSize=20&descAlignY=55" alt="Group Policy Compliance Reporting Banner" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module documents the implementation of Group Policy Compliance Reporting within the Windows Server environment.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+The objective was to validate Group Policy deployment, generate compliance reports, and document applied policies across domain-joined systems.
+
+This implementation simulates how enterprise IT teams verify policy compliance, audit workstation configurations, and maintain security baselines.
 
 ---
 
-# Why Virtualization?
+# Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+Management requires confirmation that security and configuration policies are being applied correctly across organizational workstations.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+The Infrastructure Team must generate Group Policy reports, validate applied settings, and maintain documentation for compliance and auditing purposes.
 
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+This process ensures that administrative and security policies remain enforced throughout the environment.
 
 ---
 
-# Host vs Guest Operating System
+# Learning Objectives
 
-### Host Operating System
+By completing this module, the following competencies were demonstrated:
 
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
-
----
-
-### Guest Operating System
-
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- Group Policy Validation
+- GPO Auditing
+- Compliance Reporting
+- GPResult Analysis
+- HTML Report Generation
+- CSV Reporting
+- PowerShell Automation
+- Enterprise Documentation
 
 ---
 
-# Virtual Machine Configuration
+# Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Client Device | CLIENT01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Client OS | Windows 11 Enterprise |
+| Domain | homelab.local |
+| Reporting Tool | GPResult |
+| Script | GPOCompliance.ps1 |
+| Output Formats | HTML, CSV |
 
 ---
 
-# Step-by-Step Deployment
+# Folder Structure
 
-## Step 1 - Create a New Virtual Machine
-
-Created a new virtual machine using VMware Workstation Pro.
-
-**Screenshot**
-
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
-
----
-
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+```text
+18-Group-Policy-Compliance-Reporting
+│
+├── README.md
+│
+├── Scripts
+│   └── GPOCompliance.ps1
+│
+├── Reports
+│   ├── GPResult.html
+│   └── ComplianceReport.csv
+│
+└── Evidence
+    └── Screenshots
+        ├── 01-Project-Folder.png
+        ├── 02-Create-Compliance-Script.png
+        ├── 03-Run-GPResult.png
+        ├── 04-Generate-HTML-Report.png
+        ├── 05-Open-GPResult-Report.png
+        ├── 06-Create-Compliance-CSV.png
+        ├── 07-Compliance-Report-Generated.png
+        └── 08-Module-Complete.png
+```
 
 ---
 
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 5 - Configure Storage
+## Step 1 — Create Project Structure
 
-Created a new virtual NVMe disk with:
+Created folders for scripts, reports, and evidence.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
-
-Thin provisioning conserves host storage by allocating disk space only as data is written.
-
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/18-Group-Policy-Compliance-Reporting/Evidence/Screenshots/01-Project-Folder.png" width="900">
+</p>
 
 ---
 
-# Verification
+## Step 2 — Create Compliance Script
 
-Verified that:
+Developed a PowerShell script to automate compliance report generation.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+The script records:
+
+- Computer Name
+- Report Date
+- Compliance Status
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/18-Group-Policy-Compliance-Reporting/Evidence/Screenshots/02-Create-Compliance-Script.png" width="900">
+</p>
+
+---
+
+## Step 3 — Generate GPResult Report
+
+Executed GPResult to generate a comprehensive Group Policy report.
+
+Command used:
+
+```powershell
+gpresult /h GPResult.html
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/18-Group-Policy-Compliance-Reporting/Evidence/Screenshots/03-Run-GPResult.png" width="900">
+</p>
+
+---
+
+## Step 4 — Verify Report Creation
+
+Confirmed successful creation of the HTML report.
+
+Generated file:
+
+```text
+GPResult.html
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/18-Group-Policy-Compliance-Reporting/Evidence/Screenshots/04-Generate-HTML-Report.png" width="900">
+</p>
+
+---
+
+## Step 5 — Review Applied Policies
+
+Opened the GPResult report and reviewed:
+
+- Applied GPOs
+- Security Settings
+- User Configuration
+- Computer Configuration
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/18-Group-Policy-Compliance-Reporting/Evidence/Screenshots/05-Open-GPResult-Report.png" width="900">
+</p>
+
+---
+
+## Step 6 — Generate Compliance Report
+
+Executed the compliance reporting script.
+
+Output file:
+
+```text
+ComplianceReport.csv
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/18-Group-Policy-Compliance-Reporting/Evidence/Screenshots/06-Create-Compliance-CSV.png" width="900">
+</p>
+
+---
+
+## Step 7 — Validate CSV Report
+
+Reviewed exported compliance data.
+
+Verified:
+
+- Computer Name
+- Report Date
+- Compliance Status
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/18-Group-Policy-Compliance-Reporting/Evidence/Screenshots/07-Compliance-Report-Generated.png" width="900">
+</p>
+
+---
+
+## Step 8 — Final Validation
+
+Validated complete Group Policy Compliance Reporting deployment.
+
+Confirmed:
+
+- GPResult Report Generation
+- Compliance CSV Export
+- PowerShell Automation
+- Policy Verification
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/18-Group-Policy-Compliance-Reporting/Evidence/Screenshots/08-Module-Complete.png" width="900">
+</p>
+
+---
+
+# Compliance Reporting Workflow
+
+```text
+CLIENT01
+    │
+    ▼
+GPResult
+    │
+    ▼
+HTML Report
+    │
+    ▼
+Compliance Script
+    │
+    ▼
+ComplianceReport.csv
+    │
+    ▼
+Administrative Review
+```
+
+---
+
+# Validation Results
+
+| Validation Check | Status |
+|------------------|--------|
+| Project Structure Created | ✅ |
+| Compliance Script Created | ✅ |
+| GPResult Generated | ✅ |
+| HTML Report Verified | ✅ |
+| Compliance Report Exported | ✅ |
+| CSV Report Validated | ✅ |
+| Policy Review Completed | ✅ |
+| Compliance Reporting Operational | ✅ |
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Group Policy Management
+- GPO Auditing
+- Compliance Reporting
+- GPResult Analysis
+- PowerShell Automation
+- Enterprise Documentation
+- Security Validation
+- Windows Administration
+- IT Operations
 
 ---
 
 # Key Takeaways
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+This module demonstrated how enterprise administrators validate Group Policy deployment and generate compliance reports using built-in Windows tools and PowerShell automation.
+
+By combining GPResult with automated reporting, administrators can verify policy application, document compliance status, and maintain visibility into workstation configurations across the environment.
+
+This reflects real-world enterprise practices used for security validation, auditing, and compliance monitoring.
 
 ---
 
-# Interview Questions
+<div align="center">
 
-### What is virtualization?
+### Module Status
 
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+✅ Completed Successfully
 
----
+**Next Module:** File Server Auditing
 
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+</div>
