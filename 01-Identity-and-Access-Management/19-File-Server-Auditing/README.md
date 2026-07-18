@@ -1,211 +1,267 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=File%20Server%20Auditing&fontSize=42&fontAlignY=35&desc=Module%2019%20%7C%20NTFS%20and%20Share%20Permission%20Auditing&descSize=20&descAlignY=55" alt="File Server Auditing Banner" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module documents the implementation of File Server Auditing within the Windows Server environment.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+The objective was to audit departmental file shares, review NTFS permissions, export access reports, and validate file access controls across the organization.
+
+This implementation simulates how enterprise administrators perform permission reviews, compliance checks, and security audits of shared resources.
 
 ---
 
-# Why Virtualization?
+# Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+Management requires visibility into file share access and permissions to ensure that users only have access to resources appropriate for their department.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+The Infrastructure Team must review departmental shares, validate NTFS permissions, and generate audit reports that can be used for compliance and security reviews.
 
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+This process helps reduce unauthorized access and supports enterprise governance requirements.
 
 ---
 
-# Host vs Guest Operating System
+# Learning Objectives
 
-### Host Operating System
+By completing this module, the following competencies were demonstrated:
 
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
-
----
-
-### Guest Operating System
-
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- NTFS Permission Auditing
+- File Share Security Reviews
+- PowerShell Automation
+- Access Control Validation
+- CSV Reporting
+- Security Compliance
+- File Services Administration
+- Windows Server Management
 
 ---
 
-# Virtual Machine Configuration
+# Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Domain | homelab.local |
+| File Server | SRV01 |
+| Audit Tool | PowerShell |
+| Report Format | CSV |
+| Shares Audited | HR, Finance, IT, Sales |
 
 ---
 
-# Step-by-Step Deployment
+# Folder Structure
 
-## Step 1 - Create a New Virtual Machine
-
-Created a new virtual machine using VMware Workstation Pro.
-
-**Screenshot**
-
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
-
----
-
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+```text
+19-File-Server-Auditing
+│
+├── README.md
+│
+├── Scripts
+│   └── FileAudit.ps1
+│
+├── Reports
+│   └── SharePermissions.csv
+│
+└── Evidence
+    └── Screenshots
+        ├── 01-Project-Folder.png
+        ├── 02-Create-Audit-Script.png
+        ├── 03-Run-Audit-Script.png
+        ├── 04-HR-Share-Permissions.png
+        ├── 05-Finance-Share-Permissions.png
+        ├── 06-Export-CSV-Report.png
+        ├── 07-SharePermissions-CSV.png
+        └── 08-Module-Complete.png
+```
 
 ---
 
-## Step 4 - Configure Virtual Hardware
-
-Configured:
-
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 5 - Configure Storage
+## Step 1 — Create Project Structure
 
-Created a new virtual NVMe disk with:
+Created folders for scripts, reports, and evidence.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
-
-Thin provisioning conserves host storage by allocating disk space only as data is written.
-
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/19-File-Server-Auditing/Evidence/Screenshots/01-Project-Folder.png" width="900">
+</p>
 
 ---
 
-# Verification
+## Step 2 — Create File Audit Script
 
-Verified that:
+Developed a PowerShell script to audit departmental file shares and export permission information.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+The script captures:
+
+- Folder Name
+- Security Principal
+- Permission Level
+- Access Type
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/19-File-Server-Auditing/Evidence/Screenshots/02-Create-Audit-Script.png" width="900">
+</p>
+
+---
+
+## Step 3 — Execute Audit Script
+
+Executed the PowerShell audit script to collect file share permissions.
+
+The script successfully processed all departmental shares and generated a report.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/19-File-Server-Auditing/Evidence/Screenshots/03-Run-Audit-Script.png" width="900">
+</p>
+
+---
+
+## Step 4 — Review HR Share Permissions
+
+Validated NTFS permissions assigned to the HR department share.
+
+Confirmed access controls matched organizational requirements.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/19-File-Server-Auditing/Evidence/Screenshots/04-HR-Share-Permission.png" width="900">
+</p>
+
+---
+
+## Step 5 — Review Finance Share Permissions
+
+Validated NTFS permissions assigned to the Finance department share.
+
+Confirmed appropriate security groups maintained access.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/19-File-Server-Auditing/Evidence/Screenshots/05-Finance-Share-Permissions.png" width="900">
+</p>
+
+---
+
+## Step 6 — Export Permission Report
+
+Verified successful creation of the audit report.
+
+Generated file:
+
+```text
+SharePermissions.csv
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/19-File-Server-Auditing/Evidence/Screenshots/06-Export-CSV-Report.png" width="900">
+</p>
+
+---
+
+## Step 7 — Validate CSV Report
+
+Reviewed exported permission data.
+
+Verified:
+
+- Folder Path
+- Identity Reference
+- Permission Level
+- Access Type
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/19-File-Server-Auditing/Evidence/Screenshots/07-SharePermissions-CSV.png" width="900">
+</p>
+
+---
+
+## Step 8 — Final Validation
+
+Validated complete File Server Auditing deployment.
+
+Confirmed:
+
+- Audit Script Execution
+- Permission Collection
+- CSV Export
+- Security Review Completion
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/19-File-Server-Auditing/Evidence/Screenshots/08-Module-Complete.png" width="900">
+</p>
+
+---
+
+# Auditing Workflow
+
+```text
+Department Shares
+        │
+        ▼
+PowerShell Audit Script
+        │
+        ▼
+NTFS Permission Collection
+        │
+        ▼
+SharePermissions.csv
+        │
+        ▼
+Administrative Review
+```
+
+---
+
+# Validation Results
+
+| Validation Check | Status |
+|------------------|--------|
+| Project Structure Created | ✅ |
+| Audit Script Created | ✅ |
+| Audit Script Executed | ✅ |
+| HR Share Reviewed | ✅ |
+| Finance Share Reviewed | ✅ |
+| CSV Report Generated | ✅ |
+| Report Validated | ✅ |
+| File Server Audit Completed | ✅ |
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Windows File Services
+- NTFS Permissions
+- Share Permissions
+- Access Control Reviews
+- PowerShell Automation
+- Security Auditing
+- CSV Reporting
+- Windows Server Administration
+- IT Operations
 
 ---
 
 # Key Takeaways
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+This module demonstrated how administrators can audit file shares and validate access permissions using PowerShell automation.
+
+By exporting permission information into structured reports, administrators gain visibility into access control assignments and can perform compliance reviews more efficiently.
+
+This reflects real-world enterprise practices where file server audits are routinely performed to support security, compliance, and governance initiatives.
 
 ---
 
-# Interview Questions
+<div align="center">
 
-### What is virtualization?
+### Module Status
 
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+✅ Completed Successfully
 
----
+**Next Module:** Backup & Disaster Recovery
 
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+</div>
