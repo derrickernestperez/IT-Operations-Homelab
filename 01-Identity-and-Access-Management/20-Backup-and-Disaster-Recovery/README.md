@@ -1,211 +1,325 @@
-# Enterprise Virtualization with VMware Workstation Pro
-
-## Overview
-
-Enterprise virtualization allows multiple operating systems to run on a single physical computer by creating virtual machines (VMs). Each virtual machine behaves like an independent computer with its own CPU, memory, storage, network adapter, and operating system.
-
-For this homelab, VMware Workstation Pro is used as the hypervisor to build an enterprise environment consisting of Windows Server 2025, Windows 11, and future Linux virtual machines. This virtual infrastructure will become the foundation for Active Directory, DNS, DHCP, Microsoft 365, Microsoft Entra ID, security monitoring, and incident response.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Backup%20and%20Disaster%20Recovery&fontSize=42&fontAlignY=35&desc=Module%2020%20|%20Business%20Continuity%20and%20Data%20Protection&descSize=20&descAlignY=55" width="100%">
+</div>
 
 ---
 
-# Objectives
+# Overview
 
-After completing this module, I was able to:
+This module documents the implementation of a basic Backup and Disaster Recovery solution within the Windows Server homelab environment.
 
-- Understand the concept of virtualization
-- Differentiate between a Host and Guest operating system
-- Install VMware Workstation Pro
-- Create a Windows Server 2025 virtual machine
-- Configure enterprise virtual hardware
-- Prepare the virtual environment for Windows Server installation
+The objective was to understand how organizations protect critical business data through backups and how data can be restored after accidental deletion, corruption, or system failure.
+
+The lab simulates real-world backup operations used by enterprise IT teams to support business continuity and disaster recovery planning.
 
 ---
 
-# Why Virtualization?
+# Business Scenario
 
-Modern organizations rarely purchase a dedicated physical server for every service. Instead, they use virtualization to maximize hardware utilization, reduce costs, simplify backups, improve disaster recovery, and accelerate deployment.
+The organization stores critical departmental data including HR records, financial documents, and operational files.
 
-Using virtualization allows multiple servers to operate independently on a single physical machine while remaining isolated from one another.
+Management requires a backup solution that allows administrators to recover files if they are accidentally deleted, corrupted, or lost during an outage.
 
-Benefits include:
-
-- Better hardware utilization
-- Reduced infrastructure costs
-- Easier backups and snapshots
-- Rapid deployment of new servers
-- Safe environment for testing and learning
-- Isolation between operating systems
+The Infrastructure Team must create a backup process, validate backup integrity, and successfully restore lost data.
 
 ---
 
-# Host vs Guest Operating System
+# Learning Objectives
 
-### Host Operating System
+By completing this module, the following competencies were demonstrated:
 
-The host operating system is the physical computer running VMware Workstation Pro.
-
-In this homelab:
-
-- Physical Device: Laptop
-- RAM: 16 GB
-- Storage Available: ~200 GB
-- Hypervisor: VMware Workstation Pro
-
----
-
-### Guest Operating System
-
-A guest operating system is installed inside a virtual machine.
-
-For this module:
-
-- Windows Server 2025
-- Future Windows 11 Client
-- Future Ubuntu Linux Server
-
-Each guest has its own virtual hardware and operates independently from the host system.
+- Backup Fundamentals
+- Disaster Recovery Concepts
+- Business Continuity Planning
+- PowerShell Automation
+- File Restoration Procedures
+- Recovery Validation
+- Data Protection
+- Enterprise Backup Operations
 
 ---
 
-# Virtual Machine Configuration
+# Key Concepts Learned
+
+## Backup
+
+A backup is a copy of data stored separately from the production environment.
+
+Purpose:
+
+- Protect against accidental deletion
+- Protect against hardware failure
+- Protect against ransomware
+- Support disaster recovery
+
+---
+
+## Disaster Recovery
+
+Disaster Recovery (DR) is the process of restoring systems and business operations after an incident.
+
+Examples:
+
+- Server Failure
+- Ransomware Attack
+- Data Corruption
+- Natural Disaster
+
+---
+
+## Recovery Point Objective (RPO)
+
+RPO measures the maximum acceptable amount of data loss.
+
+Example:
+
+If backups run every night and a file is lost at 4 PM:
+
+```text
+Maximum Data Loss = 16 Hours
+```
+
+---
+
+# Lab Environment Specifications
 
 | Component | Configuration |
-|-----------|---------------|
-| Hypervisor | VMware Workstation Pro |
-| Guest OS | Windows Server 2025 |
-| Firmware | UEFI |
-| Secure Boot | Enabled |
-| CPU | 2 vCPUs |
-| Memory | 4 GB |
-| Storage | 80 GB NVMe (Thin Provisioned) |
-| Network | NAT |
-| Installation Media | Windows Server 2025 ISO |
+|------------|------------|
+| Server Name | SRV01 |
+| Operating System | Windows Server 2025 Standard Evaluation |
+| Domain | homelab.local |
+| Backup Location | C:\Backups |
+| Source Data | C:\Shares |
+| Automation Tool | PowerShell |
+| Recovery Method | File Restoration |
 
 ---
 
-# Step-by-Step Deployment
+# Folder Structure
 
-## Step 1 - Create a New Virtual Machine
-
-Created a new virtual machine using VMware Workstation Pro.
-
-**Screenshot**
-
-![](Evidence/Screenshots/01-New-VM-Wizard.png)
-
----
-
-## Step 2 - Select the Installation Media
-
-Attached the Windows Server 2025 ISO image to the virtual machine.
-
-**Screenshot**
-
-![](Evidence/Screenshots/02-Windows-Server-ISO.png)
+```text
+20-Backup-and-Disaster-Recovery
+│
+├── README.md
+│
+├── Scripts
+│   └── BackupShares.ps1
+│
+├── Reports
+│
+├── Evidence
+│   └── Screenshots
+│
+└── Backups
+```
 
 ---
 
-## Step 3 - Configure Firmware
-
-Configured the virtual machine to use UEFI firmware with Secure Boot enabled.
-
-UEFI provides modern boot capabilities and Secure Boot helps verify trusted boot components.
-
-**Screenshot**
-
-![](Evidence/Screenshots/03-UEFI-SecureBoot.png)
+# Step-by-Step Implementation
 
 ---
 
-## Step 4 - Configure Virtual Hardware
+## Step 1 — Create Project Structure
 
-Configured:
+Created the module folder structure for scripts, reports, and evidence.
 
-- 2 vCPUs
-- 4 GB RAM
-- NAT Networking
-- 80 GB NVMe Disk
-
-These settings provide sufficient resources while maintaining good performance on the host system.
-
-**Screenshot**
-
-![](Evidence/Screenshots/04-Virtual-Hardware.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/20-Backup-and-Disaster-Recovery/Evidence/Screenshots/01-Project-Folder.png" width="900">
+</p>
 
 ---
 
-## Step 5 - Configure Storage
+## Step 2 — Create Backup Location
 
-Created a new virtual NVMe disk with:
+Created a dedicated backup repository.
 
-- 80 GB Capacity
-- Thin Provisioning
-- Single File
+```text
+C:\Backups
+```
 
-Thin provisioning conserves host storage by allocating disk space only as data is written.
+This separates production data from backup data.
 
-**Screenshot**
-
-![](Evidence/Screenshots/05-Virtual-Disk.png)
+<p align="center">
+<img src="/01-Identity-and-Access-Management/20-Backup-and-Disaster-Recovery/Evidence/Screenshots/02-Create-Backup-Location.png" width="900">
+</p>
 
 ---
 
-# Verification
+## Step 3 — Create Backup Script
 
-Verified that:
+Developed a PowerShell script to automate backup operations.
 
-- Windows Server ISO was attached
-- Virtual hardware matched the design
-- UEFI firmware was enabled
-- Secure Boot was enabled
-- NAT networking was configured
-- VM was ready to boot
+Script:
+
+```powershell
+$Source = "C:\Shares"
+$Destination = "C:\Backups"
+
+Copy-Item `
+    -Path $Source `
+    -Destination $Destination `
+    -Recurse `
+    -Force
+
+Write-Host "Backup Completed Successfully"
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/20-Backup-and-Disaster-Recovery/Evidence/Screenshots/03-Create-Backup-Script.png" width="900">
+</p>
+
+---
+
+## Step 4 — Execute Backup Job
+
+Executed the backup script.
+
+Result:
+
+```text
+Backup Completed Successfully
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/20-Backup-and-Disaster-Recovery/Evidence/Screenshots/04-Run-Backup-Script.png" width="900">
+</p>
+
+---
+
+## Step 5 — Create Restore Test File
+
+Created a test file within the HR share.
+
+Purpose:
+
+To simulate real-world file recovery operations.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/20-Backup-and-Disaster-Recovery/Evidence/Screenshots/05-Restore-Test-File.png" width="900">
+</p>
+
+---
+
+## Step 6 — Update Backup
+
+Executed another backup cycle to ensure the test file was included in the backup repository.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/20-Backup-and-Disaster-Recovery/Evidence/Screenshots/06-Backup-Updated.png" width="900">
+</p>
+
+---
+
+## Step 7 — Simulate Data Loss
+
+Deleted the test file from the production HR share.
+
+This simulates accidental deletion by a user.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/20-Backup-and-Disaster-Recovery/Evidence/Screenshots/07-Simulate-Data-Loss.png" width="900">
+</p>
+
+---
+
+## Step 8 — Restore Lost Data
+
+Recovered the deleted file from the backup repository.
+
+Command:
+
+```powershell
+Copy-Item `
+"C:\Backups\Shares\HR\RestoreTest.txt" `
+"C:\Shares\HR"
+```
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/20-Backup-and-Disaster-Recovery/Evidence/Screenshots/08-Restore-File.png" width="900">
+</p>
+
+---
+
+## Step 9 — Validate Recovery
+
+Opened the restored file and confirmed the contents matched the original file.
+
+This validates successful recovery.
+
+<p align="center">
+<img src="/01-Identity-and-Access-Management/20-Backup-and-Disaster-Recovery/Evidence/Screenshots/09-Restore-Validation.png" width="900">
+</p>
+
+---
+
+# Backup and Recovery Workflow
+
+```text
+Department Shares
+       │
+       ▼
+Backup Script
+       │
+       ▼
+C:\Backups
+       │
+       ▼
+Data Loss Event
+       │
+       ▼
+Restore Process
+       │
+       ▼
+Business Recovery
+```
+
+---
+
+# Validation Results
+
+| Validation Check | Status |
+|------------------|--------|
+| Backup Location Created | ✅ |
+| Backup Script Created | ✅ |
+| Backup Executed | ✅ |
+| Test File Created | ✅ |
+| Backup Updated | ✅ |
+| Data Loss Simulated | ✅ |
+| File Restored | ✅ |
+| Recovery Validated | ✅ |
 
 ---
 
 # Skills Demonstrated
 
-- VMware Workstation Administration
-- Enterprise Virtualization
-- Resource Planning
-- Virtual Hardware Configuration
-- Network Planning
-- Storage Provisioning
+- Windows Server Administration
+- Business Continuity
+- Disaster Recovery
+- Backup Operations
+- PowerShell Automation
+- File Restoration
+- Data Protection
+- IT Operations
+- Enterprise Infrastructure
 
 ---
 
 # Key Takeaways
 
-Virtualization enables organizations to consolidate multiple servers onto a single physical host while maintaining isolation between workloads. Proper planning of CPU, memory, storage, and networking is essential for building scalable enterprise infrastructure.
+This module demonstrated how backups support business continuity and disaster recovery.
+
+By creating backups, simulating data loss, and successfully restoring files, the lab validated one of the most important responsibilities of enterprise IT teams: protecting organizational data.
+
+The exercise also reinforced the principle that a backup is only valuable if it can be successfully restored and verified.
 
 ---
 
-# Interview Questions
+<div align="center">
 
-### What is virtualization?
+### Module Status
 
-Virtualization is the process of creating virtual versions of computing resources such as servers, storage, and networks, allowing multiple operating systems to run on a single physical computer.
+✅ Completed Successfully
 
----
+**Next Module:** Windows Admin Center
 
-### What is the difference between a Host and Guest Operating System?
-
-The host operating system runs directly on the physical computer and manages the virtualization software. A guest operating system runs inside a virtual machine and uses virtualized hardware provided by the hypervisor.
-
----
-
-### Why did you use NAT networking?
-
-NAT provides internet access while isolating the virtual machine from the physical network. This allows updates and downloads without exposing the lab environment directly to other devices.
-
----
-
-### Why use Thin Provisioning?
-
-Thin provisioning saves physical disk space by allocating storage only as needed, making it ideal for home labs with limited storage capacity.
-
----
-
-# Next Module
-
-Windows Server 2025 Installation
+</div>
