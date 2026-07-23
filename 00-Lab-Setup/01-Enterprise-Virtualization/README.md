@@ -1,165 +1,678 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Enterprise%20Virtualization&fontSize=50&fontAlignY=35&desc=Module%201%20%7C%20Homelab%20Deployment&descSize=20&descAlignY=55" alt="Enterprise Virtualization Banner" width="100%">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Enterprise%20Virtualization&fontSize=50&fontAlignY=35&desc=Lab%20Setup%20%7C%20Virtual%20Machine%20Provisioning&descSize=20&descAlignY=55" alt="Enterprise Virtualization Banner" width="100%">
 </div>
 
 ---
 
-## Overview
-This module documents the deployment of the first virtual machine in my **Enterprise IT Operations Homelab**. 
+# Overview
 
-The goal is to create a Windows Server 2025 virtual machine designated as **SRV01**. This server acts as the primary infrastructure backbone for the lab and will subsequently host core services, including Active Directory, DNS, DHCP, Group Policy, Windows LAPS, Microsoft Entra ID integration, and security monitoring. 
+This module documents the creation of the first virtual machine in my IT Operations Homelab.
 
-To simulate strict enterprise standards and hardware planning, automated deployment tools (like VMware Easy Install) were bypassed in favor of manual, component-by-component configuration.
+The objective was to provision a Windows Server 2025 virtual machine named **SRV01** using VMware Workstation Pro.
 
-## Business Scenario
-A company has procured a new server to serve as the foundation of its internal IT infrastructure. Before the Windows Server OS can be installed, the Infrastructure Team must provision a virtual machine and configure its virtual hardware to align with company deployment standards.
+SRV01 will become the primary Windows Server in the lab. Later modules will use it for services such as:
 
-While production environments typically rely on hypervisors like **VMware ESXi, Microsoft Hyper-V, Nutanix AHV,** or **Proxmox VE**, this lab utilizes **VMware Workstation Pro** to emulate a scalable enterprise virtualization environment.
+- Active Directory Domain Services
+- DNS
+- DHCP
+- Group Policy
+- Windows LAPS
+- File and Print Services
+- Monitoring and administration
 
----
+These roles were not configured during this module. This module focused only on planning and creating the virtual machine.
 
-## Learning Objectives
-By the end of this module, the following competencies were achieved:
-* **Hypervisor Architecture:** Understand the core purpose of virtualization and the relationship between Host and Guest operating systems.
-* **VM Provisioning:** Deploy a virtual machine manually using VMware Workstation Pro.
-* **Resource Allocation:** Configure enterprise virtual hardware, strategically allocating CPU, memory, storage, and networking resources.
-* **Architectural Justification:** Articulate the technical reasoning behind each configuration choice.
-
----
-
-## Lab Environment Specifications
-
-| Component | Configuration Details |
-| :--- | :--- |
-| **Hypervisor** | VMware Workstation Pro |
-| **Host OS** | Windows 11 |
-| **Guest OS** | Windows Server 2025 |
-| **Hostname** | SRV01 |
-| **Firmware** | UEFI (Secure Boot Enabled) |
-| **Compute** | 1 Processor / 2 Cores (2 vCPUs total) |
-| **Memory** | 4 GB (4096 MB) |
-| **Storage** | 80 GB NVMe (Thin Provisioned) |
-| **Network** | NAT (Network Address Translation) |
+Instead of using VMware Easy Install, I selected the custom configuration option so I could review and choose each virtual hardware setting manually.
 
 ---
 
-## Step-by-Step Implementation
+# Why I Built This Module
 
-### Step 1: Create a New Virtual Machine
-Launched the **New Virtual Machine Wizard** to begin provisioning the first enterprise server.
+Before installing Windows Server, I wanted to understand how a virtual machine is planned and provisioned.
+
+It is easy to accept default settings without knowing what they control. By using the custom installation process, I was able to make decisions about:
+
+- Firmware
+- CPU allocation
+- Memory allocation
+- Virtual storage
+- Network mode
+- Operating system compatibility
+
+My goal was not to give the virtual machine the highest possible specifications. My goal was to create a server that could perform its planned roles while leaving enough host resources for additional client and server virtual machines.
+
+---
+
+# Business Scenario
+
+An organization is preparing a new Windows Server that will support internal infrastructure services.
+
+Before the operating system can be installed, the Infrastructure Team must create a virtual machine and determine its hardware configuration.
+
+The server requires:
+
+- Sufficient CPU and memory for its planned workload
+- Modern firmware and boot security
+- Adequate storage for the operating system and lab data
+- Internet access for updates
+- Network separation from the physical home network
+
+Production environments may use platforms such as VMware ESXi, Microsoft Hyper-V, Nutanix AHV, or Proxmox VE.
+
+This homelab uses VMware Workstation Pro because it allows me to practice virtual machine planning and administration using the hardware available on my personal computer.
+
+---
+
+# Learning Objectives
+
+By completing this module, I practiced the following:
+
+- Understanding the relationship between a host and guest operating system
+- Creating a virtual machine using VMware Workstation Pro
+- Selecting a custom virtual machine configuration
+- Choosing an operating system compatibility profile
+- Configuring UEFI and Secure Boot
+- Allocating virtual CPU and memory
+- Creating a thin-provisioned virtual disk
+- Selecting an appropriate network mode
+- Reviewing virtual hardware before deployment
+- Explaining the reason behind each configuration choice
+
+---
+
+# Key Concepts Learned
+
+## Host and Guest Operating Systems
+
+The **host operating system** is the operating system installed on the physical computer.
+
+In this lab:
+
+```text
+Host Operating System: Windows 11
+```
+
+The **guest operating system** is installed inside the virtual machine.
+
+In this lab:
+
+```text
+Guest Operating System: Windows Server 2025
+```
+
+VMware Workstation Pro provides the virtualization layer that allows the guest system to use virtual CPU, memory, storage, and networking resources from the host.
+
+---
+
+## Virtual Machine Resource Allocation
+
+Virtual machines share the physical resources of the host computer.
+
+Giving one virtual machine too many resources can reduce the number of systems that the host can run at the same time.
+
+The configuration therefore needs to balance:
+
+```text
+Virtual Machine Performance
+            +
+Available Host Resources
+            +
+Future Lab Expansion
+```
+
+---
+
+## Thin Provisioning
+
+Thin provisioning allows the virtual disk file to grow as data is written.
+
+An 80 GB virtual disk does not immediately consume the full 80 GB of physical storage.
+
+This helps conserve host storage, although the administrator must still monitor physical disk capacity as the virtual disk grows.
+
+---
+
+## NAT Networking
+
+NAT allows the virtual machine to access external networks through the host computer.
+
+For this lab, NAT provides internet connectivity while keeping the virtual environment logically separated from the physical home network.
+
+This is important because later modules will introduce services such as DHCP. I do not want lab DHCP traffic interfering with devices on my home network.
+
+---
+
+# Lab Environment Specifications
+
+| Component | Configuration |
+|------------|---------------|
+| Hypervisor | VMware Workstation Pro |
+| Host Operating System | Windows 11 |
+| Planned Guest Operating System | Windows Server 2025 |
+| Virtual Machine Name | SRV01 |
+| Firmware | UEFI |
+| Secure Boot | Enabled |
+| Processor Configuration | 1 processor, 2 cores |
+| Total Virtual CPUs | 2 vCPUs |
+| Memory | 4 GB / 4096 MB |
+| Virtual Disk | 80 GB NVMe |
+| Disk Allocation | Thin provisioned |
+| Network Mode | NAT |
+
+---
+
+# Folder Structure
+
+```text
+00-Lab-Setup
+│
+└── 01-Enterprise-Virtualization
+    │
+    ├── README.md
+    │
+    └── Evidence
+        └── Screenshots
+            ├── 01-New-Virtual-Machine-Wizard.png
+            ├── 02-Custom-Configuration.png
+            ├── 03-Hardware-Compatibility.png
+            ├── 04-Install-Operating-System-Later.png
+            ├── 05-Guest-Operating-System.png
+            ├── 06-VM-Name.png
+            ├── 07-UEFI-SecureBoot.png
+            ├── 08-CPU-Configuration.png
+            ├── 09-Memory-Configuration.png
+            ├── 10-NVMe-Disk.png
+            ├── 11-NAT-Network.png
+            └── 12-VM-Hardware-Summary.png
+```
+
+---
+
+# Step-by-Step Implementation
+
+---
+
+## Step 1 — Create a New Virtual Machine
+
+Opened VMware Workstation Pro and launched the **New Virtual Machine Wizard**.
+
+This wizard begins the process of defining the virtual hardware that will be assigned to SRV01.
 
 <p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/01-New-Virtual-Machine-Wizard.png" width="800" alt="New Virtual Machine">
-</p>
-
-### Step 2: Select Custom Configuration
-Selected **Custom (Advanced)**. This provides granular control over the virtual hardware, reflecting how VMs are strictly defined in production environments.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/02-Custom-Configuration.png" width="800" alt="Custom Configuration">
-</p>
-
-### Step 3: Hardware Compatibility
-Maintained the latest VMware hardware compatibility version to ensure seamless integration with modern virtual hardware and Windows Server 2025.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/03-Hardware-Compatibility.png" width="800" alt="Hardware Compatibility">
-</p>
-
-### Step 4: Operating System Installation
-Selected **"I will install the operating system later."** This disables VMware Easy Install, allowing for a manual OS installation and providing better visibility into the boot process.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/04-Install-Operating-System-Later.png" width="800" alt="Install Later">
-</p>
-
-### Step 5: Guest Operating System
-Configured the profile for **Microsoft Windows Server 2025** so VMware can apply the appropriate driver optimizations.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/05-Guest-Operating-System.png" width="800" alt="Guest Operating System">
-</p>
-
-### Step 6: Virtual Machine Naming
-Assigned the hostname **SRV01**. Consistent naming conventions are critical for asset management as environments scale.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/06-VM-Name.png" width="800" alt="VM Name">
-</p>
-
-### Step 7: Firmware & Security
-Transitioned firmware to **UEFI** and enabled **Secure Boot**, aligning with modern enterprise security standards to protect the boot sequence.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/07-UEFI-SecureBoot.png" width="800" alt="UEFI">
-</p>
-
-### Step 8: Processor Allocation
-Assigned **1 Processor** and **2 Cores**. This provides adequate processing power for core infrastructure services while preserving host resources.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/08-CPU-Configuration.png" width="800" alt="CPU Configuration">
-</p>
-
-### Step 9: Memory Allocation
-Allocated **4 GB (4096 MB)** of memory. This baseline is sufficient for foundational services (AD, DNS, DHCP) and ensures resources remain available for spinning up additional VMs later.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/09-Memory-Configuration.png" width="800" alt="Memory Configuration">
-</p>
-
-### Step 10: Storage Provisioning
-Created an **80 GB NVMe virtual disk** utilizing **Thin Provisioning**. This ensures the VM only consumes physical storage as data is written, maximizing host drive efficiency.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/10-NVMe-Disk.png" width="800" alt="Storage Configuration">
-</p>
-
-### Step 11: Network Configuration
-Selected **NAT**. This provides the VM with internet access for patching and updates while logically isolating the lab from the physical home network.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/11-NAT-Network.png" width="800" alt="Network Configuration">
-</p>
-
-### Step 12: Hardware Verification
-Conducted a final review of the virtual hardware ledger prior to powering on the VM to prevent deployment failures.
-
-<p align="center">
-  <img src="/00-Lab-Setup/01-Enterprise-Virtualization/Evidence/Screenshots/12-VM-Hardware-Summary.png" width="800" alt="Hardware Summary">
+  <img src="Evidence/Screenshots/01-New-Virtual-Machine-Wizard.png" width="800" alt="New Virtual Machine Wizard">
 </p>
 
 ---
 
-## Technical Architecture & Justifications
+## Step 2 — Select Custom Configuration
 
-* **Why use UEFI over BIOS?** UEFI is the modern firmware standard for enterprise systems. It enables Secure Boot, supports GPT partitions (allowing drives larger than 2TB), and offers vastly improved hardware compatibility.
-* **Why enable Secure Boot?** It cryptographically verifies trusted boot components during startup, neutralizing rootkits and unauthorized bootloaders.
-* **Why Thin Provisioning?** It optimizes physical storage by allocating disk space dynamically as data is written, rather than instantly reserving the entire 80 GB block (Thick Provisioning).
-* **Why NAT over Bridged Networking?** NAT acts as a security and routing boundary. It allows the server to fetch external updates while preventing lab traffic (like DHCP broadcasts) from bleeding out and disrupting the physical home network.
+Selected:
+
+```text
+Custom (Advanced)
+```
+
+I chose the custom option because I wanted to review each hardware setting instead of allowing VMware to configure the virtual machine using default values.
+
+This provided more control over:
+
+- Hardware compatibility
+- Firmware
+- CPU
+- Memory
+- Storage controller
+- Disk type
+- Network mode
+
+<p align="center">
+  <img src="Evidence/Screenshots/02-Custom-Configuration.png" width="800" alt="Custom Virtual Machine Configuration">
+</p>
 
 ---
 
-## Skills Demonstrated
-* VMware Workstation Pro Administration
-* Enterprise Virtualization Architecture
-* Secure Virtual Machine Provisioning
-* Strategic Resource & Capacity Planning
-* Network Isolation (NAT)
+## Step 3 — Select Hardware Compatibility
+
+Kept the current VMware hardware compatibility version.
+
+The hardware compatibility setting determines which virtual hardware features are available to the virtual machine.
+
+Using the current version allows the VM to use modern VMware virtual hardware supported by Windows Server 2025.
+
+<p align="center">
+  <img src="Evidence/Screenshots/03-Hardware-Compatibility.png" width="800" alt="VMware Hardware Compatibility">
+</p>
 
 ---
 
-## Mock Interview Q&A
+## Step 4 — Install the Operating System Later
 
-**Q: Why did you choose a "Custom" configuration instead of "Typical"?**
-> **A:** Custom configuration provides granular control over the virtual hardware stack (firmware, disk controllers, network types). This closely mirrors how systems administrators deploy production VMs via vCenter or Hyper-V, rather than relying on automated defaults.
+Selected:
 
-**Q: What is the benefit of allocating only 4 GB of RAM to a Windows Server?**
-> **A:** In a lab setting, foundational roles like Active Directory and DNS have highly predictable, low-memory footprints. Over-provisioning memory leads to resource starvation on the host. 4 GB ensures the server runs smoothly while leaving overhead for additional nodes in the lab environment.
+```text
+I will install the operating system later
+```
+
+This prevented VMware Easy Install from automatically performing the operating system installation.
+
+I wanted the Windows Server installation to be completed manually in the next module so that I could review:
+
+- Boot behavior
+- Edition selection
+- Disk selection
+- Installation options
+- Initial administrator setup
+
+<p align="center">
+  <img src="Evidence/Screenshots/04-Install-Operating-System-Later.png" width="800" alt="Install Operating System Later">
+</p>
+
+---
+
+## Step 5 — Select the Guest Operating System
+
+Configured the virtual machine profile for:
+
+```text
+Microsoft Windows Server 2025
+```
+
+The guest operating system profile helps VMware select compatible virtual hardware defaults and optimization settings.
+
+<p align="center">
+  <img src="Evidence/Screenshots/05-Guest-Operating-System.png" width="800" alt="Windows Server 2025 Guest Operating System">
+</p>
+
+---
+
+## Step 6 — Name the Virtual Machine
+
+Assigned the virtual machine name:
+
+```text
+SRV01
+```
+
+I used a short and consistent naming format:
+
+```text
+SRV = Server
+01  = First server
+```
+
+A clear naming convention makes systems easier to identify as the lab grows.
+
+Future systems may follow the same pattern:
+
+```text
+SRV02
+CLIENT01
+CLIENT02
+```
+
+<p align="center">
+  <img src="Evidence/Screenshots/06-VM-Name.png" width="800" alt="SRV01 Virtual Machine Name">
+</p>
+
+---
+
+## Step 7 — Configure UEFI and Secure Boot
+
+Selected **UEFI** firmware and enabled **Secure Boot**.
+
+UEFI is the modern replacement for legacy BIOS and supports features such as:
+
+- Secure Boot
+- GPT partitioning
+- Modern operating system compatibility
+- Improved firmware management
+
+Secure Boot helps prevent unauthorized or untrusted boot components from loading during startup.
+
+<p align="center">
+  <img src="Evidence/Screenshots/07-UEFI-SecureBoot.png" width="800" alt="UEFI and Secure Boot Configuration">
+</p>
+
+---
+
+## Step 8 — Allocate Processor Resources
+
+Configured:
+
+```text
+Processors: 1
+Cores per processor: 2
+Total vCPUs: 2
+```
+
+Two virtual CPUs provide enough processing capacity for the initial Windows Server roles planned for this homelab.
+
+I avoided allocating more CPU than necessary because the physical host must also support additional virtual machines later.
+
+<p align="center">
+  <img src="Evidence/Screenshots/08-CPU-Configuration.png" width="800" alt="Virtual CPU Configuration">
+</p>
+
+---
+
+## Step 9 — Allocate Memory
+
+Allocated:
+
+```text
+4096 MB
+```
+
+or:
+
+```text
+4 GB RAM
+```
+
+Four gigabytes is a practical starting point for this homelab server.
+
+It allows Windows Server to run while preserving host memory for future systems such as:
+
+- Windows 11 client
+- Additional Windows Server
+- Monitoring server
+- Security testing systems
+
+Before this module, I assumed that giving a virtual machine more memory would always make it better.
+
+I learned that over-allocation can limit the number of virtual machines the host can run and may not provide a meaningful performance improvement.
+
+<p align="center">
+  <img src="Evidence/Screenshots/09-Memory-Configuration.png" width="800" alt="Virtual Memory Configuration">
+</p>
+
+---
+
+## Step 10 — Create the Virtual Disk
+
+Created an:
+
+```text
+80 GB NVMe virtual disk
+```
+
+The disk was configured using thin provisioning.
+
+This means the virtual disk file will grow as data is written instead of immediately reserving the complete 80 GB on the host drive.
+
+The disk must still be monitored because thin provisioning does not remove the possibility of the host running out of storage.
+
+<p align="center">
+  <img src="Evidence/Screenshots/10-NVMe-Disk.png" width="800" alt="NVMe Virtual Disk Configuration">
+</p>
+
+---
+
+## Step 11 — Configure NAT Networking
+
+Selected:
+
+```text
+NAT
+```
+
+NAT allows SRV01 to reach external networks through the host computer.
+
+I selected NAT because the server requires internet access for tasks such as:
+
+- Windows updates
+- Software downloads
+- Microsoft documentation
+- Package installation
+
+At the same time, NAT helps separate the lab from the physical home network.
+
+This will become especially important when DHCP is configured later.
+
+<p align="center">
+  <img src="Evidence/Screenshots/11-NAT-Network.png" width="800" alt="NAT Network Configuration">
+</p>
+
+---
+
+## Step 12 — Review the Hardware Summary
+
+Reviewed the final virtual hardware configuration before completing the wizard.
+
+The review confirmed:
+
+- Correct virtual machine name
+- Windows Server 2025 profile
+- UEFI firmware
+- Secure Boot
+- 2 vCPUs
+- 4 GB memory
+- 80 GB virtual disk
+- NAT networking
+
+This final check reduces the chance of continuing into the operating system installation with an incorrect configuration.
+
+<p align="center">
+  <img src="Evidence/Screenshots/12-VM-Hardware-Summary.png" width="800" alt="Virtual Machine Hardware Summary">
+</p>
+
+---
+
+# Virtualization Architecture
+
+```text
+Physical Computer
+│
+├── Windows 11 Host Operating System
+│
+├── VMware Workstation Pro
+│   │
+│   └── SRV01 Virtual Machine
+│       ├── 2 vCPUs
+│       ├── 4 GB RAM
+│       ├── 80 GB Virtual Disk
+│       ├── UEFI and Secure Boot
+│       └── NAT Network Adapter
+│
+└── Physical CPU, Memory, Storage, and Network
+```
+
+---
+
+# Technical Decisions
+
+## Why Use Custom Instead of Typical?
+
+The Custom option allowed me to review and control the virtual hardware configuration.
+
+The Typical option would have been faster, but it would provide less visibility into decisions such as firmware, controller type, and resource allocation.
+
+---
+
+## Why Use UEFI Instead of Legacy BIOS?
+
+UEFI supports modern operating systems, Secure Boot, and GPT partitioning.
+
+It is the more appropriate choice for a new Windows Server 2025 deployment.
+
+---
+
+## Why Enable Secure Boot?
+
+Secure Boot verifies that trusted components are used during the startup process.
+
+It reduces the risk of unauthorized bootloaders or certain forms of boot-level malware being loaded.
+
+---
+
+## Why Allocate Only 4 GB of RAM?
+
+This is a homelab running on limited physical hardware.
+
+The goal is to provide enough memory for SRV01 while leaving capacity for additional machines.
+
+In a production environment, memory would be sized based on:
+
+- Server roles
+- Number of users
+- Application requirements
+- Monitoring data
+- Performance testing
+- Growth expectations
+
+---
+
+## Why Use Thin Provisioning?
+
+Thin provisioning conserves physical storage by allowing the virtual disk to grow as required.
+
+The trade-off is that the administrator must monitor the physical host disk to make sure enough storage remains available.
+
+---
+
+## Why Use NAT Instead of Bridged Networking?
+
+NAT provides internet connectivity while reducing direct exposure to the physical home network.
+
+It also helps prevent future lab services, particularly DHCP, from interfering with physical network devices.
+
+---
+
+# Validation Results
+
+| Validation Check | Result |
+|------------------|--------|
+| New Virtual Machine Wizard opened | ✅ |
+| Custom configuration selected | ✅ |
+| Hardware compatibility selected | ✅ |
+| Automated operating system installation disabled | ✅ |
+| Windows Server 2025 profile selected | ✅ |
+| Virtual machine named SRV01 | ✅ |
+| UEFI configured | ✅ |
+| Secure Boot enabled | ✅ |
+| 2 vCPUs allocated | ✅ |
+| 4 GB RAM allocated | ✅ |
+| 80 GB virtual disk created | ✅ |
+| Thin provisioning selected | ✅ |
+| NAT networking configured | ✅ |
+| Final virtual hardware reviewed | ✅ |
+
+---
+
+# Skills Demonstrated
+
+- VMware Workstation Pro
+- Virtual Machine Provisioning
+- Virtual CPU and Memory Allocation
+- Virtual Storage Planning
+- Thin Provisioning
+- UEFI Configuration
+- Secure Boot
+- NAT Networking
+- Capacity Planning
+- Technical Documentation
+- Infrastructure Planning
+
+---
+
+# Interview Notes
+
+## Why did you choose Custom instead of Typical configuration?
+
+I selected Custom because I wanted control over the virtual hardware configuration.
+
+It allowed me to review firmware, processors, memory, storage, and networking instead of relying entirely on VMware defaults.
+
+---
+
+## Why did you allocate only 4 GB of RAM?
+
+The server is part of a homelab with limited host resources.
+
+Four gigabytes provides enough memory for the initial server configuration while preserving capacity for additional client and server virtual machines.
+
+In a production environment, I would size memory according to the server workload and performance data.
+
+---
+
+## What is the difference between a host and a guest operating system?
+
+The host operating system runs directly on the physical computer.
+
+The guest operating system runs inside a virtual machine and uses virtual hardware provided by the hypervisor.
+
+---
+
+## What is thin provisioning?
+
+Thin provisioning creates a virtual disk with a maximum capacity but only consumes physical host storage as data is written.
+
+It improves storage efficiency, but available physical storage must still be monitored.
+
+---
+
+## Why did you select NAT networking?
+
+NAT gives the server internet access through the host while keeping the lab logically separated from the physical home network.
+
+This reduces the risk of lab traffic interfering with home devices.
+
+---
+
+# What I Learned
+
+The most important lesson from this module was that virtual machine provisioning is not only about selecting the largest available specifications.
+
+Each resource decision affects the rest of the environment.
+
+I initially assumed that assigning more CPU and memory would always improve a virtual machine. I learned that unnecessary allocation can reduce the number of systems the host can run and may not provide a noticeable benefit.
+
+I also learned why network mode matters.
+
+Using NAT gives the server internet access while helping protect the physical home network from services that will be introduced later, such as DHCP.
+
+Choosing the custom configuration took more time than using the default wizard, but it helped me understand what VMware was creating.
+
+---
+
+# Future Improvements
+
+To make this virtualization environment closer to a larger production environment, I would add:
+
+- A second Windows Server
+- Multiple Windows client virtual machines
+- A dedicated virtual network
+- Separate server and client network segments
+- Virtual machine snapshots before major changes
+- Centralized backup of VM configuration files
+- Hyper-V or VMware ESXi experience
+- Infrastructure documentation and network diagrams
+- Resource monitoring over time
+
+---
+
+# Key Takeaways
+
+This module established the virtualization foundation for the rest of the IT Operations Homelab.
+
+The virtual machine was created with:
+
+- A clear naming convention
+- Modern UEFI firmware
+- Secure Boot
+- Balanced CPU and memory allocation
+- Thin-provisioned storage
+- NAT network connectivity
+
+The main lesson was that good virtual machine design requires balancing performance, security, storage, networking, and available host resources.
 
 ---
 
 <div align="center">
-  <b><a href="#">Next Module: Installing Windows Server 2025</a></b><br>
-  <i>Covering OS installation, edition selection, and initial server configuration.</i>
+
+### Module Status
+
+✅ Completed Successfully
+
+**Next Module:** [Windows Server Installation](../02-Windows-Server-Installation/)
+
 </div>
