@@ -1,83 +1,109 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=DNS%20Infrastructure&fontSize=50&fontAlignY=35&desc=Core%20Infrastructure%20%7C%20Name%20Resolution%2C%20Zones%2C%20and%20DNS%20Validation&descSize=18&descAlignY=55" alt="DNS Infrastructure Banner" width="100%">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=DHCP%20Infrastructure&fontSize=50&fontAlignY=35&desc=Core%20Infrastructure%20%7C%20Automated%20IP%20Address%20Assignment%20and%20Client%20Configuration&descSize=17&descAlignY=55" alt="DHCP Infrastructure Banner" width="100%">
 </div>
 
 ---
 
 # Overview
 
-This module documents the configuration and validation of Domain Name System services in the `homelab.local` environment.
+This module documents the deployment and configuration of the **Dynamic Host Configuration Protocol** service in the `homelab.local` environment.
 
-DNS was installed automatically when SRV01 was promoted to a domain controller, but the purpose of this module was to understand how the DNS infrastructure is organized and how name resolution is validated.
+The objective was to configure SRV01 to automatically provide network settings to domain clients.
 
 The implementation included:
 
-- Opening DNS Manager
-- Reviewing the forward lookup zone
-- Reviewing the `homelab.local` zone
-- Verifying the domain controller A record
-- Creating a test A record
-- Creating a reverse lookup zone
-- Verifying PTR records
-- Testing forward name resolution
-- Testing reverse name resolution
-- Testing hostname connectivity
-- Reviewing the completed DNS configuration
+- Installing the DHCP Server role
+- Completing post-installation configuration
+- Opening the DHCP management console
+- Creating an IPv4 scope
+- Defining the client address range
+- Configuring excluded addresses
+- Setting the lease duration
+- Configuring scope options
+- Assigning the default gateway
+- Assigning the internal DNS server
+- Activating the DHCP scope
+- Renewing CLIENT01's address
+- Verifying the client configuration
+- Confirming the active DHCP lease
 
-This module demonstrates why DNS is one of the most important supporting services in an Active Directory environment.
+This module also includes a real troubleshooting case involving:
+
+```text
+DHCP Event ID 1046
+```
+
+The event indicated that the DHCP server was not authorized in Active Directory and had stopped servicing clients.
 
 ---
 
 # Why I Built This Module
 
-Earlier in the homelab, CLIENT01 had to use SRV01 as its DNS server before it could join the domain.
+Before configuring DHCP, network settings could be entered manually on every client.
 
-At first, it was easy to think of DNS only as a service that translates a hostname into an IP address.
+That approach may work for a very small lab, but it becomes difficult to maintain as more devices are added.
 
-This module helped me understand that Active Directory uses DNS for much more than ordinary name lookup.
+Manual network configuration can lead to:
 
-Domain computers use DNS to locate:
+- Duplicate IP addresses
+- Incorrect subnet masks
+- Incorrect gateways
+- Incorrect DNS servers
+- Inconsistent client settings
+- Longer workstation deployment time
+- More Help Desk incidents
 
-- Domain controllers
-- Kerberos authentication services
-- LDAP
-- Global Catalog servers
-- Group Policy resources
-- Other domain services
+I wanted to understand how organizations automatically provide network settings to client devices while keeping important infrastructure addresses reserved.
 
-I also learned that basic connectivity and DNS resolution should be tested separately.
+The most important lesson was that DHCP provides more than an IP address.
+
+A complete DHCP lease may include:
 
 ```text
-IP address works
+IPv4 Address
 +
-Hostname fails
-=
-Likely DNS problem
+Subnet Mask
++
+Default Gateway
++
+DNS Server
++
+Lease Duration
 ```
 
-That troubleshooting distinction is important because a successful ping by IP does not prove that DNS is functioning.
+I also learned that installing the DHCP role is not enough in an Active Directory domain.
+
+The DHCP server must be authorized before it can service clients.
 
 ---
 
 # Business Scenario
 
-The organization uses Active Directory to manage users, computers, authentication, and Group Policy.
+The organization is adding more Windows workstations to the `homelab.local` environment.
 
-Domain clients must be able to locate SRV01 and the `homelab.local` domain reliably.
+Manually configuring every workstation is no longer efficient.
 
-The Infrastructure Team must verify that the DNS environment provides:
+The Infrastructure Team must deploy a DHCP service that can automatically provide:
 
-- Forward name resolution
-- Reverse name resolution
-- Domain-controller records
-- Host A records
-- PTR records
-- Client name-resolution support
-- Consistent results from administrative tools
+- IPv4 addresses
+- Subnet masks
+- Default gateway information
+- Internal DNS server information
+- Lease duration
 
-A test DNS record is created to demonstrate how administrators add and validate host records.
+The DHCP scope must also protect infrastructure addresses from being assigned to clients.
 
-A reverse lookup zone is also created to support IP-to-name resolution.
+The following systems require stable addresses:
+
+- Domain controller
+- DNS server
+- DHCP server
+- File server
+- Printers
+- Network devices
+- Future infrastructure systems
+
+SRV01 will provide DHCP services to clients on the VMware NAT lab network.
 
 ---
 
@@ -85,217 +111,228 @@ A reverse lookup zone is also created to support IP-to-name resolution.
 
 By completing this module, I practiced the following:
 
-- Opening DNS Manager
-- Navigating DNS server zones
-- Understanding forward lookup zones
-- Reviewing an Active Directory-integrated DNS zone
-- Understanding A records
-- Creating a test host record
-- Understanding reverse lookup zones
-- Understanding PTR records
-- Running forward lookup tests
-- Running reverse lookup tests
-- Testing name resolution with `ping`
-- Distinguishing IP connectivity from DNS resolution
-- Understanding Active Directory DNS dependencies
-- Troubleshooting common DNS failures
-- Documenting DNS evidence
+- Installing the DHCP Server role
+- Completing DHCP post-installation configuration
+- Opening DHCP Manager
+- Understanding DHCP authorization
+- Creating an IPv4 scope
+- Configuring an address pool
+- Configuring excluded addresses
+- Setting a lease duration
+- Configuring scope options
+- Assigning a default gateway
+- Assigning the internal DNS server
+- Activating a DHCP scope
+- Releasing and renewing a client lease
+- Verifying client configuration
+- Reviewing active DHCP leases
+- Troubleshooting DHCP authorization failures
+- Distinguishing DHCP problems from DNS problems
+- Documenting infrastructure validation
 
 ---
 
 # Key Concepts Learned
 
-## Domain Name System
+## DHCP
 
-DNS translates human-readable names into IP addresses.
+Dynamic Host Configuration Protocol automatically provides network configuration to clients.
+
+Without DHCP, an administrator may need to configure every device manually.
+
+DHCP can provide:
+
+- IPv4 address
+- Subnet mask
+- Default gateway
+- DNS server
+- DNS domain name
+- Lease duration
+- Additional network options
+
+---
+
+## DHCP Scope
+
+A DHCP scope defines the range of addresses available for a particular network.
 
 Example:
 
 ```text
-SRV01.homelab.local
+Network: 192.168.241.0/24
 ```
 
-resolves to:
+A scope may include:
 
-```text
-192.168.241.10
-```
-
-This allows users and systems to communicate using names instead of remembering numeric addresses.
+- Start address
+- End address
+- Subnet mask
+- Exclusions
+- Lease duration
+- Scope options
+- Reservations
+- Active leases
 
 ---
 
-## Forward Lookup Zone
+## Address Pool
 
-A forward lookup zone translates:
-
-```text
-Hostname
-→ IP address
-```
+The address pool is the range of IPv4 addresses that DHCP may assign to clients.
 
 Example:
 
 ```text
-SRV01.homelab.local
-→ 192.168.241.10
+192.168.241.100
+through
+192.168.241.200
 ```
 
-The forward lookup zone in this lab is:
-
-```text
-homelab.local
-```
+The actual values should match the environment shown in the DHCP scope configuration.
 
 ---
 
-## Reverse Lookup Zone
+## Exclusion Range
 
-A reverse lookup zone translates:
+An exclusion range prevents DHCP from assigning selected addresses.
 
-```text
-IP address
-→ Hostname
-```
+Excluded addresses may be used by:
 
-Example:
-
-```text
-192.168.241.10
-→ SRV01.homelab.local
-```
-
-Reverse lookup is useful for:
-
-- Troubleshooting
-- Logging
-- Some applications
-- Security investigations
-- Administrative verification
-
----
-
-## A Record
-
-An A record maps an IPv4 hostname to an IPv4 address.
-
-Example:
-
-```text
-test.homelab.local
-→ 192.168.241.20
-```
-
-A records are commonly used for:
-
-- Servers
-- Workstations
-- Applications
-- Network devices
-- Internal services
-
----
-
-## PTR Record
-
-A PTR record maps an IP address to a hostname.
-
-Example:
-
-```text
-192.168.241.10
-→ SRV01.homelab.local
-```
-
-PTR records are stored in reverse lookup zones.
-
----
-
-## SRV Record
-
-Service records identify systems that provide specific services.
-
-Active Directory uses SRV records to advertise services such as:
-
-- LDAP
-- Kerberos
-- Global Catalog
 - Domain controllers
-
-Example service lookup:
-
-```text
-_ldap._tcp.dc._msdcs.homelab.local
-```
-
-These records help clients discover domain controllers.
-
----
-
-## Active Directory-Integrated DNS
-
-An Active Directory-integrated zone stores DNS information inside Active Directory.
-
-Benefits include:
-
-- Secure dynamic updates
-- Active Directory replication
-- Multi-domain-controller support
-- Centralized management
-- Improved availability
-
-This lab uses an Active Directory-integrated DNS zone.
-
----
-
-## Recursive DNS Resolution
-
-When the DNS server does not host a requested external domain, it can query other DNS servers.
+- DNS servers
+- DHCP servers
+- File servers
+- Printers
+- Routers
+- Network appliances
 
 Example:
 
 ```text
-CLIENT01 asks SRV01 for microsoft.com
-           ↓
-SRV01 does not host that zone
-           ↓
-SRV01 forwards or recursively resolves the request
-           ↓
-Answer returned to CLIENT01
+192.168.241.1
+through
+192.168.241.99
+```
+
+This protects statically configured infrastructure systems from accidental address conflicts.
+
+---
+
+## DHCP Lease
+
+A DHCP lease is the temporary assignment of an IP address to a client.
+
+A lease contains:
+
+- Assigned address
+- Lease start time
+- Lease expiration time
+- Client identifier
+- Hostname
+- Scope information
+
+Clients attempt to renew their lease before it expires.
+
+---
+
+## Lease Duration
+
+Lease duration controls how long a client may use an assigned address.
+
+Shorter leases may be useful for networks with frequent device changes.
+
+Longer leases may be appropriate for stable workstation environments.
+
+The correct value depends on:
+
+- Number of available addresses
+- Number of clients
+- Device turnover
+- Network design
+- Business requirements
+
+---
+
+## DHCP Options
+
+DHCP options provide additional network settings.
+
+Common options include:
+
+```text
+003 Router
+006 DNS Servers
+015 DNS Domain Name
+```
+
+In this lab:
+
+- The router option provides the default gateway
+- The DNS option directs clients to SRV01
+- The domain name option supports `homelab.local`
+
+---
+
+## DHCP Authorization
+
+In an Active Directory domain, a DHCP server must be authorized before it can service clients.
+
+Authorization prevents unauthorized DHCP servers from distributing incorrect network settings.
+
+An unauthorized server may stop servicing clients and log:
+
+```text
+Event ID 1046
 ```
 
 ---
 
-## DNS Forwarder
+## DHCP Lease Process
 
-A DNS forwarder is another DNS server used for queries that the local server cannot answer.
+The DHCP lease process is commonly described as:
 
-Examples may include:
+```text
+DORA
+```
 
-- ISP DNS
-- Router DNS
-- Approved public DNS
-- Central corporate DNS
+Meaning:
 
-Domain clients should still use the internal Active Directory DNS server directly.
+```text
+Discover
+Offer
+Request
+Acknowledge
+```
 
-The internal DNS server can then forward external queries.
+### Discover
+
+The client broadcasts a request for DHCP service.
+
+### Offer
+
+The server offers an available address and network configuration.
+
+### Request
+
+The client requests the offered address.
+
+### Acknowledge
+
+The server confirms the lease.
 
 ---
 
-## DNS Cache
+## DHCP Reservation
 
-DNS clients and servers store recent results temporarily.
+A reservation assigns a consistent address to a device based on its MAC address.
 
-Caching improves performance but may cause old results to remain visible after a record changes.
+Reservations are useful for systems that should use DHCP but need a predictable address.
 
-Useful command:
+Examples include:
 
-```cmd
-ipconfig /flushdns
-```
-
-This clears the client DNS resolver cache.
+- Printers
+- Scanners
+- Access points
+- Lab appliances
 
 ---
 
@@ -303,18 +340,17 @@ This clears the client DNS resolver cache.
 
 | Component | Configuration |
 |------------|---------------|
-| DNS Server | SRV01 |
+| DHCP Server | SRV01 |
 | Server Operating System | Windows Server 2025 Standard Evaluation |
 | Active Directory Domain | homelab.local |
-| DNS Zone | homelab.local |
-| DNS Zone Type | Active Directory-integrated |
 | Domain Controller IP | 192.168.241.10 |
-| Client Computer | CLIENT01 |
-| Client DNS Server | 192.168.241.10 |
-| Forward Lookup | Hostname to IPv4 |
-| Reverse Lookup | IPv4 to hostname |
-| Administration Tool | DNS Manager |
-| Validation Tools | `nslookup`, `ping`, `Resolve-DnsName` |
+| Client | CLIENT01 |
+| Network Type | VMware NAT |
+| DHCP Protocol | IPv4 |
+| DNS Server Delivered to Clients | 192.168.241.10 |
+| Management Tool | DHCP Manager |
+| Verification Tools | `ipconfig`, DHCP Manager, PowerShell |
+| Authorization | Active Directory authorization required |
 
 ---
 
@@ -323,25 +359,30 @@ This clears the client DNS resolver cache.
 ```text
 02-Core-Infrastructure
 │
-└── 01-DNS-Infrastructure
+└── 02-DHCP-Infrastructure
     │
     ├── README.md
     │
     └── Evidence
         └── Screenshots
-            ├── 01-Open-DNS-Manager.png
-            ├── 02-Forward-Lookup-Zone.png
-            ├── 03-homelab.local-Zone.png
-            ├── 04-Domain-Controller-A-Record.png
-            ├── 05-Create-Test-A-Record.png
-            ├── 06-Test-A-Record-Created.png
-            ├── 07-Reverse-Lookup-Zone-Wizard.png
-            ├── 08-Reverse-Lookup-Zone-Created.png
-            ├── 09-PTR-Records-Verification.png
-            ├── 10-NSLookup-Test.png
-            ├── 11-Reverse-NSLookup-Test.png
-            ├── 12-Ping-Name-Resolution-Test.png
-            └── 13-DNS-Manager-Final-Configuration.png
+            ├── 01-Open-Add-Roles-and-Features.png
+            ├── 02-Select-DHCP-Server-Role.png
+            ├── 03-DHCP-Installation-Complete.png
+            ├── 04-Complete-DHCP-Configuration-Wizard.png
+            ├── 05-DHCP-Manager-Console.png
+            ├── 06-New-Scope-Wizard.png
+            ├── 07-Scope-IP-Range-Configuration.png
+            ├── 08-Exclusion-Range-Configuration.png
+            ├── 09-Lease-Duration-Configuration.png
+            ├── 10-DHCP-Options-Configuration.png
+            ├── 11-Gateway-Configuration.png
+            ├── 12-DNS-Server-Configuration.png
+            ├── 13-Scope-Activated.png
+            ├── 14-DHCP-Scope-Summary.png
+            ├── 15-Client-IP-Renewal.png
+            ├── 16-IPConfig-Verification.png
+            ├── 17-DHCP-Lease-Verification.png
+            └── 18-Final-DHCP-Configuration.png
 ```
 
 ---
@@ -350,7 +391,73 @@ This clears the client DNS resolver cache.
 
 ---
 
-## Step 1 — Open DNS Manager
+## Step 1 — Open Add Roles and Features
+
+Opened Server Manager and selected:
+
+```text
+Manage
+    ↓
+Add Roles and Features
+```
+
+The wizard is used to install Windows Server roles and management tools.
+
+<p align="center">
+  <img src="Evidence/Screenshots/01-Open-Add-Roles-and-Features.png" width="800" alt="Open Add Roles and Features Wizard">
+</p>
+
+---
+
+## Step 2 — Select the DHCP Server Role
+
+Selected:
+
+```text
+DHCP Server
+```
+
+The required management tools and supporting features were included.
+
+Installing the role adds the DHCP service, but the server still requires post-installation configuration and Active Directory authorization.
+
+<p align="center">
+  <img src="Evidence/Screenshots/02-Select-DHCP-Server-Role.png" width="800" alt="Select DHCP Server Role">
+</p>
+
+---
+
+## Step 3 — Complete the DHCP Role Installation
+
+Completed the role installation and confirmed that the DHCP Server role was installed successfully.
+
+At this stage, the service components were available, but the server still needed authorization and scope configuration.
+
+<p align="center">
+  <img src="Evidence/Screenshots/03-DHCP-Installation-Complete.png" width="800" alt="DHCP Server Installation Complete">
+</p>
+
+---
+
+## Step 4 — Complete DHCP Post-Installation Configuration
+
+Opened the DHCP post-installation configuration wizard.
+
+This step is used to:
+
+- Create required DHCP security groups
+- Authorize the server in Active Directory
+- Complete domain-related configuration
+
+The authorization process is important because an unauthorized DHCP server should not distribute network settings in a domain environment.
+
+<p align="center">
+  <img src="Evidence/Screenshots/04-Complete-DHCP-Configuration-Wizard.png" width="800" alt="Complete DHCP Configuration Wizard">
+</p>
+
+---
+
+## Step 5 — Open the DHCP Manager Console
 
 Opened:
 
@@ -359,368 +466,569 @@ Server Manager
       ↓
 Tools
       ↓
-DNS
+DHCP
 ```
 
-DNS Manager provides a graphical interface for managing:
+The DHCP Manager console provides access to:
 
-- DNS servers
-- Forward lookup zones
-- Reverse lookup zones
-- Resource records
-- Forwarders
-- Root hints
-- Server properties
+- IPv4 and IPv6 scopes
+- Address pools
+- Exclusions
+- Reservations
+- Scope options
+- Active leases
+- Server options
+- Policies
+- Filters
 
 <p align="center">
-  <img src="Evidence/Screenshots/01-Open-DNS-Manager.png" width="800" alt="Open DNS Manager">
+  <img src="Evidence/Screenshots/05-DHCP-Manager-Console.png" width="800" alt="DHCP Manager Console">
 </p>
 
 ---
 
-## Step 2 — Review the Forward Lookup Zone
+## Step 6 — Start the New Scope Wizard
 
-Expanded the DNS server and opened:
+Right-clicked IPv4 and selected:
 
 ```text
-Forward Lookup Zones
+New Scope
 ```
 
-Forward lookup zones contain records used to resolve names into IP addresses.
-
-The zone created for Active Directory was visible under this section.
+The New Scope Wizard defines the range of addresses and network options that DHCP will provide to clients.
 
 <p align="center">
-  <img src="Evidence/Screenshots/02-Forward-Lookup-Zone.png" width="800" alt="DNS Forward Lookup Zone">
+  <img src="Evidence/Screenshots/06-New-Scope-Wizard.png" width="800" alt="New DHCP Scope Wizard">
 </p>
 
 ---
 
-## Step 3 — Review the `homelab.local` Zone
+## Step 7 — Configure the Scope IP Range
 
-Opened:
+Configured the starting and ending IPv4 addresses for the client pool.
 
-```text
-homelab.local
-```
+The address range was selected from the VMware NAT lab network.
 
-The zone contained DNS records used by the domain.
+The scope range should:
 
-These records included:
-
-- Host records
-- Name server records
-- Start of Authority record
-- Active Directory service records
-- Domain-controller records
-
-The zone is required for domain clients to locate Active Directory services.
+- Match the correct subnet
+- Avoid infrastructure addresses
+- Provide enough addresses for clients
+- Avoid overlapping another DHCP server
+- Match the configured subnet mask
 
 <p align="center">
-  <img src="Evidence/Screenshots/03-homelab.local-Zone.png" width="800" alt="homelab.local DNS Zone">
+  <img src="Evidence/Screenshots/07-Scope-IP-Range-Configuration.png" width="800" alt="DHCP Scope IP Range Configuration">
 </p>
 
 ---
 
-## Step 4 — Verify the Domain Controller A Record
+## Step 8 — Configure the Exclusion Range
 
-Reviewed the A record for SRV01.
+Configured excluded addresses that DHCP should not assign.
 
-The expected relationship was:
+These addresses are reserved for systems using static configuration or separate reservations.
 
-```text
-SRV01.homelab.local
-→ 192.168.241.10
-```
+Examples include:
 
-This record allows domain computers to resolve the domain controller by hostname.
+- SRV01
+- Gateway
+- Future servers
+- Printers
+- Network appliances
+
+Exclusions reduce the risk of duplicate IP conflicts.
 
 <p align="center">
-  <img src="Evidence/Screenshots/04-Domain-Controller-A-Record.png" width="800" alt="SRV01 Domain Controller A Record">
+  <img src="Evidence/Screenshots/08-Exclusion-Range-Configuration.png" width="800" alt="DHCP Exclusion Range Configuration">
 </p>
 
 ---
 
-## Step 5 — Create a Test A Record
+## Step 9 — Configure the Lease Duration
 
-Created a test host record in the `homelab.local` zone.
+Configured the DHCP lease duration.
 
-The record was used to practice manually adding a hostname and IPv4 address.
+The lease duration determines how long a client may use an address before renewal is required.
 
-A record creation requires:
-
-- Hostname
-- IPv4 address
-- Correct zone
-- Optional PTR record creation
-
-The test entry should use an address that does not conflict with another device.
+The selected value was appropriate for a small, stable homelab environment.
 
 <p align="center">
-  <img src="Evidence/Screenshots/05-Create-Test-A-Record.png" width="800" alt="Create Test DNS A Record">
+  <img src="Evidence/Screenshots/09-Lease-Duration-Configuration.png" width="800" alt="DHCP Lease Duration Configuration">
 </p>
 
 ---
 
-## Step 6 — Verify the Test A Record
+## Step 10 — Configure DHCP Scope Options
 
-Confirmed that the new host record appeared in the forward lookup zone.
+Selected the option to configure DHCP scope options.
 
-This verified that the record was created successfully.
+Scope options provide additional information required by clients.
 
-The new entry could then be queried using:
+The main settings configured were:
 
-```cmd
-nslookup <test-hostname>.homelab.local
-```
+- Default gateway
+- DNS server
+- DNS domain name
 
 <p align="center">
-  <img src="Evidence/Screenshots/06-Test-A-Record-Created.png" width="800" alt="Test DNS A Record Created">
+  <img src="Evidence/Screenshots/10-DHCP-Options-Configuration.png" width="800" alt="DHCP Scope Options Configuration">
 </p>
 
 ---
 
-## Step 7 — Start the Reverse Lookup Zone Wizard
+## Step 11 — Configure the Default Gateway
 
-Opened the New Zone Wizard under:
+Configured the router option.
 
-```text
-Reverse Lookup Zones
-```
+The default gateway allows clients to communicate with networks outside the local subnet.
 
-A reverse lookup zone was required to support IP-to-hostname resolution.
-
-The wizard was used to define the reverse network range.
+The value must match the VMware NAT network gateway.
 
 <p align="center">
-  <img src="Evidence/Screenshots/07-Reverse-Lookup-Zone-Wizard.png" width="800" alt="Reverse Lookup Zone Wizard">
+  <img src="Evidence/Screenshots/11-Gateway-Configuration.png" width="800" alt="DHCP Default Gateway Configuration">
 </p>
 
 ---
 
-## Step 8 — Create the Reverse Lookup Zone
+## Step 12 — Configure the DNS Server
 
-Completed the reverse lookup zone configuration.
-
-For a `/24` network such as:
-
-```text
-192.168.241.0/24
-```
-
-the corresponding reverse zone is based on:
-
-```text
-241.168.192.in-addr.arpa
-```
-
-The zone stores PTR records for addresses in the network.
-
-<p align="center">
-  <img src="Evidence/Screenshots/08-Reverse-Lookup-Zone-Created.png" width="800" alt="Reverse Lookup Zone Created">
-</p>
-
----
-
-## Step 9 — Verify PTR Records
-
-Reviewed the reverse lookup zone and confirmed that PTR records were available.
-
-The expected domain-controller mapping was:
+Configured the DNS option to provide:
 
 ```text
 192.168.241.10
-→ SRV01.homelab.local
 ```
 
-A PTR record supports reverse name resolution.
+This is the address of SRV01.
+
+Domain clients must use the internal Active Directory DNS server so they can locate:
+
+- Domain controllers
+- Kerberos
+- LDAP
+- Group Policy
+- Internal resources
+
+Public DNS should not be delivered directly to domain clients as their primary resolver.
 
 <p align="center">
-  <img src="Evidence/Screenshots/09-PTR-Records-Verification.png" width="800" alt="PTR Records Verification">
+  <img src="Evidence/Screenshots/12-DNS-Server-Configuration.png" width="800" alt="DHCP DNS Server Configuration">
 </p>
 
 ---
 
-## Step 10 — Test Forward Resolution with NSLookup
+## Step 13 — Activate the DHCP Scope
 
-Used `nslookup` to test forward name resolution.
+Activated the new scope.
 
-Example:
+An inactive scope does not issue addresses even if the role and server are configured correctly.
+
+Activation allowed the server to begin servicing DHCP clients.
+
+<p align="center">
+  <img src="Evidence/Screenshots/13-Scope-Activated.png" width="800" alt="DHCP Scope Activated">
+</p>
+
+---
+
+## Step 14 — Review the DHCP Scope Summary
+
+Reviewed the completed scope configuration.
+
+The summary confirmed:
+
+- Scope name
+- Address range
+- Subnet mask
+- Excluded addresses
+- Lease duration
+- Gateway
+- DNS server
+- Activation status
+
+<p align="center">
+  <img src="Evidence/Screenshots/14-DHCP-Scope-Summary.png" width="800" alt="DHCP Scope Summary">
+</p>
+
+---
+
+## Step 15 — Renew the CLIENT01 Address
+
+On CLIENT01, released and renewed the DHCP lease.
+
+Commands:
 
 ```cmd
-nslookup SRV01.homelab.local
+ipconfig /release
 ```
 
-Expected result:
+```cmd
+ipconfig /renew
+```
+
+This forced the client to request a new configuration from the DHCP server.
+
+<p align="center">
+  <img src="Evidence/Screenshots/15-Client-IP-Renewal.png" width="800" alt="CLIENT01 DHCP IP Renewal">
+</p>
+
+---
+
+## Step 16 — Verify the Client IP Configuration
+
+Ran:
+
+```cmd
+ipconfig /all
+```
+
+Verified that CLIENT01 received:
+
+- IPv4 address from the configured scope
+- Correct subnet mask
+- Correct default gateway
+- SRV01 as DNS server
+- DHCP enabled
+- DHCP server information
+- Lease start and expiration time
+
+<p align="center">
+  <img src="Evidence/Screenshots/16-IPConfig-Verification.png" width="800" alt="CLIENT01 IPConfig Verification">
+</p>
+
+---
+
+## Step 17 — Verify the DHCP Lease
+
+Opened DHCP Manager and reviewed:
 
 ```text
-Name:    SRV01.homelab.local
-Address: 192.168.241.10
+Address Leases
 ```
 
-This confirmed that the hostname could be resolved to the expected IP address.
+Confirmed that CLIENT01 appeared with:
+
+- Assigned IP address
+- Client name
+- Lease expiration
+- Client identifier
+- Active lease status
+
+This validated that SRV01 issued the lease.
 
 <p align="center">
-  <img src="Evidence/Screenshots/10-NSLookup-Test.png" width="800" alt="Forward DNS NSLookup Test">
+  <img src="Evidence/Screenshots/17-DHCP-Lease-Verification.png" width="800" alt="DHCP Lease Verification">
 </p>
 
 ---
 
-## Step 11 — Test Reverse Resolution with NSLookup
+## Step 18 — Review the Final DHCP Configuration
 
-Used `nslookup` with the IP address.
-
-Command:
-
-```cmd
-nslookup 192.168.241.10
-```
-
-Expected result:
-
-```text
-Name: SRV01.homelab.local
-```
-
-This confirmed that the PTR record supported reverse lookup.
-
-<p align="center">
-  <img src="Evidence/Screenshots/11-Reverse-NSLookup-Test.png" width="800" alt="Reverse DNS NSLookup Test">
-</p>
-
----
-
-## Step 12 — Test Name Resolution with Ping
-
-Tested hostname resolution and basic connectivity using:
-
-```cmd
-ping SRV01.homelab.local
-```
-
-The test checked two things:
-
-1. Whether the hostname resolved
-2. Whether the target responded to ICMP
-
-A failed ping does not always mean DNS failed because ICMP may be blocked.
-
-However, the displayed IP address still shows whether name resolution succeeded.
-
-<p align="center">
-  <img src="Evidence/Screenshots/12-Ping-Name-Resolution-Test.png" width="800" alt="Ping Name Resolution Test">
-</p>
-
----
-
-## Step 13 — Review the Final DNS Configuration
-
-Reviewed DNS Manager after completing the forward and reverse lookup configuration.
+Reviewed the completed DHCP configuration.
 
 The final environment included:
 
-- `homelab.local` forward lookup zone
-- SRV01 A record
-- Test A record
-- Reverse lookup zone
-- PTR records
-- Successful forward lookup
-- Successful reverse lookup
-- Successful hostname resolution
+- Installed DHCP Server role
+- Completed post-installation configuration
+- Authorized DHCP service
+- Active IPv4 scope
+- Configured address pool
+- Excluded infrastructure addresses
+- Lease duration
+- Gateway option
+- Internal DNS option
+- Active CLIENT01 lease
 
 <p align="center">
-  <img src="Evidence/Screenshots/13-DNS-Manager-Final-Configuration.png" width="800" alt="DNS Manager Final Configuration">
+  <img src="Evidence/Screenshots/18-Final-DHCP-Configuration.png" width="800" alt="Final DHCP Configuration">
 </p>
 
 ---
 
-# DNS Resolution Workflow
+# DHCP Client Workflow
 
 ```text
-CLIENT01
-   │
-   ▼
-DNS Query Sent to SRV01
-   │
-   ├── Internal name?
-   │      │
-   │      └── Answer from homelab.local zone
-   │
-   └── External name?
-          │
-          └── Forward or recursively resolve
-                   │
-                   ▼
-              Return Answer
+CLIENT01 Starts
+      │
+      ▼
+DHCP Discover
+      │
+      ▼
+SRV01 Sends Offer
+      │
+      ▼
+CLIENT01 Sends Request
+      │
+      ▼
+SRV01 Sends Acknowledgment
+      │
+      ▼
+CLIENT01 Receives:
+      ├── IPv4 Address
+      ├── Subnet Mask
+      ├── Default Gateway
+      ├── DNS Server
+      └── Lease Duration
 ```
 
 ---
 
-# Forward and Reverse Resolution
+# DHCP and DNS Relationship
 
 ```text
-Forward Lookup
+DHCP
+  │
+  └── Gives CLIENT01:
+          ├── IP address
+          ├── Gateway
+          └── DNS server = SRV01
+                        │
+                        ▼
+                CLIENT01 queries DNS
+                        │
+                        ▼
+               homelab.local resolves
+```
 
+DHCP provides the DNS server address.
+
+DNS performs name resolution.
+
+They are different services, but both must be configured correctly.
+
+---
+
+# Real Troubleshooting Case — DHCP Event ID 1046
+
+During the lab, the DHCP service reported:
+
+```text
+The DHCP/BINL service on the local machine,
+belonging to the Windows Administrative domain homelab.local,
+has determined that it is not authorized to start.
+It has stopped servicing clients.
+```
+
+This corresponds to:
+
+```text
+Event ID 1046
+```
+
+The message means the DHCP server did not consider itself authorized in Active Directory.
+
+As a result, it stopped servicing clients.
+
+---
+
+## Why DHCP Authorization Exists
+
+Authorization prevents a rogue or accidental DHCP server from distributing incorrect settings.
+
+An unauthorized DHCP server could provide:
+
+- Wrong gateway
+- Wrong DNS server
+- Wrong IP range
+- Attacker-controlled DNS
+- Conflicting addresses
+
+In a domain, DHCP servers should be explicitly approved.
+
+---
+
+## Step-by-Step Fix for Event ID 1046
+
+### Step 1 — Confirm the server is domain joined
+
+```powershell
+Get-CimInstance Win32_ComputerSystem |
+Select-Object Name, Domain, PartOfDomain
+```
+
+Expected:
+
+```text
+Name         SRV01
+Domain       homelab.local
+PartOfDomain True
+```
+
+---
+
+### Step 2 — Check the server DNS configuration
+
+```cmd
+ipconfig /all
+```
+
+SRV01 should use the internal Active Directory DNS configuration.
+
+For a single domain controller lab, SRV01 commonly points to itself for DNS.
+
+Avoid configuring public DNS directly on the server network adapter.
+
+---
+
+### Step 3 — Confirm domain-controller discovery
+
+```cmd
+nltest /dsgetdc:homelab.local
+```
+
+If this fails, investigate DNS or domain connectivity before DHCP authorization.
+
+---
+
+### Step 4 — Check existing authorized DHCP servers
+
+```powershell
+Get-DhcpServerInDC
+```
+
+Expected entry:
+
+```text
 SRV01.homelab.local
-        ↓
 192.168.241.10
 ```
 
-```text
-Reverse Lookup
+---
 
-192.168.241.10
+### Step 5 — Authorize SRV01 if missing
+
+```powershell
+Add-DhcpServerInDC `
+    -DnsName "SRV01.homelab.local" `
+    -IPAddress "192.168.241.10"
+```
+
+Run this with an authorized domain account.
+
+---
+
+### Step 6 — Refresh the DHCP console
+
+In DHCP Manager:
+
+```text
+Right-click server
         ↓
-SRV01.homelab.local
+Refresh
 ```
+
+The server icon should no longer indicate an authorization problem.
 
 ---
 
-# Active Directory DNS Workflow
+### Step 7 — Restart the DHCP Server service
+
+```powershell
+Restart-Service DHCPServer
+```
+
+Verify:
+
+```powershell
+Get-Service DHCPServer
+```
+
+Expected status:
 
 ```text
-CLIENT01 needs a domain controller
-               │
-               ▼
-Queries DNS for Active Directory service records
-               │
-               ▼
-DNS returns SRV01 service information
-               │
-               ▼
-CLIENT01 contacts SRV01
-               │
-               ▼
-Authentication and Group Policy proceed
+Running
 ```
 
 ---
 
-# Validation Results
+### Step 8 — Check the DHCP event log again
 
-| Validation Check | Result |
-|------------------|--------|
-| DNS Manager opened | ✅ |
-| Forward Lookup Zones reviewed | ✅ |
-| `homelab.local` zone reviewed | ✅ |
-| SRV01 A record verified | ✅ |
-| Test A record created | ✅ |
-| Test A record visible in zone | ✅ |
-| Reverse lookup zone created | ✅ |
-| PTR records reviewed | ✅ |
-| Forward `nslookup` succeeded | ✅ |
-| Reverse `nslookup` succeeded | ✅ |
-| Hostname resolution tested with `ping` | ✅ |
-| Final DNS configuration reviewed | ✅ |
-| DNS forwarders documented | ⏭️ Future improvement |
-| DNS event logging reviewed | ⏭️ Future improvement |
-| DNS scavenging configured | ⏭️ Future improvement |
+Open:
+
+```text
+Event Viewer
+→ Applications and Services Logs
+→ Microsoft
+→ Windows
+→ DHCP-Server
+```
+
+Confirm that no new authorization failure appears.
 
 ---
 
-# Troubleshooting Guide
+### Step 9 — Renew the client lease
 
-## Scenario 1 — IP Address Works but Hostname Fails
+On CLIENT01:
+
+```cmd
+ipconfig /release
+```
+
+```cmd
+ipconfig /renew
+```
+
+---
+
+### Step 10 — Verify the full client configuration
+
+```cmd
+ipconfig /all
+```
+
+Confirm:
+
+- Address came from the DHCP scope
+- Correct gateway
+- DNS server is SRV01
+- DHCP server is SRV01
+- Lease information is present
+
+---
+
+# Real-World Troubleshooting Guide
+
+## Scenario 1 — Client Receives No Address
+
+Possible symptom:
+
+```text
+169.254.x.x
+```
+
+This is an APIPA address.
+
+It usually means the client could not obtain a DHCP lease.
+
+Check:
+
+1. Is the DHCP service running?
+2. Is the server authorized?
+3. Is the scope active?
+4. Are addresses available?
+5. Is the client connected to the correct virtual network?
+6. Is another DHCP server interfering?
+7. Is the firewall blocking DHCP?
+8. Is the network adapter configured for automatic addressing?
+
+Commands:
+
+```powershell
+Get-Service DHCPServer
+```
+
+```powershell
+Get-DhcpServerInDC
+```
+
+```powershell
+Get-DhcpServerv4Scope
+```
+
+---
+
+## Scenario 2 — Client Receives an IP but Cannot Resolve Names
 
 Example:
 
@@ -736,407 +1044,408 @@ ping SRV01.homelab.local
 
 fails.
 
-This usually indicates a DNS problem rather than a complete network failure.
+This indicates that DHCP assigned an address, but DNS configuration may be wrong.
 
-### Step 1 — Check the client DNS server
+Check:
 
 ```cmd
 ipconfig /all
 ```
 
-Confirm that CLIENT01 uses:
+Verify that DNS server is:
 
 ```text
 192.168.241.10
 ```
 
-as its DNS server.
+Then test:
 
-### Step 2 — Query the record directly
+```cmd
+nslookup homelab.local
+```
 
 ```cmd
 nslookup SRV01.homelab.local
 ```
 
-### Step 3 — Use PowerShell resolution
+If IP communication works but hostname communication fails, investigate DNS rather than DHCP address assignment.
 
-```powershell
-Resolve-DnsName SRV01.homelab.local
+---
+
+## Scenario 3 — Client Receives the Wrong DNS Server
+
+Check DHCP option:
+
+```text
+006 DNS Servers
 ```
 
-### Step 4 — Check the A record
+The option should provide SRV01.
 
-On SRV01:
-
-```powershell
-Get-DnsServerResourceRecord `
-    -ZoneName "homelab.local" `
-    -Name "SRV01"
-```
-
-### Step 5 — Check the DNS service
+Review with PowerShell:
 
 ```powershell
-Get-Service DNS
+Get-DhcpServerv4OptionValue `
+    -ScopeId <ScopeNetworkID>
 ```
 
-### Step 6 — Clear the client cache
+Replace `<ScopeNetworkID>` with the actual network ID.
+
+After correcting the option:
 
 ```cmd
+ipconfig /release
+ipconfig /renew
 ipconfig /flushdns
-```
-
-### Step 7 — Register DNS again
-
-```cmd
-ipconfig /registerdns
 ```
 
 ---
 
-## Scenario 2 — Hostname Resolves to the Wrong IP
+## Scenario 4 — Client Receives the Wrong Gateway
+
+Check DHCP option:
+
+```text
+003 Router
+```
+
+An incorrect gateway may allow local communication while preventing external access.
+
+Review scope options and renew the lease after correction.
+
+---
+
+## Scenario 5 — Scope Is Active but No Addresses Are Available
 
 Possible causes:
 
-- Old A record
-- Duplicate A record
-- Cached DNS response
-- Dynamic update issue
-- Reused hostname
-- Incorrect manual record
-
-Check:
-
-```cmd
-nslookup SRV01.homelab.local
-```
-
-Then review the record in DNS Manager or PowerShell.
-
-```powershell
-Get-DnsServerResourceRecord `
-    -ZoneName "homelab.local" `
-    -Name "SRV01"
-```
-
-After correcting the record:
-
-```cmd
-ipconfig /flushdns
-```
-
----
-
-## Scenario 3 — Forward Lookup Works but Reverse Lookup Fails
-
-Example:
-
-```cmd
-nslookup SRV01.homelab.local
-```
-
-works, but:
-
-```cmd
-nslookup 192.168.241.10
-```
-
-fails.
-
-This usually means:
-
-- Reverse lookup zone is missing
-- PTR record is missing
-- PTR record contains the wrong hostname
-- The reverse zone uses the wrong network ID
+- Address pool exhausted
+- Exclusion range too large
+- Stale leases
+- Scope range too small
+- Too many clients
+- Incorrect reservations
 
 Check:
 
 ```powershell
-Get-DnsServerZone
+Get-DhcpServerv4ScopeStatistics
 ```
 
-and:
+Review:
 
-```powershell
-Get-DnsServerResourceRecord `
-    -ZoneName "241.168.192.in-addr.arpa"
-```
+- Addresses in use
+- Addresses available
+- Percentage in use
 
 ---
 
-## Scenario 4 — Internet Works but Domain Join Fails
+## Scenario 6 — Duplicate IP Address
 
-This often happens when the client uses public DNS instead of the internal Active Directory DNS server.
+Possible causes:
 
-Example:
+- Static address overlaps the DHCP pool
+- Exclusion range is missing
+- Reservation conflicts with a static assignment
+- Another DHCP server exists
+- Old manual client settings remain
 
-```text
-Internet websites resolve
-homelab.local does not resolve
-```
-
-Correct design:
-
-```text
-CLIENT01 DNS
-→ SRV01
-```
-
-Then SRV01 resolves or forwards external queries.
-
-Incorrect design:
-
-```text
-CLIENT01 DNS
-→ Public DNS only
-```
-
-Public DNS does not contain the private Active Directory records.
+The fix is to document the address plan and ensure static infrastructure addresses are excluded.
 
 ---
 
-## Scenario 5 — NSLookup Shows the Wrong DNS Server
+## Scenario 7 — Client Keeps an Old Configuration
 
 Run:
 
 ```cmd
-nslookup
+ipconfig /release
 ```
 
-The first lines show which DNS server is being queried.
+```cmd
+ipconfig /renew
+```
 
-If it is not SRV01, review:
+If the client still receives the old configuration:
 
-- Static adapter configuration
-- DHCP options
-- Alternate DNS server
-- VPN adapter
-- Multiple network adapters
-- IPv6 configuration
+- Check the correct scope
+- Check DHCP policies
+- Check multiple network adapters
+- Check another DHCP server
+- Restart the adapter
+- Verify the lease in DHCP Manager
 
 ---
 
-## Scenario 6 — DNS Server Is Running but Queries Fail
+## Scenario 8 — DHCP Server Is Authorized but Still Shows Unauthorized
+
+Possible causes include:
+
+- Authorization information has not refreshed
+- DNS name mismatch
+- Old server entry
+- Domain connectivity problem
+- Active Directory replication delay
+- DHCP console cache
+- Service restart required
 
 Check:
 
 ```powershell
-Get-Service DNS
+Get-DhcpServerInDC
 ```
 
-Then review:
+Compare:
 
-- DNS Manager
-- Zone status
-- Event Viewer
-- Firewall rules
-- Network interface binding
-- Active Directory health
-- Server IP configuration
+- DNS name
+- IP address
+- Current server identity
 
-Useful commands:
-
-```cmd
-dcdiag /test:dns
-```
+Remove an incorrect stale authorization only after confirming it is not needed:
 
 ```powershell
-Get-DnsServerZone
+Remove-DhcpServerInDC `
+    -DnsName "<OldServerName>" `
+    -IPAddress "<OldIPAddress>"
 ```
 
-```powershell
-Get-DnsServerForwarder
-```
-
----
-
-## Scenario 7 — Recent Record Change Is Not Visible
-
-The old result may be cached.
-
-Clear the client cache:
-
-```cmd
-ipconfig /flushdns
-```
-
-Clear server cache when appropriate:
-
-```powershell
-Clear-DnsServerCache -Force
-```
-
-Then test again:
-
-```cmd
-nslookup <hostname>
-```
+Then authorize the correct server.
 
 ---
 
 # Technical Decisions
 
-## Why Should Domain Clients Use SRV01 for DNS?
+## Why Use DHCP for Clients?
 
-SRV01 hosts the private records required for `homelab.local`.
+Client addresses may change without affecting core infrastructure.
 
-These records are not available from public DNS services.
+DHCP reduces manual configuration and provides consistent network options.
 
-Using SRV01 allows clients to locate:
+---
 
-- Domain controllers
-- Kerberos
-- LDAP
+## Why Keep SRV01 Static?
+
+SRV01 provides:
+
+- Active Directory
+- DNS
+- DHCP
 - Group Policy
-- Internal systems
+- File services
+
+Clients and other services must be able to locate it consistently.
+
+A DHCP-assigned address could change and interrupt infrastructure services.
 
 ---
 
-## Why Not Configure Public DNS Directly on CLIENT01?
+## Why Use Exclusions?
 
-If CLIENT01 uses public DNS directly, it may resolve internet names but fail to resolve private Active Directory services.
+Exclusions keep DHCP from assigning addresses already used by infrastructure systems.
 
-The correct model is:
+This reduces duplicate-address risk.
+
+---
+
+## Why Deliver SRV01 as DNS?
+
+The `homelab.local` domain records exist on SRV01.
+
+Clients need SRV01 for Active Directory name resolution.
+
+External DNS can be reached through DNS forwarders configured on SRV01.
+
+---
+
+## Why Verify the Lease in Two Places?
+
+Client-side verification confirms what CLIENT01 received.
+
+Server-side verification confirms what SRV01 issued.
 
 ```text
-CLIENT01
-   ↓
-SRV01 DNS
-   ↓
-Forwarder for external names
-```
-
----
-
-## Why Create a Reverse Lookup Zone?
-
-A reverse zone supports IP-to-hostname resolution.
-
-It is useful for:
-
-- Troubleshooting
-- Security logs
-- Administrative validation
-- Some network applications
-- Identifying hosts by address
-
----
-
-## Why Create a Test A Record?
-
-The test record demonstrated the complete record lifecycle:
-
-```text
-Create
-  ↓
-Verify
-  ↓
-Query
-  ↓
-Document
-```
-
-It also provided a safe way to practice DNS administration without changing the SRV01 record.
-
----
-
-## Why Test with More Than One Tool?
-
-Each tool provides a different type of evidence.
-
-```text
-ping
+CLIENT01 ipconfig
++
+DHCP Manager lease
 =
-Name resolution plus ICMP connectivity
+Stronger validation
 ```
 
-```text
-nslookup
-=
-DNS query result and responding DNS server
-```
+---
 
-```text
-Resolve-DnsName
-=
-Detailed PowerShell DNS output
-```
+# Validation Results
 
-Using multiple tools helps confirm the result and narrow failures.
+| Validation Check | Result |
+|------------------|--------|
+| Add Roles and Features opened | ✅ |
+| DHCP Server role selected | ✅ |
+| DHCP role installed | ✅ |
+| Post-installation configuration completed | ✅ |
+| DHCP Manager opened | ✅ |
+| IPv4 scope created | ✅ |
+| Address range configured | ✅ |
+| Exclusion range configured | ✅ |
+| Lease duration configured | ✅ |
+| Scope options configured | ✅ |
+| Default gateway configured | ✅ |
+| SRV01 configured as DNS server | ✅ |
+| Scope activated | ✅ |
+| Scope summary reviewed | ✅ |
+| CLIENT01 lease renewed | ✅ |
+| CLIENT01 IP configuration verified | ✅ |
+| Active lease verified in DHCP Manager | ✅ |
+| DHCP authorization issue understood | ✅ |
+| Final DHCP configuration reviewed | ✅ |
 
 ---
 
 # Security Notes
 
-## Restrict Dynamic Updates
+## Authorize Only Approved DHCP Servers
 
-Active Directory-integrated zones should normally use secure dynamic updates.
+Unauthorized DHCP servers can disrupt an entire network or redirect traffic.
 
-This reduces the risk of unauthorized systems registering or changing records.
+Only approved servers should be authorized.
 
 ---
 
-## Protect DNS Administration
+## Protect DHCP Administration
 
 Only approved administrators should be allowed to:
 
-- Create zones
-- Delete zones
-- Modify critical records
-- Change forwarders
-- Clear server cache
-- Configure scavenging
+- Create scopes
+- Modify options
+- Add reservations
+- Change exclusions
+- Authorize servers
+- Remove authorized servers
+- Modify DHCP policies
 
 ---
 
-## Avoid Publishing Real Infrastructure Details
+## Avoid Overlapping Scopes
 
-Public documentation should avoid exposing:
+Two DHCP servers should not distribute overlapping address ranges unless the design explicitly supports failover.
 
-- Public IP addresses
-- Real company domain names
-- External DNS architecture
-- Production server names
-- Sensitive internal records
-- Credential information
-
-This portfolio uses a test domain and private address range.
+Overlapping scopes can create duplicate IP conflicts.
 
 ---
 
-## Monitor DNS Changes
+## Use Internal DNS for Domain Clients
 
-Unauthorized DNS changes can redirect users or disrupt authentication.
+Domain clients should receive the internal DNS server through DHCP.
 
-A stronger environment should audit:
+Using public DNS directly may break:
 
-- Record creation
-- Record deletion
-- Zone changes
-- Forwarder changes
-- Dynamic update failures
-- DNS service failures
+- Domain joins
+- Authentication
+- Group Policy
+- Service discovery
+- Internal resource resolution
 
 ---
 
-## Back Up Active Directory and DNS
+## Monitor DHCP Logs
 
-Active Directory-integrated DNS records are protected through Active Directory backup and replication.
+A production environment should monitor:
 
-A recovery plan should still include:
-
-- System State backup
-- Multiple domain controllers
-- Tested restore procedures
-- Configuration documentation
-- Disaster recovery runbooks
+- Authorization failures
+- Scope exhaustion
+- Service failures
+- Declined addresses
+- Duplicate addresses
+- Unauthorized DHCP activity
+- Lease anomalies
 
 ---
 
 # Useful Commands
 
-## Review client IP and DNS configuration
+## View authorized DHCP servers
+
+```powershell
+Get-DhcpServerInDC
+```
+
+---
+
+## Authorize SRV01
+
+```powershell
+Add-DhcpServerInDC `
+    -DnsName "SRV01.homelab.local" `
+    -IPAddress "192.168.241.10"
+```
+
+---
+
+## Check DHCP service status
+
+```powershell
+Get-Service DHCPServer
+```
+
+---
+
+## Restart the DHCP service
+
+```powershell
+Restart-Service DHCPServer
+```
+
+---
+
+## View DHCP scopes
+
+```powershell
+Get-DhcpServerv4Scope
+```
+
+---
+
+## View scope statistics
+
+```powershell
+Get-DhcpServerv4ScopeStatistics
+```
+
+---
+
+## View active leases
+
+```powershell
+Get-DhcpServerv4Lease `
+    -ScopeId <ScopeNetworkID>
+```
+
+---
+
+## View scope options
+
+```powershell
+Get-DhcpServerv4OptionValue `
+    -ScopeId <ScopeNetworkID>
+```
+
+---
+
+## Release a client address
+
+```cmd
+ipconfig /release
+```
+
+---
+
+## Renew a client address
+
+```cmd
+ipconfig /renew
+```
+
+---
+
+## Verify the client configuration
 
 ```cmd
 ipconfig /all
@@ -1144,265 +1453,194 @@ ipconfig /all
 
 ---
 
-## Clear client DNS cache
+## Test DNS after receiving the lease
 
 ```cmd
-ipconfig /flushdns
+nslookup homelab.local
 ```
-
----
-
-## Register client DNS records
-
-```cmd
-ipconfig /registerdns
-```
-
----
-
-## Test forward resolution
 
 ```cmd
 nslookup SRV01.homelab.local
-```
-
----
-
-## Test reverse resolution
-
-```cmd
-nslookup 192.168.241.10
-```
-
----
-
-## Test with PowerShell
-
-```powershell
-Resolve-DnsName SRV01.homelab.local
-```
-
----
-
-## List DNS zones
-
-```powershell
-Get-DnsServerZone
-```
-
----
-
-## List records in the domain zone
-
-```powershell
-Get-DnsServerResourceRecord `
-    -ZoneName "homelab.local"
-```
-
----
-
-## View SRV01 record
-
-```powershell
-Get-DnsServerResourceRecord `
-    -ZoneName "homelab.local" `
-    -Name "SRV01"
-```
-
----
-
-## View DNS forwarders
-
-```powershell
-Get-DnsServerForwarder
-```
-
----
-
-## Check DNS service
-
-```powershell
-Get-Service DNS
-```
-
----
-
-## Run domain-controller DNS diagnostics
-
-```cmd
-dcdiag /test:dns
-```
-
----
-
-## Locate a domain controller
-
-```cmd
-nltest /dsgetdc:homelab.local
 ```
 
 ---
 
 # Skills Demonstrated
 
-- Windows DNS Server
-- DNS Manager
-- Active Directory-Integrated DNS
-- Forward Lookup Zones
-- Reverse Lookup Zones
-- A Records
-- PTR Records
-- SRV Record Awareness
-- DNS Client Configuration
-- Name Resolution Testing
-- `nslookup`
-- `Resolve-DnsName`
-- DNS Troubleshooting
-- Active Directory Infrastructure
+- Windows DHCP Server
+- DHCP Role Installation
+- Active Directory DHCP Authorization
+- IPv4 Scope Configuration
+- Address Pool Management
+- Exclusion Ranges
+- Lease Duration
+- DHCP Scope Options
+- Default Gateway Configuration
+- DNS Option Configuration
+- Client Lease Renewal
+- DHCP Lease Verification
+- Event ID 1046 Troubleshooting
 - Windows Server 2025
-- Technical Documentation
+- Network Troubleshooting
+- Infrastructure Documentation
 
 ---
 
 # Interview Notes
 
-## What is DNS?
+## What is DHCP?
 
-DNS translates names into IP addresses and supports service discovery.
-
----
-
-## Why does Active Directory depend on DNS?
-
-Domain clients use DNS service records to locate domain controllers, Kerberos, LDAP, Global Catalog, and other domain services.
+DHCP automatically assigns network configuration to clients, including IP address, subnet mask, gateway, and DNS server.
 
 ---
 
-## What is an A record?
+## What is DORA?
 
-An A record maps a hostname to an IPv4 address.
+DORA describes the DHCP lease process:
 
----
-
-## What is a PTR record?
-
-A PTR record maps an IP address to a hostname.
-
----
-
-## What is the difference between forward and reverse lookup?
-
-Forward lookup resolves a hostname to an IP address.
-
-Reverse lookup resolves an IP address to a hostname.
-
----
-
-## Why should domain clients use the internal DNS server?
-
-The internal DNS server contains the private Active Directory records required for domain discovery and authentication.
-
----
-
-## What does it mean if ping by IP works but ping by hostname fails?
-
-Basic IP connectivity works, but DNS resolution is likely failing.
-
----
-
-## How would you test DNS resolution?
-
-I would use:
-
-```cmd
-nslookup hostname
+```text
+Discover
+Offer
+Request
+Acknowledge
 ```
 
-and:
+---
+
+## What is a DHCP scope?
+
+A scope defines the address range and network options available to clients on a subnet.
+
+---
+
+## What is an exclusion range?
+
+An exclusion prevents DHCP from assigning selected addresses.
+
+It is commonly used to protect statically configured infrastructure devices.
+
+---
+
+## Why must DHCP be authorized in Active Directory?
+
+Authorization prevents unauthorized DHCP servers from servicing domain clients.
+
+---
+
+## What does Event ID 1046 indicate?
+
+It indicates that the DHCP server determined it was not authorized in Active Directory and stopped servicing clients.
+
+---
+
+## How do you check DHCP authorization?
 
 ```powershell
-Resolve-DnsName hostname
-```
-
-I would also verify the client DNS server using:
-
-```cmd
-ipconfig /all
+Get-DhcpServerInDC
 ```
 
 ---
 
-## What is an Active Directory-integrated zone?
+## How do you authorize a DHCP server?
 
-It is a DNS zone stored in Active Directory and replicated through Active Directory.
-
-It supports secure dynamic updates and centralized replication.
+```powershell
+Add-DhcpServerInDC `
+    -DnsName "SRV01.homelab.local" `
+    -IPAddress "192.168.241.10"
+```
 
 ---
 
-## Why use DNS forwarders?
+## Why should the DHCP server give clients the internal DNS address?
 
-Forwarders allow the internal DNS server to send external queries to another approved DNS server.
+Domain clients require internal DNS to locate Active Directory services.
 
-This allows clients to use internal DNS for both private and public resolution.
+---
+
+## What does an APIPA address indicate?
+
+An address in the range:
+
+```text
+169.254.x.x
+```
+
+usually indicates that the client could not obtain a DHCP lease.
+
+---
+
+## How would you troubleshoot a client that receives an IP but cannot access the domain?
+
+I would check:
+
+1. DNS server received from DHCP
+2. Gateway
+3. Domain-controller connectivity
+4. `nslookup`
+5. DHCP scope options
+6. Client DNS cache
+7. Active Directory DNS records
 
 ---
 
 # What I Learned
 
-The most important lesson from this module was that DNS troubleshooting should begin by separating connectivity from name resolution.
+The most important lesson from this module was that DHCP configuration is more than creating an address range.
 
-The pattern is:
+A working client lease depends on:
 
 ```text
-Can I reach the IP?
+Authorized Server
++
+Active Scope
++
+Available Address
++
+Correct Gateway
++
+Correct DNS
 ```
 
+I also learned how closely DHCP and DNS work together.
+
+DHCP can successfully assign an IP address while still providing the wrong DNS server.
+
+That creates a situation where:
+
 ```text
-Can I resolve the hostname?
+IP connectivity works
 ```
 
+but:
+
 ```text
-Is the correct DNS server answering?
+Domain and hostname resolution fail
 ```
 
-Before this module, I sometimes treated a successful ping as proof that the whole network configuration was correct.
+The Event ID 1046 investigation also showed why Active Directory authorization matters.
 
-Now I understand:
+The server role was installed, but the service refused to operate because it was not approved in the domain.
 
-```text
-Ping by IP succeeds
-```
-
-only proves that basic communication is possible.
-
-It does not prove that:
-
-- DNS is configured correctly
-- The record exists
-- The correct server is answering
-- Active Directory service records are available
-
-I also learned why domain clients should use the internal DNS server instead of public DNS directly.
-
-Public DNS may resolve internet names, but it cannot resolve the private records required by `homelab.local`.
-
-The workflow I want to remember is:
+The troubleshooting workflow I want to remember is:
 
 ```text
-Check client DNS
+Check service
       ↓
-Test by IP
+Check authorization
       ↓
-Test forward lookup
+Check active scope
       ↓
-Test reverse lookup
+Check available leases
       ↓
-Inspect DNS record
+Renew client
       ↓
-Clear cache
+Verify IP
       ↓
-Retest
+Verify gateway
+      ↓
+Verify DNS
+      ↓
+Test name resolution
 ```
 
 ---
@@ -1411,79 +1649,82 @@ Retest
 
 To expand this module, I would add:
 
-- DNS forwarder configuration
-- Secure dynamic update validation
-- DNS scavenging
-- Aging configuration
-- Stale-record cleanup
-- DNS event-log review
-- PowerShell record creation
-- DNS health report
-- Secondary DNS server
-- Second domain controller
-- DNS replication testing
-- Conditional forwarders
-- DNSSEC investigation
-- Query logging
-- Centralized DNS monitoring
-- Automated record inventory
+- DHCP reservations
+- DHCP policies
+- MAC-based filtering
+- Scope utilization reporting
+- DHCP failover
+- Second DHCP server
+- Multiple VLAN scopes
+- DHCP relay
+- PowerShell scope creation
+- Automated lease reports
+- DHCP audit-log review
+- DNS dynamic-update validation
+- Secure credential configuration for DNS updates
+- Monitoring for rogue DHCP servers
+- Scope exhaustion alerts
 - Backup and restore testing
 
-Example PowerShell record creation:
+Example PowerShell scope creation:
 
 ```powershell
-Add-DnsServerResourceRecordA `
-    -Name "APP01" `
-    -ZoneName "homelab.local" `
-    -IPv4Address "192.168.241.20" `
-    -CreatePtr
+Add-DhcpServerv4Scope `
+    -Name "Homelab Clients" `
+    -StartRange "192.168.241.100" `
+    -EndRange "192.168.241.200" `
+    -SubnetMask "255.255.255.0"
 ```
+
+Values must match the actual network design before execution.
 
 ---
 
 # Key Takeaways
 
-This module documented and validated the DNS infrastructure supporting the `homelab.local` domain.
+This module deployed and validated DHCP services for the `homelab.local` environment.
 
 The implementation included:
 
-- Reviewing the forward lookup zone
-- Verifying the domain-controller A record
-- Creating a test A record
-- Creating a reverse lookup zone
-- Verifying PTR records
-- Testing forward resolution
-- Testing reverse resolution
-- Testing hostname connectivity
-- Reviewing the completed configuration
+- Installing the DHCP role
+- Completing post-installation configuration
+- Creating an IPv4 scope
+- Configuring exclusions
+- Setting lease duration
+- Configuring gateway and DNS options
+- Activating the scope
+- Renewing CLIENT01
+- Verifying the client configuration
+- Confirming the active lease
+- Investigating DHCP Event ID 1046
 
 The main lessons were:
 
 ```text
-Active Directory depends on DNS.
+DHCP must be authorized in Active Directory.
 ```
 
 ```text
-Domain clients should use the internal DNS server.
+An active scope is required before clients receive addresses.
 ```
 
 ```text
-A records support hostname-to-IP lookup.
+Exclude infrastructure addresses from the client pool.
 ```
 
 ```text
-PTR records support IP-to-hostname lookup.
+Deliver the internal DNS server to domain clients.
 ```
 
 ```text
-IP connectivity and DNS resolution must be tested separately.
+Verify both the client configuration and the server lease.
 ```
 
 ```text
-If IP works but the hostname fails, investigate DNS first.
+If IP works but names fail, investigate DNS.
 ```
 
-The DNS environment is now documented and ready to support DHCP integration and additional infrastructure services.
+The network now has automated client addressing and is ready to support the remaining core infrastructure services.
 
 ---
 
@@ -1493,6 +1734,6 @@ The DNS environment is now documented and ready to support DHCP integration and 
 
 ✅ Completed Successfully
 
-**Next Module:** [DHCP Infrastructure](../02-DHCP-Infrastructure/)
+**Next Module:** [File Services](../03-File-Services/)
 
 </div>
