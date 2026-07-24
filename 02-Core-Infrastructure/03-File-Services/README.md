@@ -1,82 +1,87 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=Group%20Policy%20Management%20and%20Security%20Hardening&fontSize=39&fontAlignY=35&desc=Identity%20and%20Access%20Management%20%7C%20Centralized%20Workstation%20Configuration&descSize=17&descAlignY=55" alt="Group Policy Hardening Banner" width="100%">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=File%20Services&fontSize=48&fontAlignY=35&desc=Core%20Infrastructure%20%7C%20Department%20Shares%2C%20Permissions%2C%20and%20Drive%20Mapping&descSize=17&descAlignY=55" alt="File Services Banner" width="100%">
 </div>
 
 ---
 
 # Overview
 
-This module documents the use of Group Policy to manage and harden domain-joined Windows workstations in the `homelab.local` environment.
+This module documents the implementation of departmental file services in the `homelab.local` environment.
 
-The objective was to create centralized policies that could be applied to CLIENT01 without configuring each setting manually on the device.
+The objective was to create shared folders, configure SMB sharing, apply NTFS permissions, validate authorized and unauthorized access, and automatically deploy departmental mapped drives using Group Policy Preferences.
 
-The implemented policies included:
+The implementation included:
 
-- Corporate desktop wallpaper
-- Domain password policy review
-- USB storage restriction
-- Password-protected screen saver
-- Fifteen-minute inactivity timeout
-- Forced screen saver configuration
-- Policy refresh using `gpupdate`
-- Policy validation using `gpresult`
-- Client-side confirmation
+- Department share folders
+- HR share configuration
+- SMB share permissions
+- NTFS permissions
+- Permission inheritance control
+- Authorized access testing
+- Unauthorized access testing
+- Group Policy drive mapping
+- Item-level targeting
+- Security-group-based drive assignment
+- Client-side validation using File Explorer and `net use`
 
-This module demonstrates how Active Directory administrators can apply standardized configuration and security settings across multiple computers from one central location.
+This module connects Active Directory users and security groups to actual business resources.
 
 ---
 
 # Why I Built This Module
 
-After joining CLIENT01 to the domain, the next step was to understand how the workstation could be managed centrally.
+After creating users and security groups in Active Directory, I wanted to understand how those identities are used to control access to real resources.
 
-Without Group Policy, an administrator would need to configure settings manually on every computer.
+A security group does not provide much value by itself until it is connected to something such as:
 
-That approach becomes difficult to maintain when:
+- Shared folders
+- Applications
+- Printers
+- Databases
+- Remote systems
 
-- More users are hired
-- Additional workstations are deployed
-- Security settings change
-- Devices are moved between departments
-- Audit requirements increase
-- Users modify local settings
+File Services allowed me to apply the identity and access model created in the previous modules.
 
-I wanted to understand how a Group Policy Object is created, edited, linked, applied, and verified.
-
-The most important lesson was that creating a policy is not enough.
-
-A complete Group Policy workflow requires:
+The most important lesson was that file access depends on several layers:
 
 ```text
-Create
-   ↓
-Configure
-   ↓
-Link
-   ↓
-Refresh
-   ↓
-Validate
+User Account
++
+Security Group Membership
++
+Share Permissions
++
+NTFS Permissions
++
+Group Policy Targeting
 ```
+
+I also learned that testing only successful access is not enough. A secure configuration should prove that approved users can access the folder and unauthorized users are denied.
 
 ---
 
 # Business Scenario
 
-The organization has started joining Windows 11 workstations to the `homelab.local` domain.
+The organization stores department files on SRV01.
 
-Management requires consistent workstation settings across company devices.
+The following departments require their own shared folders:
 
-The Infrastructure Team must enforce the following controls:
+- Human Resources
+- Sales
+- Information Technology
+- Finance
+- Management
 
-- Display the approved company wallpaper
-- Apply domain password requirements
-- Restrict removable USB storage
-- Lock inactive workstations
-- Require password protection after inactivity
-- Confirm that policies are actually applied
+Management requires the following:
 
-The goal is to reduce inconsistent configurations and strengthen endpoint security through centralized management.
+- Department users should access only their approved folders
+- Unauthorized users should be denied
+- Permissions should be assigned through security groups
+- Department drives should appear automatically
+- Drive assignments should follow department membership
+- Access should be validated from CLIENT01
+
+The Infrastructure Team must create the departmental file structure, configure permissions, and deploy mapped drives through Group Policy Preferences.
 
 ---
 
@@ -84,178 +89,169 @@ The goal is to reduce inconsistent configurations and strengthen endpoint securi
 
 By completing this module, I practiced the following:
 
-- Opening Group Policy Management
-- Navigating the Group Policy hierarchy
-- Creating a new Group Policy Object
-- Editing computer and user policy settings
-- Linking a GPO to an Organizational Unit
-- Understanding policy scope
-- Applying desktop standardization
-- Reviewing domain password settings
-- Restricting removable storage
-- Configuring inactivity lock controls
-- Forcing Group Policy refresh
-- Validating applied policies with `gpresult`
-- Troubleshooting policy application
-- Understanding the difference between user and computer settings
+- Creating department share folders
+- Configuring SMB sharing
+- Understanding share permissions
+- Configuring NTFS permissions
+- Reviewing permission inheritance
+- Disabling inheritance when required
+- Assigning access through Active Directory security groups
+- Testing authorized access
+- Testing unauthorized access
+- Understanding effective permissions
+- Creating drive mappings with Group Policy Preferences
+- Using item-level targeting
+- Targeting users by security-group membership
+- Verifying mapped drives with `net use`
+- Troubleshooting file-access and drive-mapping problems
+- Documenting resource-access controls
 
 ---
 
 # Key Concepts Learned
 
-## Group Policy
+## SMB File Sharing
 
-Group Policy is a Windows management feature used to configure users and computers in an Active Directory domain.
+Server Message Block, or SMB, is the protocol used by Windows systems to access shared files and folders over a network.
 
-Administrators can use Group Policy to control:
+A shared folder can be accessed using a UNC path such as:
 
-- Security settings
-- Password policies
-- Desktop configuration
-- Windows components
-- Firewall rules
-- Removable storage
-- Scripts
-- Software settings
-- Browser configuration
-- Screen locking
-- Audit policies
+```text
+\\SRV01\HR
+```
 
 ---
 
-## Group Policy Object
+## Share Permissions
 
-A Group Policy Object, or GPO, is a collection of configuration settings.
+Share permissions apply when a folder is accessed over the network.
 
-A GPO does not affect users or computers until it is linked to a valid scope.
+Common share permissions include:
 
-Common scopes include:
+- Read
+- Change
+- Full Control
 
-- Site
-- Domain
+Share permissions do not replace NTFS permissions.
+
+Both permission layers may affect access.
+
+---
+
+## NTFS Permissions
+
+NTFS permissions apply to files and folders stored on an NTFS volume.
+
+Common permissions include:
+
+- Full Control
+- Modify
+- Read and Execute
+- List Folder Contents
+- Read
+- Write
+
+NTFS permissions apply whether the folder is accessed locally or through the network.
+
+---
+
+## Effective Access
+
+When a user accesses a shared folder over the network, Windows evaluates both:
+
+```text
+Share Permissions
++
+NTFS Permissions
+```
+
+The most restrictive effective result normally controls access.
+
+Example:
+
+```text
+Share Permission: Full Control
+NTFS Permission: Read
+Effective Access: Read
+```
+
+---
+
+## Permission Inheritance
+
+Permissions normally flow from a parent folder to child folders.
+
+Disabling inheritance allows a folder to use a more specific access-control list.
+
+This must be handled carefully because removing inherited entries may accidentally remove access required by:
+
+- Administrators
+- SYSTEM
+- Backup operators
+- File-server administrators
+
+---
+
+## Security-Group-Based Access
+
+Permissions were assigned to security groups instead of individual users.
+
+Example:
+
+```text
+John Smith
+     ↓
+HR Security Group
+     ↓
+HR Folder Permission
+```
+
+This makes onboarding, department changes, and offboarding easier to manage.
+
+---
+
+## Mapped Drives
+
+A mapped drive assigns a drive letter to a network share.
+
+Example:
+
+```text
+H:
+```
+
+mapped to:
+
+```text
+\\SRV01\HR
+```
+
+Mapped drives provide users with a familiar way to access departmental files.
+
+---
+
+## Group Policy Preferences
+
+Group Policy Preferences can create, update, replace, or remove settings such as mapped drives.
+
+Unlike traditional policy settings, preferences can use conditional targeting.
+
+---
+
+## Item-Level Targeting
+
+Item-level targeting allows a preference item to apply only when specific conditions are true.
+
+Examples include:
+
+- Security-group membership
+- User name
+- Computer name
+- Operating system
+- IP range
 - Organizational Unit
 
----
-
-## User Configuration
-
-User Configuration follows the user account.
-
-Examples include:
-
-- Desktop wallpaper
-- Start menu settings
-- Drive mappings
-- User scripts
-- Screen saver settings
-
----
-
-## Computer Configuration
-
-Computer Configuration applies to the workstation or server.
-
-Examples include:
-
-- Firewall settings
-- USB restrictions
-- Security options
-- Windows services
-- Update configuration
-- Device restrictions
-
----
-
-## GPO Linking
-
-A GPO must be linked to a Site, Domain, or Organizational Unit before it can apply.
-
-Example:
-
-```text
-Workstation Security Baseline GPO
-              ↓
-Workstations OU
-              ↓
-CLIENT01
-```
-
-The GPO applies only when the target object is inside the linked scope and passes any security or WMI filtering.
-
----
-
-## Group Policy Processing
-
-Group Policy is processed during:
-
-- Computer startup
-- User sign-in
-- Background refresh
-- Manual refresh
-
-A manual refresh can be triggered using:
-
-```cmd
-gpupdate /force
-```
-
----
-
-## Group Policy Results
-
-The `gpresult` command shows which policies were applied or denied.
-
-Example:
-
-```cmd
-gpresult /r
-```
-
-A more detailed HTML report can be generated using:
-
-```cmd
-gpresult /h C:\Reports\GPResult.html
-```
-
----
-
-## Default Domain Policy
-
-The Default Domain Policy usually contains domain-wide account policies such as:
-
-- Password history
-- Password age
-- Minimum password length
-- Password complexity
-- Account lockout settings
-
-It should not become a general storage location for unrelated workstation settings.
-
-Custom GPOs are easier to manage, troubleshoot, and document.
-
----
-
-## Policy Precedence
-
-When multiple GPOs apply, Windows processes them in this general order:
-
-```text
-Local
-  ↓
-Site
-  ↓
-Domain
-  ↓
-Organizational Unit
-```
-
-This is commonly remembered as:
-
-```text
-LSDOU
-```
-
-Later policies normally have higher precedence unless inheritance, enforcement, filtering, or loopback processing changes the result.
+In this module, drive mappings were targeted according to department security groups.
 
 ---
 
@@ -263,55 +259,51 @@ Later policies normally have higher precedence unless inheritance, enforcement, 
 
 | Component | Configuration |
 |------------|---------------|
-| Domain Controller | SRV01 |
-| Client Computer | CLIENT01 |
+| File Server | SRV01 |
 | Server Operating System | Windows Server 2025 Standard Evaluation |
+| Client | CLIENT01 |
 | Client Operating System | Windows 11 Enterprise |
-| Active Directory Domain | homelab.local |
-| Management Tool | Group Policy Management Console |
-| Client OU | Workstations |
-| Primary GPO | Workstation Security Baseline |
-| Wallpaper Delivery | Shared network folder |
-| USB Control | Removable storage restriction |
-| Screen Saver Timeout | 900 seconds |
-| Validation Tools | `gpupdate`, `gpresult` |
+| Domain | homelab.local |
+| File Protocol | SMB |
+| File System | NTFS |
+| Department Groups | HR, Sales, IT, Finance, Management |
+| Management Tools | File Explorer, Advanced Sharing, Group Policy Management |
+| Validation Tools | File Explorer, `net use`, `whoami /groups`, `gpresult` |
+| Primary Test Share | `\\SRV01\HR` |
 
 ---
 
 # Folder Structure
 
 ```text
-01-Identity-and-Access-Management
+02-Core-Infrastructure
 │
-└── 04-Group-Policy-Hardening
+└── 03-File-Services
     │
     ├── README.md
     │
     └── Evidence
         └── Screenshots
-            ├── 01-Open-Group-Policy-Management.png
-            ├── 02-Group-Policy-Management-Console.png
-            ├── 03-Create-Workstation-Security-Baseline-GPO.png
-            ├── 04-Workstation-Security-Baseline-GPO-Editor.png
-            ├── 05-Wallpaper-Shared-Folder.png
-            ├── 06-Desktop-Wallpaper-Policy.png
-            ├── 07-GPUpdate-Force.png
-            ├── 08-GPResult-Workstation-Security-Baseline.png
-            ├── 09-Corporate-Wallpaper-Applied.png
-            ├── 10-Default-Domain-Policy.png
-            ├── 11-Password-Policy-Settings.png
-            ├── 12-GPUpdate-Password-Policy.png
-            ├── 13-USB-Storage-Restriction-GPO.png
-            ├── 14-GPUpdate-USB-Policy.png
-            ├── 15-GPResult-USB-Policy.png
-            ├── 16-Enable-Screen-Saver-Policy.png
-            ├── 17-Password-Protect-Screen-Saver-Policy.png
-            ├── 18-Screen-Saver-Timeout-900-Seconds.png
-            ├── 19-Force-Specific-Screen-Saver.png
-            ├── 20-Screen-Saver-Policy-Summary.png
-            ├── 21-GPUpdate-Screen-Saver-Policy.png
-            ├── 22-GPResult-Screen-Saver-Policy.png
-            └── 23-Screen-Saver-Lock-Screen.png
+            ├── 01-Department-Share-Folders.png
+            ├── 02-HR-Advanced-Sharing.png
+            ├── 03-HR-Share-Permissions.png
+            ├── 04-Advanced-Security-Settings-HR.png
+            ├── 05-Disable-Inheritance-HR.png
+            ├── 06-HR-Final-NTFS-Permissions.png
+            ├── 07-HR-Share-Access-Success.png
+            ├── 08-Unauthorized-Access-Denied.png
+            ├── 09-HR-Share-Access-Granted.png
+            ├── 10-Open-Group-Policy-Management-Drive-Mapping.png
+            ├── 11-Create-HR-Drive-Mapping-GPO.png
+            ├── 12-HR-Drive-Maps-Node.png
+            ├── 13-HR-Mapped-Drive-General-Settings.png
+            ├── 14-HR-Item-Level-Targeting-Enabled.png
+            ├── 15-HR-Security-Group-Targeting.png
+            ├── 16-Link-HR-Drive-Mapping-GPO.png
+            ├── 17-HR-Drive-Mapped-Successfully.png
+            ├── 18-Net-Use-HR-Drive-Mapping.png
+            ├── 19-All-Department-Drive-Mappings.png
+            └── 20-IT-User-Receives-Only-IT-Drive.png
 ```
 
 ---
@@ -320,447 +312,436 @@ Later policies normally have higher precedence unless inheritance, enforcement, 
 
 ---
 
-## Step 1 — Open Group Policy Management
+## Step 1 — Create Department Share Folders
 
-Opened:
+Created folders for each department.
+
+Example structure:
 
 ```text
-Server Manager
-      ↓
-Tools
-      ↓
-Group Policy Management
+C:\Shares
+│
+├── HR
+├── Sales
+├── IT
+├── Finance
+└── Management
 ```
 
-The Group Policy Management Console provides a centralized interface for creating, linking, editing, backing up, and reviewing Group Policy Objects.
+This provided a consistent storage location for departmental data.
 
 <p align="center">
-  <img src="Evidence/Screenshots/01-Open-Group-Policy-Management.png" width="800" alt="Open Group Policy Management">
+  <img src="Evidence/Screenshots/01-Department-Share-Folders.png" width="800" alt="Department Share Folders">
 </p>
 
 ---
 
-## Step 2 — Review the Group Policy Management Console
+## Step 2 — Enable Advanced Sharing for HR
 
-Reviewed the domain structure and available policy locations.
+Opened the HR folder properties and enabled Advanced Sharing.
 
-The console displayed:
+The folder was shared using the name:
 
-- Forest
-- Domain
-- Organizational Units
-- Group Policy Objects
-- Default Domain Policy
-- Default Domain Controllers Policy
-- Group Policy Results
-- Group Policy Modeling
+```text
+HR
+```
 
-This helped identify where custom workstation policies should be created and linked.
+The resulting UNC path was:
+
+```text
+\\SRV01\HR
+```
 
 <p align="center">
-  <img src="Evidence/Screenshots/02-Group-Policy-Management-Console.png" width="800" alt="Group Policy Management Console">
+  <img src="Evidence/Screenshots/02-HR-Advanced-Sharing.png" width="800" alt="HR Advanced Sharing">
 </p>
 
 ---
 
-## Step 3 — Create the Workstation Security Baseline GPO
+## Step 3 — Configure HR Share Permissions
 
-Created a custom GPO named:
+Configured the share-level permissions for the HR folder.
 
-```text
-Workstation Security Baseline
-```
+Share permissions control network access to the folder.
 
-A separate GPO was used instead of placing all settings in the Default Domain Policy.
-
-This improves:
-
-- Troubleshooting
-- Change tracking
-- Policy separation
-- Documentation
-- Future rollback
+The permission design was reviewed together with the NTFS permissions because both layers affect the final result.
 
 <p align="center">
-  <img src="Evidence/Screenshots/03-Create-Workstation-Security-Baseline-GPO.png" width="800" alt="Create Workstation Security Baseline GPO">
+  <img src="Evidence/Screenshots/03-HR-Share-Permissions.png" width="800" alt="HR Share Permissions">
 </p>
 
 ---
 
-## Step 4 — Open the GPO Editor
+## Step 4 — Review Advanced Security Settings
 
-Opened the Group Policy Management Editor for the new baseline.
+Opened the Advanced Security Settings for the HR folder.
 
-The editor separates settings into:
+This interface was used to review:
+
+- Permission entries
+- Inheritance
+- Object ownership
+- Permission scope
+- Security principals
+- Effective access
+
+<p align="center">
+  <img src="Evidence/Screenshots/04-Advanced-Security-Settings-HR.png" width="800" alt="Advanced Security Settings for HR Folder">
+</p>
+
+---
+
+## Step 5 — Disable Permission Inheritance
+
+Disabled permission inheritance for the HR folder.
+
+This allowed the HR folder to use a more specific permission set instead of automatically receiving all permissions from the parent folder.
+
+Before changing inheritance, I confirmed that required administrative principals would retain access.
+
+<p align="center">
+  <img src="Evidence/Screenshots/05-Disable-Inheritance-HR.png" width="800" alt="Disable Permission Inheritance for HR Folder">
+</p>
+
+---
+
+## Step 6 — Configure Final NTFS Permissions
+
+Configured the final NTFS permissions for the HR folder.
+
+The access-control list included appropriate entries for:
+
+- HR security group
+- Administrators
+- SYSTEM
+- Other required management accounts
+
+Permissions were assigned to groups instead of directly to individual users.
+
+<p align="center">
+  <img src="Evidence/Screenshots/06-HR-Final-NTFS-Permissions.png" width="800" alt="Final HR NTFS Permissions">
+</p>
+
+---
+
+## Step 7 — Test HR Share Access
+
+Tested access to:
 
 ```text
-Computer Configuration
+\\SRV01\HR
 ```
 
-and:
+using an authorized HR user.
+
+The successful result confirmed that:
+
+- The server was reachable
+- SMB sharing was active
+- The user belonged to the correct group
+- Share permissions allowed access
+- NTFS permissions allowed access
+
+<p align="center">
+  <img src="Evidence/Screenshots/07-HR-Share-Access-Success.png" width="800" alt="HR Share Access Success">
+</p>
+
+---
+
+## Step 8 — Test Unauthorized Access
+
+Attempted to access the HR folder using an unauthorized user.
+
+The access-denied result confirmed that the permission boundary was working.
+
+A successful test alone would not prove that unauthorized users were blocked, so this negative test was required.
+
+<p align="center">
+  <img src="Evidence/Screenshots/08-Unauthorized-Access-Denied.png" width="800" alt="Unauthorized Access Denied">
+</p>
+
+---
+
+## Step 9 — Confirm HR Access Is Granted
+
+Signed in using the approved HR account and confirmed access to the HR shared folder.
+
+The access path was:
+
+```text
+HR User
+   ↓
+HR Security Group
+   ↓
+HR Folder Permissions
+   ↓
+Access Granted
+```
+
+<p align="center">
+  <img src="Evidence/Screenshots/09-HR-Share-Access-Granted.png" width="800" alt="HR Share Access Granted">
+</p>
+
+---
+
+# Department Drive Mapping with Group Policy Preferences
+
+---
+
+## Step 10 — Open Group Policy Management
+
+Opened Group Policy Management to begin creating the mapped-drive policy.
+
+The goal was to automatically provide the HR drive only to approved HR users.
+
+<p align="center">
+  <img src="Evidence/Screenshots/10-Open-Group-Policy-Management-Drive-Mapping.png" width="800" alt="Open Group Policy Management for Drive Mapping">
+</p>
+
+---
+
+## Step 11 — Create the HR Drive Mapping GPO
+
+Created a dedicated GPO for the HR drive mapping.
+
+Example name:
+
+```text
+HR Drive Mapping
+```
+
+Using a dedicated GPO makes the purpose easier to identify, test, and troubleshoot.
+
+<p align="center">
+  <img src="Evidence/Screenshots/11-Create-HR-Drive-Mapping-GPO.png" width="800" alt="Create HR Drive Mapping GPO">
+</p>
+
+---
+
+## Step 12 — Open the Drive Maps Node
+
+Navigated to:
 
 ```text
 User Configuration
+      ↓
+Preferences
+      ↓
+Windows Settings
+      ↓
+Drive Maps
 ```
 
-This distinction determines whether the policy follows the device or the user.
+This node allows administrators to create and manage mapped network drives.
 
 <p align="center">
-  <img src="Evidence/Screenshots/04-Workstation-Security-Baseline-GPO-Editor.png" width="800" alt="Workstation Security Baseline GPO Editor">
+  <img src="Evidence/Screenshots/12-HR-Drive-Maps-Node.png" width="800" alt="HR Drive Maps Node">
 </p>
 
 ---
 
-## Step 5 — Prepare the Shared Wallpaper Folder
+## Step 13 — Configure the HR Mapped Drive
 
-Created a shared folder containing the approved corporate wallpaper.
+Configured the general mapped-drive settings.
 
-The image needed to be accessible from CLIENT01 through a UNC path.
-
-Example:
+Example configuration:
 
 ```text
-\\SRV01\Wallpaper\Corporate-Wallpaper.jpg
+Action: Update
+Location: \\SRV01\HR
+Drive Letter: H:
+Label: HR Department
 ```
 
-Using a shared location allows multiple domain users to receive the same image.
+The `Update` action allows the mapping to be created when missing and updated when the configuration changes.
 
 <p align="center">
-  <img src="Evidence/Screenshots/05-Wallpaper-Shared-Folder.png" width="800" alt="Wallpaper Shared Folder">
+  <img src="Evidence/Screenshots/13-HR-Mapped-Drive-General-Settings.png" width="800" alt="HR Mapped Drive General Settings">
 </p>
 
 ---
 
-## Step 6 — Configure the Desktop Wallpaper Policy
+## Step 14 — Enable Item-Level Targeting
 
-Configured the desktop wallpaper policy to use the shared image.
+Enabled item-level targeting for the HR mapped drive.
 
-This setting provides a consistent desktop appearance for targeted users.
+Without targeting, the mapping could apply to every user within the GPO scope.
 
-Although wallpaper is not a major security control, it demonstrates centralized user configuration and confirms that Group Policy processing is functioning.
+Item-level targeting restricts the mapping according to specific conditions.
 
 <p align="center">
-  <img src="Evidence/Screenshots/06-Desktop-Wallpaper-Policy.png" width="800" alt="Desktop Wallpaper Group Policy">
+  <img src="Evidence/Screenshots/14-HR-Item-Level-Targeting-Enabled.png" width="800" alt="HR Item-Level Targeting Enabled">
 </p>
 
 ---
 
-## Step 7 — Force Group Policy Update
+## Step 15 — Target the HR Security Group
 
-On CLIENT01, ran:
+Configured the targeting rule so the drive mapping applied only to members of the HR security group.
 
-```cmd
-gpupdate /force
+The targeting logic was:
+
+```text
+User is a member of HR Security Group
+              ↓
+Create H: drive
 ```
 
-This forced Windows to process both computer and user policy settings.
-
-Some settings may still require sign-out, sign-in, or restart.
+Users outside the group should not receive the HR drive.
 
 <p align="center">
-  <img src="Evidence/Screenshots/07-GPUpdate-Force.png" width="800" alt="Force Group Policy Update">
+  <img src="Evidence/Screenshots/15-HR-Security-Group-Targeting.png" width="800" alt="HR Security Group Targeting">
 </p>
 
 ---
 
-## Step 8 — Validate the Workstation Baseline
+## Step 16 — Link the HR Drive Mapping GPO
+
+Linked the HR Drive Mapping GPO to the appropriate user Organizational Unit.
+
+The GPO needed to be linked to a location containing the target user accounts.
+
+<p align="center">
+  <img src="Evidence/Screenshots/16-Link-HR-Drive-Mapping-GPO.png" width="800" alt="Link HR Drive Mapping GPO">
+</p>
+
+---
+
+## Step 17 — Confirm the HR Drive Mapping
+
+Signed in using an HR account and confirmed that the HR mapped drive appeared successfully.
+
+The mapped drive provided access to:
+
+```text
+\\SRV01\HR
+```
+
+through:
+
+```text
+H:
+```
+
+<p align="center">
+  <img src="Evidence/Screenshots/17-HR-Drive-Mapped-Successfully.png" width="800" alt="HR Drive Mapped Successfully">
+</p>
+
+---
+
+## Step 18 — Verify the Mapping with NET USE
 
 Ran:
 
 ```cmd
-gpresult /r
+net use
 ```
 
-The output was reviewed to confirm that the Workstation Security Baseline GPO appeared in the applied policy list.
+The output showed the active network drive connection and confirmed:
 
-This step was important because a policy existing in Group Policy Management does not prove that it reached the client.
+- Drive letter
+- UNC path
+- Connection status
 
 <p align="center">
-  <img src="Evidence/Screenshots/08-GPResult-Workstation-Security-Baseline.png" width="800" alt="Group Policy Result for Workstation Security Baseline">
+  <img src="Evidence/Screenshots/18-Net-Use-HR-Drive-Mapping.png" width="800" alt="Verify HR Drive Mapping with Net Use">
 </p>
 
 ---
 
-## Step 9 — Confirm the Corporate Wallpaper
+## Step 19 — Review All Department Drive Mappings
 
-Verified that the approved wallpaper appeared on CLIENT01.
+Created or reviewed mapped-drive policies for all departments.
 
-This confirmed that:
-
-- The GPO was linked correctly
-- The client could access the shared image
-- User policy processing succeeded
-- The policy path was valid
-
-<p align="center">
-  <img src="Evidence/Screenshots/09-Corporate-Wallpaper-Applied.png" width="800" alt="Corporate Wallpaper Applied">
-</p>
-
----
-
-## Step 10 — Review the Default Domain Policy
-
-Opened the Default Domain Policy to review domain-level account settings.
-
-The Default Domain Policy commonly contains password and account-lockout configuration.
-
-It should be kept focused on domain-wide account policy rather than unrelated workstation settings.
-
-<p align="center">
-  <img src="Evidence/Screenshots/10-Default-Domain-Policy.png" width="800" alt="Default Domain Policy">
-</p>
-
----
-
-## Step 11 — Review Password Policy Settings
-
-Reviewed password settings such as:
-
-- Password history
-- Maximum password age
-- Minimum password age
-- Minimum password length
-- Complexity requirements
-- Reversible encryption
-
-These settings apply to domain accounts and support a consistent authentication baseline.
-
-<p align="center">
-  <img src="Evidence/Screenshots/11-Password-Policy-Settings.png" width="800" alt="Domain Password Policy Settings">
-</p>
-
----
-
-## Step 12 — Refresh the Password Policy
-
-Ran a Group Policy refresh after reviewing or updating the password policy.
-
-Command:
-
-```cmd
-gpupdate /force
-```
-
-Password policy behavior should also be checked using domain-level tools because account policies are processed by domain controllers.
-
-<p align="center">
-  <img src="Evidence/Screenshots/12-GPUpdate-Password-Policy.png" width="800" alt="Refresh Password Policy">
-</p>
-
----
-
-## Step 13 — Configure USB Storage Restriction
-
-Created or configured a GPO that restricts removable storage access.
-
-USB restrictions can help reduce risks such as:
-
-- Unauthorized data copying
-- Malware introduced through removable devices
-- Unapproved software
-- Loss of sensitive information
-- Use of unmanaged storage
-
-The exact policy should match business needs because some departments may require approved removable media.
-
-<p align="center">
-  <img src="Evidence/Screenshots/13-USB-Storage-Restriction-GPO.png" width="800" alt="USB Storage Restriction GPO">
-</p>
-
----
-
-## Step 14 — Apply the USB Policy
-
-Ran:
-
-```cmd
-gpupdate /force
-```
-
-This forced CLIENT01 to retrieve the updated removable-storage policy.
-
-<p align="center">
-  <img src="Evidence/Screenshots/14-GPUpdate-USB-Policy.png" width="800" alt="Apply USB Restriction Policy">
-</p>
-
----
-
-## Step 15 — Validate the USB Policy
-
-Used `gpresult` to confirm that the USB restriction GPO applied to CLIENT01.
-
-This helped distinguish between:
+Example design:
 
 ```text
-Policy configured
+H: → HR
+S: → Sales
+I: → IT
+F: → Finance
+M: → Management
 ```
 
-and:
+Each mapping should use department-specific group targeting.
+
+<p align="center">
+  <img src="Evidence/Screenshots/19-All-Department-Drive-Mappings.png" width="800" alt="All Department Drive Mappings">
+</p>
+
+---
+
+## Step 20 — Verify IT User Receives Only the IT Drive
+
+Signed in using an IT department user and confirmed that the user received the IT mapped drive but did not receive the HR mapped drive.
+
+This validated:
+
+- Security-group targeting
+- Department separation
+- Item-level targeting
+- Least-privilege access
+
+<p align="center">
+  <img src="Evidence/Screenshots/20-IT-User-Receives-Only-IT-Drive.png" width="800" alt="IT User Receives Only IT Drive">
+</p>
+
+---
+
+# File Services Workflow
 
 ```text
-Policy applied
+Create Department Folders
+          │
+          ▼
+Enable SMB Sharing
+          │
+          ▼
+Configure Share Permissions
+          │
+          ▼
+Configure NTFS Permissions
+          │
+          ▼
+Assign Security Groups
+          │
+          ▼
+Test Authorized Access
+          │
+          ▼
+Test Unauthorized Access
+          │
+          ▼
+Create Drive Mapping GPO
+          │
+          ▼
+Apply Item-Level Targeting
+          │
+          ▼
+Validate Department Drives
 ```
 
-<p align="center">
-  <img src="Evidence/Screenshots/15-GPResult-USB-Policy.png" width="800" alt="Validate USB Restriction Policy">
-</p>
-
 ---
 
-## Step 16 — Enable the Screen Saver Policy
-
-Enabled the screen saver policy for targeted users.
-
-A screen saver policy can support workstation locking after inactivity.
-
-<p align="center">
-  <img src="Evidence/Screenshots/16-Enable-Screen-Saver-Policy.png" width="800" alt="Enable Screen Saver Policy">
-</p>
-
----
-
-## Step 17 — Require Password Protection
-
-Enabled password protection for the screen saver.
-
-When the workstation becomes inactive and the screen saver activates, the user must authenticate again before returning to the desktop.
-
-<p align="center">
-  <img src="Evidence/Screenshots/17-Password-Protect-Screen-Saver-Policy.png" width="800" alt="Password Protect Screen Saver Policy">
-</p>
-
----
-
-## Step 18 — Configure the Inactivity Timeout
-
-Configured the screen saver timeout to:
+# Permission Evaluation Workflow
 
 ```text
-900 seconds
-```
-
-This equals:
-
-```text
-15 minutes
-```
-
-A defined inactivity period reduces the risk of an unattended workstation remaining accessible.
-
-<p align="center">
-  <img src="Evidence/Screenshots/18-Screen-Saver-Timeout-900-Seconds.png" width="800" alt="Screen Saver Timeout 900 Seconds">
-</p>
-
----
-
-## Step 19 — Force a Specific Screen Saver
-
-Configured a specific screen saver executable.
-
-This ensured that the policy used a known Windows screen saver rather than depending on an individual user selection.
-
-<p align="center">
-  <img src="Evidence/Screenshots/19-Force-Specific-Screen-Saver.png" width="800" alt="Force Specific Screen Saver">
-</p>
-
----
-
-## Step 20 — Review the Screen Saver Policy
-
-Reviewed the complete screen saver configuration before applying it.
-
-The policy included:
-
-- Screen saver enabled
-- Password protection enabled
-- Fifteen-minute timeout
-- Specific screen saver selected
-
-<p align="center">
-  <img src="Evidence/Screenshots/20-Screen-Saver-Policy-Summary.png" width="800" alt="Screen Saver Policy Summary">
-</p>
-
----
-
-## Step 21 — Apply the Screen Saver Policy
-
-On CLIENT01, ran:
-
-```cmd
-gpupdate /force
-```
-
-This refreshed the client policy after the screen saver settings were configured.
-
-<p align="center">
-  <img src="Evidence/Screenshots/21-GPUpdate-Screen-Saver-Policy.png" width="800" alt="Apply Screen Saver Policy">
-</p>
-
----
-
-## Step 22 — Validate with GPResult
-
-Ran:
-
-```cmd
-gpresult /r
-```
-
-The result confirmed that the screen saver policy was included in the applied GPO list.
-
-<p align="center">
-  <img src="Evidence/Screenshots/22-GPResult-Screen-Saver-Policy.png" width="800" alt="Validate Screen Saver Policy">
-</p>
-
----
-
-## Step 23 — Confirm the Client Lock Screen
-
-Waited for the configured inactivity period and confirmed that CLIENT01 displayed the lock screen.
-
-This validated the original policy objective:
-
-```text
-Inactive workstation
-        ↓
-Screen saver activates
-        ↓
-Workstation locks
-        ↓
-User must authenticate
-```
-
-<p align="center">
-  <img src="Evidence/Screenshots/23-Screen-Saver-Lock-Screen.png" width="800" alt="Screen Saver Lock Screen">
-</p>
-
----
-
-# Group Policy Workflow
-
-```text
-Business Requirement
+User Requests Access
         │
         ▼
-Create GPO
+Security Group Membership Checked
         │
         ▼
-Configure Policy Settings
+Share Permissions Evaluated
         │
         ▼
-Link GPO to Correct Scope
+NTFS Permissions Evaluated
         │
         ▼
-Run gpupdate
+Effective Access Calculated
         │
-        ▼
-Verify with gpresult
-        │
-        ▼
-Test Client Behavior
-        │
-        ▼
-Document Result
+        ├── Access Granted
+        └── Access Denied
 ```
 
 ---
@@ -769,41 +750,93 @@ Document Result
 
 | Validation Check | Result |
 |------------------|--------|
+| Department folders created | ✅ |
+| HR folder shared | ✅ |
+| Share permissions configured | ✅ |
+| Advanced security settings reviewed | ✅ |
+| Permission inheritance disabled | ✅ |
+| Final NTFS permissions configured | ✅ |
+| Authorized HR access succeeded | ✅ |
+| Unauthorized access was denied | ✅ |
+| HR access confirmed through security group | ✅ |
 | Group Policy Management opened | ✅ |
-| Workstation Security Baseline created | ✅ |
-| GPO editor opened | ✅ |
-| Wallpaper share prepared | ✅ |
-| Wallpaper policy configured | ✅ |
-| Corporate wallpaper applied | ✅ |
-| Default Domain Policy reviewed | ✅ |
-| Password policy settings reviewed | ✅ |
-| USB storage restriction configured | ✅ |
-| USB policy processed on CLIENT01 | ✅ |
-| Screen saver enabled | ✅ |
-| Password protection enabled | ✅ |
-| Timeout configured to 900 seconds | ✅ |
-| Specific screen saver configured | ✅ |
-| Policies refreshed with `gpupdate` | ✅ |
-| Policies validated with `gpresult` | ✅ |
-| CLIENT01 lock screen confirmed | ✅ |
+| HR drive-mapping GPO created | ✅ |
+| Drive Maps preference configured | ✅ |
+| Item-level targeting enabled | ✅ |
+| HR security group targeted | ✅ |
+| HR drive-mapping GPO linked | ✅ |
+| HR mapped drive appeared successfully | ✅ |
+| Mapping verified with `net use` | ✅ |
+| Department drive mappings reviewed | ✅ |
+| IT user received only the IT drive | ✅ |
 
 ---
 
 # Troubleshooting Notes
 
-## GPO Does Not Apply
+## User Receives Access Denied
 
 Check:
 
-- Is the GPO linked?
-- Is the user or computer in the correct OU?
-- Is the GPO enabled?
-- Does security filtering allow the target?
-- Is inheritance blocked?
-- Is another GPO overriding the setting?
-- Can the client contact the domain controller?
-- Is DNS working?
-- Has policy refreshed?
+1. Is the user in the correct security group?
+2. Does the group have share permission?
+3. Does the group have NTFS permission?
+4. Is there an explicit Deny entry?
+5. Was inheritance changed?
+6. Has the user signed out and back in?
+7. Is the UNC path correct?
+8. Is SRV01 reachable?
+
+Useful command:
+
+```cmd
+whoami /groups
+```
+
+---
+
+## Group Membership Was Added but Access Still Fails
+
+A user's existing sign-in session may still contain an old security token.
+
+The user may need to:
+
+```text
+Sign out
+    ↓
+Sign back in
+```
+
+This creates a new token containing the updated group memberships.
+
+---
+
+## Share Works Locally but Not over the Network
+
+Possible causes include:
+
+- SMB sharing not enabled
+- Windows Firewall blocking File and Printer Sharing
+- Incorrect share name
+- Share permission problem
+- DNS failure
+- Server unavailable
+- Incorrect UNC path
+
+---
+
+## Drive Mapping Does Not Appear
+
+Check:
+
+- GPO link
+- User OU
+- Security filtering
+- Item-level targeting
+- User group membership
+- Share path
+- Policy processing
+- Existing mapped drive conflicts
 
 Useful commands:
 
@@ -816,228 +849,321 @@ gpresult /r
 ```
 
 ```cmd
-gpresult /h C:\Reports\GPResult.html
+net use
 ```
 
 ---
 
-## Wallpaper Does Not Display
-
-Possible causes:
-
-- Incorrect UNC path
-- User cannot read the shared file
-- File name changed
-- Share unavailable
-- GPO linked to the wrong OU
-- User policy not refreshed
-- Unsupported image path
-
-Test the path directly:
-
-```text
-\\SRV01\Wallpaper\Corporate-Wallpaper.jpg
-```
-
----
-
-## USB Restriction Does Not Work
+## User Receives the Wrong Department Drive
 
 Check:
 
-- Whether the setting is under Computer Configuration or User Configuration
-- Whether CLIENT01 is in the linked OU
-- Whether the GPO is applied
-- Whether another policy has higher precedence
-- Whether the device was already connected
-- Whether restart is required
+- Old group memberships
+- Nested security groups
+- Incorrect targeting rule
+- GPO linked too broadly
+- Multiple drive-mapping policies
+- Stale user security token
+- Incorrect group name
 
 ---
 
-## Screen Saver Does Not Lock
+## Mapped Drive Appears but Cannot Be Opened
+
+This may indicate that the mapping GPO worked but the file permissions did not.
 
 Check:
 
-- Screen saver enabled
-- Password protection enabled
-- Timeout configured
-- Correct screen saver path
-- User policy applied
-- Conflicting local settings
-- Group Policy precedence
+- Share permissions
+- NTFS permissions
+- Group membership
+- Server availability
+- UNC path
+- Effective access
 
 ---
 
 # Security Notes
 
-## Avoid Editing Default Policies Unnecessarily
+## Use Groups Instead of Direct User Permissions
 
-The Default Domain Policy should remain focused on domain-wide account settings.
+Permissions should be assigned to security groups whenever possible.
 
-Custom workstation controls should normally use separate GPOs.
+This improves:
 
----
-
-## Test Before Broad Deployment
-
-A policy should first be tested on:
-
-- A test workstation
-- A test user
-- A pilot OU
-- A limited security group
-
-A misconfigured GPO can affect many systems quickly.
+- Access reviews
+- Onboarding
+- Offboarding
+- Department transfers
+- Troubleshooting
+- Auditing
 
 ---
 
-## Use Change Documentation
+## Be Careful with Deny Permissions
 
-Record:
+Explicit Deny entries may override Allow permissions.
 
-- Policy name
-- Purpose
-- Owner
-- Linked OU
-- Date created
-- Settings changed
-- Validation result
-- Rollback method
+Deny should be used only when required and after proper testing.
 
 ---
 
-## Do Not Use GPOs Without Scope Planning
+## Protect Administrative Access
 
-A policy linked at the domain level may affect more objects than intended.
+Required administrative principals should retain appropriate access.
 
-The administrator should understand:
+Examples include:
 
-- OU structure
-- Security filtering
-- Inheritance
-- Enforcement
-- Loopback processing
-- WMI filters
+- SYSTEM
+- Administrators
+- Approved file-server administrators
+- Backup operators when required
+
+---
+
+## Separate Sensitive Departments
+
+HR and Finance folders may contain confidential data.
+
+Access should be:
+
+- Limited
+- Approved
+- Documented
+- Audited
+- Reviewed regularly
+
+---
+
+## Test Both Positive and Negative Access
+
+A secure configuration should prove both:
+
+```text
+Authorized user succeeds
+```
+
+and:
+
+```text
+Unauthorized user is denied
+```
+
+---
+
+# Useful Commands
+
+## View mapped drives
+
+```cmd
+net use
+```
+
+---
+
+## Review current user identity
+
+```cmd
+whoami
+```
+
+---
+
+## Review current user groups
+
+```cmd
+whoami /groups
+```
+
+---
+
+## Test whether the share path exists
+
+```powershell
+Test-Path "\\SRV01\HR"
+```
+
+---
+
+## View SMB shares
+
+```powershell
+Get-SmbShare
+```
+
+---
+
+## View share permissions
+
+```powershell
+Get-SmbShareAccess -Name "HR"
+```
+
+---
+
+## Review NTFS permissions
+
+```powershell
+Get-Acl "C:\Shares\HR" |
+Format-List
+```
+
+---
+
+## Check user group membership
+
+```powershell
+Get-ADPrincipalGroupMembership `
+    -Identity "john.smith" |
+Select-Object Name, GroupScope, GroupCategory
+```
+
+The actual username must match the account created in Active Directory.
+
+---
+
+## Force Group Policy refresh
+
+```cmd
+gpupdate /force
+```
+
+---
+
+## Review applied Group Policy
+
+```cmd
+gpresult /r
+```
 
 ---
 
 # Skills Demonstrated
 
-- Group Policy Management
+- Windows File Services
+- SMB Sharing
+- NTFS Permissions
+- Share Permissions
+- Permission Inheritance
+- Effective Access
+- Active Directory Security Groups
+- Role-Based Access Control
+- Least Privilege
+- Group Policy Preferences
+- Drive Mapping
+- Item-Level Targeting
+- Access Validation
+- File Access Troubleshooting
 - Windows Server 2025
-- Active Directory
-- Workstation Hardening
-- Centralized Configuration
-- Password Policy Review
-- USB Storage Restriction
-- Screen Lock Enforcement
-- Corporate Desktop Standardization
-- `gpupdate`
-- `gpresult`
-- Group Policy Troubleshooting
-- Endpoint Security
 - Technical Documentation
 
 ---
 
 # Interview Notes
 
-## What is a Group Policy Object?
+## What is the difference between share and NTFS permissions?
 
-A GPO is a collection of Windows configuration settings that can be applied to users and computers through Active Directory.
+Share permissions apply only when a folder is accessed through the network.
 
----
+NTFS permissions apply both locally and through the network.
 
-## What is the difference between Computer Configuration and User Configuration?
-
-Computer Configuration applies to the device.
-
-User Configuration applies to the user account.
+When both apply, the effective result is normally the most restrictive combination.
 
 ---
 
-## What is LSDOU?
+## Why use security groups for folder permissions?
 
-LSDOU describes normal Group Policy processing order:
+Security groups make permissions easier to manage and audit.
+
+Administrators can update group membership instead of modifying folder permissions for every individual user.
+
+---
+
+## What is permission inheritance?
+
+Inheritance allows child folders and files to receive permissions from their parent folder.
+
+It simplifies management but may need to be disabled for sensitive folders requiring unique permissions.
+
+---
+
+## What is a UNC path?
+
+A UNC path identifies a shared network resource.
+
+Example:
 
 ```text
-Local
-Site
-Domain
-Organizational Unit
+\\SRV01\HR
 ```
 
 ---
 
-## How do you force a policy update?
+## What is item-level targeting?
 
-```cmd
-gpupdate /force
-```
+Item-level targeting allows a Group Policy Preference item to apply only when certain conditions are met, such as membership in a specific security group.
 
 ---
 
-## How do you confirm which GPOs applied?
+## How would you troubleshoot a missing mapped drive?
 
-```cmd
-gpresult /r
-```
+I would check:
 
-or:
-
-```cmd
-gpresult /h C:\Reports\GPResult.html
-```
-
----
-
-## Why create custom GPOs instead of using only the Default Domain Policy?
-
-Custom GPOs improve organization, troubleshooting, change control, testing, and rollback.
+1. GPO link
+2. User OU
+3. Group membership
+4. Item-level targeting
+5. Share path
+6. Policy processing
+7. Existing mappings
+8. `gpresult`
+9. `net use`
 
 ---
 
-## Why might a GPO fail to apply?
+## Why test unauthorized access?
 
-Possible reasons include incorrect linking, wrong OU placement, security filtering, inheritance, DNS problems, replication issues, or conflicting policies.
+Successful access proves that authorized users can connect.
+
+An access-denied test proves that the security boundary is blocking users who should not have access.
+
+---
+
+## What could cause a mapped drive to appear but still show Access Denied?
+
+The Group Policy mapping may have worked, but the user's share or NTFS permissions may be incorrect.
 
 ---
 
 # What I Learned
 
-The most important lesson was that creating a GPO does not prove that it works.
+The most important lesson was that file access depends on more than one setting.
 
-A complete validation requires:
+A user may belong to the correct department group but still fail to access a folder because of:
+
+- Share permissions
+- NTFS permissions
+- Permission inheritance
+- Explicit Deny entries
+- Stale group membership
+- Incorrect drive targeting
+- Incorrect UNC paths
+
+I also learned that access validation should include both approved and denied tests.
 
 ```text
-GPO exists
+Authorized user succeeds
 +
-GPO is linked
-+
-Target is in scope
-+
-Client processes policy
-+
-Expected result appears
+Unauthorized user is denied
+=
+Stronger evidence that permissions are correct
 ```
 
-I also learned that Group Policy can be used for both standardization and security.
+The drive-mapping section showed how Active Directory group membership can directly affect the user experience.
 
-The wallpaper policy demonstrated centralized configuration, while the USB and screen-lock policies demonstrated endpoint hardening.
+HR users received the HR drive, while an IT user received only the IT drive.
 
-The commands I want to remember are:
-
-```cmd
-gpupdate /force
-```
-
-and:
-
-```cmd
-gpresult /r
-```
-
-They help separate a configuration problem from an application problem.
+That demonstrated how centralized identity, file permissions, and Group Policy can work together.
 
 ---
 
@@ -1045,52 +1171,59 @@ They help separate a configuration problem from an application problem.
 
 To expand this module, I would add:
 
-- Microsoft Defender policies
-- Windows Firewall rules
-- Audit policy settings
-- Account lockout policy
-- Local administrator restrictions
-- PowerShell execution controls
-- AppLocker
-- Windows Update policy
-- Browser hardening
-- BitLocker policy
-- Security baseline comparison
-- Group Policy backup and restore
-- Policy change reporting
-- Central Store for ADMX templates
+- Access-Based Enumeration
+- File Server Resource Manager
+- Storage quotas
+- File screening
+- Shadow Copies
+- DFS Namespace
+- DFS Replication
+- File access auditing
+- Automated permission reports
+- AGDLP-based permission groups
+- Scheduled access reviews
+- Automated department share provisioning
+- Separate file server instead of using SRV01
+- Formal access-request tickets
+- Backup and recovery validation
 
 ---
 
 # Key Takeaways
 
-This module demonstrated centralized workstation management through Group Policy.
+This module connected Active Directory identity management to real file access.
 
 The implementation included:
 
-- Corporate wallpaper deployment
-- Password policy review
-- USB storage restriction
-- Screen saver and lock enforcement
-- Manual policy refresh
-- Result validation
-- Client-side confirmation
+- Department share folders
+- SMB sharing
+- NTFS permissions
+- Security-group-based access
+- Authorized-access testing
+- Unauthorized-access testing
+- Group Policy drive mapping
+- Item-level targeting
+- Department-specific drive validation
 
-The main lesson was:
+The main lessons were:
 
 ```text
-Configure
-   ↓
-Link
-   ↓
-Refresh
-   ↓
-Verify
-   ↓
-Test
+Assign permissions to groups, not individual users.
 ```
 
-Group Policy is now being used to provide consistent configuration and security controls across domain-joined devices.
+```text
+Share and NTFS permissions must be evaluated together.
+```
+
+```text
+Test both allowed and denied access.
+```
+
+```text
+Use item-level targeting to deliver only the correct department drive.
+```
+
+The environment is now prepared for folder redirection, file auditing, and backup modules.
 
 ---
 
@@ -1100,6 +1233,6 @@ Group Policy is now being used to provide consistent configuration and security 
 
 ✅ Completed Successfully
 
-**Next Module:** [Windows LAPS](../05-Windows-LAPS/)
+**Next Module:** [Folder Redirection](../04-Folder-Redirection/)
 
 </div>
