@@ -1,10 +1,3 @@
-Save this as:
-
-```text
-03-Enterprise-Operations/03-WSUS-Patch-Management/README.md
-```
-
-````markdown
 <div align="center">
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,2&height=250&section=header&text=WSUS%20Patch%20Management&fontSize=46&fontAlignY=35&desc=Enterprise%20Operations%20%7C%20Centralized%20Updates%2C%20Pilot%20Deployment%2C%20and%20Compliance%20Reporting&descSize=16&descAlignY=55" alt="WSUS Patch Management Banner" width="100%">
@@ -2421,4 +2414,3 @@ Computers with no status: 0
 **Next Module:** [Server Monitoring](../04-Server-Monitoring/)
 
 </div>
-````
