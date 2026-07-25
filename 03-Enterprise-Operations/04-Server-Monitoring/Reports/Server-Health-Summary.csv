@@ -1,0 +1,2 @@
+"Timestamp","ComputerName","UptimeDays","CPUPercent","MemoryUsedPercent","FreeMemoryGB","SystemDriveFreePercent","StoppedCriticalServices","CriticalErrorsLast24H","OverallHealth"
+"7/25/2026 10:14:07 PM","SRV01","0.06","6.54","66.45","1.38","49","None","9","Warning"

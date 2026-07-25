@@ -1,0 +1,2 @@
+"ComputerName","AdapterName","InterfaceAlias","Status","LinkSpeed","MACAddress","IPv4Address","DefaultGateway","DNSServers","HealthStatus"
+"SRV01","Ethernet0","Ethernet0","Up","1 Gbps","00-0C-29-E5-D7-DC","192.168.241.10","192.168.241.2","127.0.0.1","Healthy"
