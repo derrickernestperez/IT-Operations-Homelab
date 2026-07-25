@@ -696,7 +696,7 @@ The dashboard displayed:
 - Client reporting information
 
 <p align="center">
-  <img src="Evidence/Screenshots/07-WSUS-Console-Overview.png" width="850" alt="WSUS Console Overview">
+  <img src="Evidence/Screenshots/07-WSUS-Configuration-Wizard.png" width="850" alt="WSUS Console Overview">
 </p>
 
 At this stage, no clients had reported and no updates had been approved.
