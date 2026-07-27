@@ -1,9 +1,9 @@
 <div align="center">
 
 <img
-  src="https://capsule-render.vercel.app/api?type=waving&color=0:0A66C2,50:0078D4,100:00A4EF&height=250&section=header&text=Derrick%20Ernest%20Perez&fontSize=46&fontColor=FFFFFF&fontAlignY=35&desc=Systems%20Administration%20%E2%80%A2%20Infrastructure%20Operations%20%E2%80%A2%20Identity%20and%20Access%20Management&descSize=16&descAlignY=56&animation=fadeIn"
+  src="https://capsule-render.vercel.app/api?type=waving&color=0:0A66C2,50:0078D4,100:00A4EF&height=250&section=header&text=k%20%20&fontSize=46&fontColor=FFFFFF&fontAlignY=35&desc=Systems%20Administration%20%E2%80%A2%20Infrastructure%20Operations%20%E2%80%A2%20Identity%20and%20Access%20Management&descSize=16&descAlignY=56&animation=fadeIn"
   width="100%"
-  alt="Derrick Ernest Perez IT Operations Homelab"
+  alt=" IT Operations Homelab"
 />
 
 <br>
