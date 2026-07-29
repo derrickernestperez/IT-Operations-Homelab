@@ -1,0 +1,24 @@
+# Microsoft Entra raw exports
+**/Reports/Entra-Audit-Logs.csv
+**/Reports/Entra-Sign-In-Logs.csv
+**/Reports/Entra-Tenant-Inventory.csv
+**/Reports/Entra-User-Inventory.csv
+**/Reports/Entra-Group-Inventory.csv
+**/Reports/Entra-Group-Membership.csv
+
+# Credentials and authentication artifacts
+*.key
+*.pem
+*.pfx
+*.p12
+*.cer
+*.token
+*.secret
+.env
+.env.*
+secrets.json
+credentials.json
+
+# PowerShell transcripts
+*.transcript.txt
+PowerShell_transcript.*
