@@ -1,0 +1,8 @@
+﻿MICROSOFT ENTRA INVENTORY SUMMARY
+Generated: 2026-07-28 19:53:06
+
+Tenant: Default Directory
+Total users: 4
+Enabled users: 4
+Disabled users: 0
+Total groups: 3

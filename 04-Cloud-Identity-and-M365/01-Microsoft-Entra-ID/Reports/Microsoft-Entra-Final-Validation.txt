@@ -1,0 +1,10 @@
+﻿MICROSOFT ENTRA ID FINAL VALIDATION
+
+Tenant: Default Directory
+Required files passed: True
+Required screenshots passed: True
+Configuration checks passed: True
+Missing files: 0
+Missing screenshots: 0
+Failed configuration checks: 0
+Final status: PASSED
