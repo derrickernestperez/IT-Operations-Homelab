@@ -134,7 +134,7 @@ By completing this module, I practised:
 | Component | Configuration |
 |---|---|
 | Microsoft Entra tenant | Default Directory |
-| Primary tenant domain | `d-------------.onmicrosoft.com` |
+| Primary tenant domain | `d-------------.omicrosoft.com` |
 | Identity platform | Microsoft Entra ID |
 | On-premises domain | `homelab.local` |
 | Domain controller | `SRV01` |
