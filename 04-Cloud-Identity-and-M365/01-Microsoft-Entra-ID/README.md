@@ -134,7 +134,7 @@ By completing this module, I practised:
 | Component | Configuration |
 |---|---|
 | Microsoft Entra tenant | Default Directory |
-| Primary tenant domain | `derrickernestpgmail.onmicrosoft.com` |
+| Primary tenant domain | `d-------------.onmicrosoft.com` |
 | Identity platform | Microsoft Entra ID |
 | On-premises domain | `homelab.local` |
 | Domain controller | `SRV01` |
@@ -223,15 +223,11 @@ The next module will use `SYNC01` to connect the on-premises Active Directory en
 │
 ├── Reports
 │   ├── Entra-Audit-Log-Review.md
-│   ├── Entra-Audit-Logs.csv
 │   ├── Entra-Sign-In-Log-Review.md
-│   ├── Entra-Sign-In-Logs.csv
-│   ├── Entra-Tenant-Inventory.csv
-│   ├── Entra-User-Inventory.csv
-│   ├── Entra-Group-Inventory.csv
 │   ├── Entra-Inventory-Summary.txt
-│   ├── Entra-Configuration-Validation.csv
-│   └── Microsoft-Entra-Final-Validation.txt
+│   ├── Microsoft-Entra-Final-Validation.txt
+
+
 │
 └── Scripts
     ├── Export-EntraInventory.ps1
@@ -751,13 +747,13 @@ A second issue occurred when the domain was entered as a standalone PowerShell l
 Incorrect:
 
 ```powershell
-derrickernestpgmail.onmicrosoft.com
+d-------------
 ```
 
 Correct:
 
 ```powershell
-$TenantDomain = "derrickernestpgmail.onmicrosoft.com"
+$TenantDomain = "d--------onmicrosoft.com"
 ```
 
 After correcting the script:
@@ -953,14 +949,8 @@ Disconnect-MgGraph
 | Report | Purpose |
 |---|---|
 | [`Entra-Audit-Log-Review.md`](Reports/Entra-Audit-Log-Review.md) | Documents reviewed administrative activity |
-| [`Entra-Audit-Logs.csv`](Reports/Entra-Audit-Logs.csv) | Exported Microsoft Entra audit events |
 | [`Entra-Sign-In-Log-Review.md`](Reports/Entra-Sign-In-Log-Review.md) | Documents successful and failed authentication |
-| [`Entra-Sign-In-Logs.csv`](Reports/Entra-Sign-In-Logs.csv) | Exported Microsoft Entra sign-in activity |
-| [`Entra-Tenant-Inventory.csv`](Reports/Entra-Tenant-Inventory.csv) | Tenant information |
-| [`Entra-User-Inventory.csv`](Reports/Entra-User-Inventory.csv) | Cloud user inventory |
-| [`Entra-Group-Inventory.csv`](Reports/Entra-Group-Inventory.csv) | Cloud security-group inventory |
 | [`Entra-Inventory-Summary.txt`](Reports/Entra-Inventory-Summary.txt) | High-level tenant summary |
-| [`Entra-Configuration-Validation.csv`](Reports/Entra-Configuration-Validation.csv) | Automated validation results |
 | [`Microsoft-Entra-Final-Validation.txt`](Reports/Microsoft-Entra-Final-Validation.txt) | Final project status |
 
 ---
