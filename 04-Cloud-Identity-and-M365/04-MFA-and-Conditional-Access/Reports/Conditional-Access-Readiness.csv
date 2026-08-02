@@ -1,0 +1,6 @@
+PolicyID,PolicyName,ImplementationStatus,DesignStatus,LicenceRequirement,PilotRequired,EmergencyAccountsExcluded,ReportOnlyPlanned,RollbackDocumented,FinalClassification
+CA001,Require MFA for All Users,Not deployed,Completed,Microsoft Entra ID P1 or eligible licence,Yes,Yes,Yes,Yes,DESIGN ONLY — LICENCE REQUIRED
+CA002,Require Strong Authentication for Administrators,Not deployed,Completed,Microsoft Entra ID P1 or eligible licence,Yes,Yes,Yes,Yes,DESIGN ONLY — LICENCE REQUIRED
+CA003,Block Legacy Authentication,Not deployed,Completed,Microsoft Entra ID P1 or eligible licence,Yes,Yes,Yes,Yes,DESIGN ONLY — LICENCE REQUIRED
+CA004,Restrict Untrusted Locations,Not deployed,Completed,Microsoft Entra ID P1 or eligible licence,Yes,Yes,Yes,Yes,DESIGN ONLY — LICENCE REQUIRED
+CA005,Require Managed or Hybrid-Joined Device,Not deployed,Completed,Microsoft Entra ID P1 plus supported device-management capability,Yes,Yes,Yes,Yes,DESIGN ONLY — LICENCE REQUIRED

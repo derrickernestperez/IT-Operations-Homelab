@@ -1,0 +1,10 @@
+ItemID,Scope,AuthenticationMethod,Status,Target,ValidationResult,Limitation,Classification
+AUTH-001,Tenant,Microsoft Authenticator,Enabled,SG-MFA-Pilot,Successful pilot registration and MFA sign-in,None,COMPLETED AND VALIDATED
+AUTH-002,Tenant,Software OATH token,Available,Emergency Access 01,Registered and sign-in tested,Not phishing-resistant,COMPLETED WITH DOCUMENTED LIMITATION
+AUTH-003,Tenant,Software OATH token,Available,Emergency Access 02,Registered and sign-in tested,Not phishing-resistant,COMPLETED WITH DOCUMENTED LIMITATION
+AUTH-004,Tenant,System-preferred MFA,Enabled,Emergency Access 01,Preferred method softwareOTP,Depends on registered methods,COMPLETED WITH DOCUMENTED LIMITATION
+AUTH-005,Tenant,System-preferred MFA,Enabled,Emergency Access 02,Preferred method softwareOTP,Depends on registered methods,COMPLETED WITH DOCUMENTED LIMITATION
+AUTH-006,Tenant,Passkey or FIDO2,Not validated,No pilot target,Not tested,Hardware-dependent,PLANNED
+AUTH-007,Tenant,Temporary Access Pass,Not validated,No pilot target,Not tested,Availability and policy-dependent,PLANNED
+AUTH-008,Tenant,Certificate-based authentication,Not validated,No pilot target,Not tested,PKI and configuration required,PLANNED
+AUTH-009,Tenant,SMS or voice,Not validated,No pilot target,Not tested,Less secure than stronger methods,PLANNED

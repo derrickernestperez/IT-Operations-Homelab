@@ -1,0 +1,43 @@
+Microsoft Entra Security Defaults Review
+========================================
+
+Review status
+-------------
+Security Defaults state was reviewed before MFA testing and before any Conditional Access design work.
+
+Recorded state
+--------------
+Security Defaults: [ENTER ENABLED OR DISABLED]
+
+Tenant capability
+-----------------
+Conditional Access deployment was unavailable under the tenant's current licensing.
+
+Available protection path
+-------------------------
+Microsoft Entra Security Defaults and the Authentication Methods policy were used as the available baseline controls.
+
+Validated controls
+------------------
+Authentication Methods policy reviewed: Yes
+Microsoft Authenticator pilot scope created: Yes
+Pilot user registered Microsoft Authenticator: Yes
+Pilot MFA sign-in completed: Yes
+Authentication details reviewed in sign-in logs: Yes
+Emergency access accounts created: Yes
+Emergency access sign-in tested: Yes
+Emergency account MFA reviewed: Yes
+
+Conditional Access status
+-------------------------
+Policy deployment: Not available
+Policy designs completed: 5
+Classification: DESIGN ONLY — LICENCE REQUIRED
+
+Security note
+-------------
+Security Defaults provides baseline tenant protection but does not provide the granular targeting, exclusions, report-only testing, named-location controls, authentication-strength controls, or device-based controls available through Conditional Access.
+
+Final classification
+--------------------
+COMPLETED WITH DOCUMENTED LIMITATION
