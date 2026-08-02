@@ -1,0 +1,2 @@
+TestID,TestIdentity,AuthenticationRequirement,AuthenticationMethod,Result,Application,EvidenceFile,Classification
+MFA-TEST-001,Pilot cloud test user,Multifactor authentication,Microsoft Authenticator,Successfully completed,Microsoft Entra admin center,14-pilot-mfa-signin-authentication-details.png,COMPLETED AND VALIDATED
