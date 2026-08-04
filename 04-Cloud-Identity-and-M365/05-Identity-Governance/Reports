@@ -1,0 +1,13 @@
+ReviewID,ReviewArea,Scope,Finding,RequiredAction,FinalStatus,Classification
+AR-001,Identity Governance licensing,Access Reviews and advanced governance features,Required licence unavailable,Document features as design-only controls,Closed,DESIGN ONLY — LICENCE REQUIRED
+AR-002,Global Administrator access,Normal administrator and two emergency-access accounts,Three approved Global Administrator assignments identified,Retain and review quarterly,Closed,COMPLETED AND VALIDATED
+AR-003,Guest-user access,All guest identities,No guest users found,None,Closed,COMPLETED AND VALIDATED
+AR-004,User-account baseline,All Microsoft Entra users,Cloud-only and synchronized identities identified,Maintain separate lifecycle procedures by identity source,Closed,COMPLETED AND VALIDATED
+AR-005,Synchronized-user review,Users originating from on-premises Active Directory,Synchronized identities identified,Manage lifecycle changes in the authoritative on-premises source,Closed,COMPLETED AND VALIDATED
+AR-006,Cloud-only-user review,Users created directly in Microsoft Entra ID,Cloud-only identities identified,Manage lifecycle directly in Microsoft Entra ID,Closed,COMPLETED AND VALIDATED
+AR-007,MFA pilot group membership,SG-MFA-Pilot,Emergency account was incorrectly included,Remove emergency account and add approved normal pilot user,Remediated,REMEDIATED
+AR-008,Security-group ownership,SG-MFA-Pilot,No group owner was assigned,Assign one normal administrator as accountable owner,Remediated,REMEDIATED
+AR-009,Disabled-account review,One disabled Microsoft Entra identity,Remaining access reviewed,Remove unnecessary roles groups or licences and retain only when justified,Closed,MANUAL REVIEW COMPLETED
+AR-010,Administrative-role review,Assigned Microsoft Entra administrative roles,Privileged access manually reviewed,Retain only approved least-privileged assignments,Closed,COMPLETED AND VALIDATED
+AR-011,Emergency-access governance,Two cloud-only recovery administrators,Accounts exist and were sign-in tested,Review quarterly and do not use for daily work,Closed,COMPLETED WITH DOCUMENTED LIMITATION
+AR-012,Quarterly access certification,Users groups roles and disabled accounts,Manual certification process documented,Use documented quarterly review until licensed Access Reviews are available,Closed,COMPLETED WITH DOCUMENTED LIMITATION
