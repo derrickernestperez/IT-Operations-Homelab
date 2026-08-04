@@ -1,0 +1,13 @@
+FeatureID,FeatureName,CurrentAvailability,ImplementationStatus,HomelabApproach,Classification
+IG-001,Access Reviews,Unavailable under current licence,Not deployed,Manual quarterly access certification documented,DESIGN ONLY — LICENCE REQUIRED
+IG-002,Entitlement Management,Unavailable under current licence,Not deployed,Access request template and approval workflow documented,DESIGN ONLY — LICENCE REQUIRED
+IG-003,Lifecycle Workflows,Unavailable under current licence,Not deployed,Manual Joiner-Mover-Leaver SOP documented,DESIGN ONLY — LICENCE REQUIRED
+IG-004,Privileged Identity Management,Unavailable under current licence,Not deployed,Manual privileged-role review and permanent emergency-access design documented,DESIGN ONLY — LICENCE REQUIRED
+IG-005,Inactive-user reporting,Detailed last-sign-in properties unavailable,Not deployed,Manual account-state review performed,COMPLETED WITH DOCUMENTED LIMITATION
+IG-006,Guest-user review,Available manually,Completed,Guest filter reviewed and zero guest users found,COMPLETED AND VALIDATED
+IG-007,Privileged-role review,Available manually,Completed,Global Administrator and other assigned roles reviewed,COMPLETED AND VALIDATED
+IG-008,Group-membership certification,Available manually,Completed,SG-MFA-Pilot membership reviewed and corrected,REMEDIATED
+IG-009,Group-owner governance,Available manually,Completed,Missing owner identified and normal administrator assigned,REMEDIATED
+IG-010,Disabled-account review,Available manually,Completed,One disabled identity reviewed for retained access,MANUAL REVIEW COMPLETED
+IG-011,Separation of duties,Available as governance design,Completed,Manual role separation matrix created,COMPLETED WITH DOCUMENTED LIMITATION
+IG-012,Access-request workflow,Available as governance design,Completed,Reusable access-request template created,COMPLETED WITH DOCUMENTED LIMITATION
