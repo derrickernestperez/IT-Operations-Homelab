@@ -1,0 +1,2 @@
+ReviewID,AccountType,AccountState,AdministrativeRoles,GroupMemberships,ActiveLicences,SignInAccess,RequiredAction,Classification
+DAR-001,Redacted Microsoft Entra identity,Disabled,[ENTER NUMBER],[ENTER NUMBER],[ENTER NUMBER],Blocked,Remove any unnecessary access and retain only if required for audit or recovery,MANUAL REVIEW COMPLETED
