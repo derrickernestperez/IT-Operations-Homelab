@@ -1,0 +1,5 @@
+ReviewID,RoleName,AssignmentScope,ApprovedAssignmentCount,ReviewFinding,RequiredAction,FinalStatus,Classification
+PRR-001,Global Administrator,Tenant,3,One normal administrator and two emergency-access administrators were identified,Retain only approved assignments and review quarterly,Closed,COMPLETED AND VALIDATED
+PRR-002,Other assigned administrative roles,Tenant,[ENTER NUMBER],Assigned privileged roles were manually reviewed,Remove any unnecessary role and apply least privilege,Closed,COMPLETED AND VALIDATED
+PRR-003,Emergency-access administrators,Tenant,2,Both recovery accounts retain permanent Global Administrator access,Reserve for emergency use and validate quarterly,Closed,COMPLETED WITH DOCUMENTED LIMITATION
+PRR-004,Privileged Identity Management,Tenant,0,Just-in-time privileged-role activation was unavailable,Document future PIM design and licensing requirement,Closed,DESIGN ONLY — LICENCE REQUIRED
